@@ -23,7 +23,7 @@ export const sections = {
     controlSetRows: [
       ['datasource'],
       ['viz_type'],
-      ['slice_id', 'cache_timeout'],
+      ['slice_id', 'cache_timeout', 'url_params'],
     ],
   },
   colorScheme: {
@@ -179,7 +179,7 @@ export const visTypes = {
         expanded: true,
         controlSetRows: [
           ['color_scheme'],
-          ['show_brush', 'show_legend'],
+          ['show_brush', 'send_time_range', 'show_legend'],
           ['rich_tooltip', 'show_markers'],
           ['line_interpolation'],
         ],
@@ -274,21 +274,14 @@ export const visTypes = {
       },
     },
     sectionOverrides: {
-      datasourceAndVizType: {
-        label: t('Chart Type'),
-        controlSetRows: [
-          ['viz_type'],
-          ['slice_id', 'cache_timeout'],
-        ],
-      },
       sqlaTimeSeries: {
         controlSetRows: [
-          ['since', 'until'],
+          ['time_range'],
         ],
       },
       druidTimeSeries: {
         controlSetRows: [
-          ['since', 'until'],
+          ['time_range'],
         ],
       },
     },
@@ -510,7 +503,7 @@ export const visTypes = {
         expanded: true,
         controlSetRows: [
           ['spatial', 'size'],
-          ['row_limit', null],
+          ['row_limit', 'filter_nulls'],
           ['adhoc_filters'],
         ],
       },
@@ -549,7 +542,7 @@ export const visTypes = {
         expanded: true,
         controlSetRows: [
           ['spatial', 'size'],
-          ['row_limit', null],
+          ['row_limit', 'filter_nulls'],
           ['adhoc_filters'],
         ],
       },
@@ -589,7 +582,7 @@ export const visTypes = {
         expanded: true,
         controlSetRows: [
           ['line_column', 'line_type'],
-          ['row_limit', null],
+          ['row_limit', 'filter_nulls'],
           ['adhoc_filters'],
         ],
       },
@@ -623,7 +616,7 @@ export const visTypes = {
         expanded: true,
         controlSetRows: [
           ['spatial', 'size'],
-          ['row_limit', null],
+          ['row_limit', 'filter_nulls'],
           ['adhoc_filters'],
         ],
       },
@@ -669,7 +662,8 @@ export const visTypes = {
         label: t('Query'),
         expanded: true,
         controlSetRows: [
-          ['geojson', 'row_limit'],
+          ['geojson', null],
+          ['row_limit', 'filter_nulls'],
           ['adhoc_filters'],
         ],
       },
@@ -710,7 +704,7 @@ export const visTypes = {
         expanded: true,
         controlSetRows: [
           ['line_column', 'line_type'],
-          ['row_limit', null],
+          ['row_limit', 'filter_nulls'],
           ['adhoc_filters'],
         ],
       },
@@ -751,7 +745,7 @@ export const visTypes = {
         expanded: true,
         controlSetRows: [
           ['start_spatial', 'end_spatial'],
-          ['row_limit', null],
+          ['row_limit', 'filter_nulls'],
           ['adhoc_filters'],
         ],
       },
@@ -765,7 +759,8 @@ export const visTypes = {
       {
         label: t('Arc'),
         controlSetRows: [
-          ['color_picker', null],
+          ['color_picker', 'legend_position'],
+          ['dimension', 'color_scheme'],
           ['stroke_width', null],
         ],
       },
@@ -779,6 +774,16 @@ export const visTypes = {
         ],
       },
     ],
+    controlOverrides: {
+      dimension: {
+        label: t('Categorical Color'),
+        description: t('Pick a dimension from which categorical colors are defined'),
+      },
+      size: {
+        validators: [],
+      },
+      time_grain_sqla: timeGrainSqlaAnimationOverrides,
+    },
   },
 
   deck_scatter: {
@@ -800,7 +805,8 @@ export const visTypes = {
         label: t('Query'),
         expanded: true,
         controlSetRows: [
-          ['spatial', 'row_limit'],
+          ['spatial', null],
+          ['row_limit', 'filter_nulls'],
           ['adhoc_filters'],
         ],
       },
@@ -942,9 +948,6 @@ export const visTypes = {
       metrics: {
         validators: [],
       },
-      time_grain_sqla: {
-        default: null,
-      },
     },
   },
 
@@ -1047,9 +1050,9 @@ export const visTypes = {
         label: t('Query'),
         expanded: true,
         controlSetRows: [
+          ['series'],
           ['metric'],
           ['adhoc_filters'],
-          ['series'],
           ['row_limit', null],
         ],
       },
@@ -1252,6 +1255,7 @@ export const visTypes = {
           ['compare_lag', 'compare_suffix'],
           ['y_axis_format', null],
           ['show_trend_line', 'start_y_axis_at_zero'],
+          ['color_picker', null],
         ],
       },
     ],
@@ -1403,7 +1407,7 @@ export const visTypes = {
   },
 
   directed_force: {
-    label: t('Directed Force Layout'),
+    label: t('Force-directed Graph'),
     controlPanelSections: [
       {
         label: t('Query'),
@@ -1518,6 +1522,7 @@ export const visTypes = {
           ['country_fieldtype'],
           ['metric'],
           ['adhoc_filters'],
+          ['row_limit'],
         ],
       },
       {
@@ -1597,13 +1602,15 @@ export const visTypes = {
           ['metrics'],
           ['secondary_metric'],
           ['adhoc_filters'],
-          ['limit'],
+          ['limit', 'row_limit'],
         ],
       },
       {
         label: t('Options'),
+        expanded: true,
         controlSetRows: [
           ['show_datatable', 'include_series'],
+          ['linear_color_scheme'],
         ],
       },
     ],

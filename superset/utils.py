@@ -39,7 +39,8 @@ from past.builtins import basestring
 from pydruid.utils.having import Having
 import pytz
 import sqlalchemy as sa
-from sqlalchemy import event, exc, select
+from sqlalchemy import event, exc, select, Text
+from sqlalchemy.dialects.mysql import MEDIUMTEXT
 from sqlalchemy.types import TEXT, TypeDecorator
 
 from superset.exceptions import SupersetException, SupersetTimeoutException
@@ -957,7 +958,7 @@ def convert_legacy_filters_into_adhoc(fd):
                 fd['adhoc_filters'].append(to_adhoc(fd, 'SQL', clause))
 
             if filters in fd:
-                for filt in fd[filters]:
+                for filt in filter(lambda x: x is not None, fd[filters]):
                     fd['adhoc_filters'].append(to_adhoc(filt, 'SIMPLE', clause))
 
     for key in ('filters', 'having', 'having_filters', 'where'):
@@ -1011,3 +1012,7 @@ def get_username():
         return g.user.username
     except Exception:
         pass
+
+
+def MediumText():
+    return Text().with_variant(MEDIUMTEXT(), 'mysql')

@@ -29,7 +29,6 @@ from superset.jinja_context import get_template_processor
 from superset.models.annotations import Annotation
 from superset.models.core import Database
 from superset.models.helpers import QueryResult
-from superset.models.helpers import set_perm
 from superset.utils import DTTM_ALIAS, QueryStatus
 
 config = app.config
@@ -47,8 +46,10 @@ class AnnotationDatasource(BaseDatasource):
         error_message = None
         qry = db.session.query(Annotation)
         qry = qry.filter(Annotation.layer_id == query_obj['filter'][0]['val'])
-        qry = qry.filter(Annotation.start_dttm >= query_obj['from_dttm'])
-        qry = qry.filter(Annotation.end_dttm <= query_obj['to_dttm'])
+        if query_obj['from_dttm']:
+            qry = qry.filter(Annotation.start_dttm >= query_obj['from_dttm'])
+        if query_obj['to_dttm']:
+            qry = qry.filter(Annotation.end_dttm <= query_obj['to_dttm'])
         status = QueryStatus.SUCCESS
         try:
             df = pd.read_sql_query(qry.statement, db.engine)
@@ -410,6 +411,7 @@ class SqlaTable(Model, BaseDatasource):
                 grains = [(g.duration, g.name) for g in grains]
             d['granularity_sqla'] = utils.choicify(self.dttm_cols)
             d['time_grain_sqla'] = grains
+            d['main_dttm_col'] = self.main_dttm_col
         return d
 
     def values_for_column(self, column_name, limit=10000):
@@ -889,5 +891,5 @@ class SqlaTable(Model, BaseDatasource):
         return qry.filter_by(is_sqllab_view=False)
 
 
-sa.event.listen(SqlaTable, 'after_insert', set_perm)
-sa.event.listen(SqlaTable, 'after_update', set_perm)
+sa.event.listen(SqlaTable, 'after_insert', security_manager.set_perm)
+sa.event.listen(SqlaTable, 'after_update', security_manager.set_perm)

@@ -325,6 +325,39 @@ export const controls = {
       ['red_yellow_blue', 'red/yellowish/blue'],
       ['brown_white_green', 'brown/white/green'],
       ['purple_white_green', 'purple/white/green'],
+      ['schemeBrBG', 'brown/green'],
+      ['schemePRGn', 'purple/green'],
+      ['schemePiYG', 'pink/green'],
+      ['schemePuOr', 'purple/orange'],
+      ['schemeRdBu', 'red/blue'],
+      ['schemeRdGy', 'red/gray/black'],
+      ['schemeRdYlBu', 'red/yellow/blue'],
+      ['schemeRdYlGn', 'red/yellow/green'],
+      ['schemeSpectral', 'rainbow'],
+      ['schemeBlues', 'd3/blues'],
+      ['schemeGreens', 'd3/greens'],
+      ['schemeGrays', 'd3/grays'],
+      ['schemeOranges', 'd3/oranges'],
+      ['schemePurples', 'd3/purples'],
+      ['schemeReds', 'd3/reds'],
+      ['schemeViridis', 'd3/purple/blue/green/yellow'],
+      ['schemeInferno', 'd3/purple/red/orange/yellow'],
+      ['schemeMagma', 'd3/purple/pink/peach'],
+      ['schemeWarm', 'd3/warm/purple/pink/yellow/green'],
+      ['schemeCool', 'd3/cool/blue/green'],
+      ['schemeCubehelixDefault', 'd3/black/green/brown/pink/blue'],
+      ['schemeBuGn', 'd3/blue/green'],
+      ['schemeBuPu', 'd3/blue/purple'],
+      ['schemeGnBu', 'd3/green/blue'],
+      ['schemeOrRd', 'd3/orange/red'],
+      ['schemePuBuGn', 'd3/purple/blue/green'],
+      ['schemePuBu', 'd3/purple/blue'],
+      ['schemePuRd', 'd3/purple/red'],
+      ['schemeRdPu', 'd3/red/purple'],
+      ['schemeYlGnBu', 'd3/yellow/green/blue'],
+      ['schemeYlGn', 'd3/yellow/green'],
+      ['schemeYlOrBr', 'd3/yellow/brown'],
+      ['schemeYlOrRd', 'd3/yellow/orange/red'],
     ],
     default: 'blue_white_yellow',
     clearable: false,
@@ -500,6 +533,7 @@ export const controls = {
     ...metric,
     label: t('Color Metric'),
     default: null,
+    validators: [],
     description: t('A metric to use for color'),
   },
   select_country: {
@@ -517,11 +551,13 @@ export const controls = {
       'Italy',
       'Portugal',
       'Morocco',
+      'Myanmar',
       'Netherlands',
       'Russia',
       'Singapore',
       'Spain',
       'Thailand',
+      'Timorleste',
       'Uk',
       'Ukraine',
       'Usa',
@@ -645,6 +681,13 @@ export const controls = {
     mapStateToProps: state => ({
       choices: (state.datasource) ? state.datasource.all_cols : [],
     }),
+  },
+
+  filter_nulls: {
+    type: 'CheckboxControl',
+    label: t('Ignore null locations'),
+    default: true,
+    description: t('Whether to ignore locations that are null'),
   },
 
   geojson: {
@@ -797,6 +840,7 @@ export const controls = {
 
   link_length: {
     type: 'SelectControl',
+    renderTrigger: true,
     freeForm: true,
     label: t('Link Length'),
     default: '200',
@@ -806,6 +850,7 @@ export const controls = {
 
   charge: {
     type: 'SelectControl',
+    renderTrigger: true,
     freeForm: true,
     label: t('Charge'),
     default: '-500',
@@ -832,29 +877,30 @@ export const controls = {
     'column in the table. Also note that the ' +
     'filter below is applied against this column or ' +
     'expression'),
-    default: (c) => {
-      if (c.options && c.options.length > 0) {
-        return c.options[0].column_name;
-      }
-      return null;
-    },
+    default: control => control.default,
     clearable: false,
     optionRenderer: c => <ColumnOption column={c} showType />,
     valueRenderer: c => <ColumnOption column={c} />,
     valueKey: 'column_name',
     mapStateToProps: (state) => {
-      const newState = {};
+      const props = {};
       if (state.datasource) {
-        newState.options = state.datasource.columns.filter(c => c.is_dttm);
+        props.options = state.datasource.columns.filter(c => c.is_dttm);
+        props.default = null;
+        if (state.datasource.main_dttm_col) {
+          props.default = state.datasource.main_dttm_col;
+        } else if (props.options && props.options.length > 0) {
+          props.default = props.options[0].column_name;
+        }
       }
-      return newState;
+      return props;
     },
   },
 
   time_grain_sqla: {
     type: 'SelectControl',
     label: t('Time Grain'),
-    default: control => control.choices && control.choices.length ? control.choices[0][0] : null,
+    default: 'P1D',
     description: t('The time granularity for the visualization. This ' +
     'applies a date transformation to alter ' +
     'your time column and defines a new time granularity. ' +
@@ -1251,7 +1297,8 @@ export const controls = {
     type: 'SelectControl',
     label: t('Rotation'),
     choices: formatSelectOptions(['random', 'flat', 'square']),
-    default: 'random',
+    renderTrigger: true,
+    default: 'square',
     description: t('Rotation to apply to words in the cloud'),
   },
 
@@ -1312,6 +1359,7 @@ export const controls = {
     type: 'TextControl',
     isInt: true,
     label: t('Font Size From'),
+    renderTrigger: true,
     default: '20',
     description: t('Font size for the smallest value in the list'),
   },
@@ -1320,6 +1368,7 @@ export const controls = {
     type: 'TextControl',
     isInt: true,
     label: t('Font Size To'),
+    renderTrigger: true,
     default: '150',
     description: t('Font size for the biggest value in the list'),
   },
@@ -1396,6 +1445,7 @@ export const controls = {
     type: 'CheckboxControl',
     label: t('Data Table'),
     default: false,
+    renderTrigger: true,
     description: t('Whether to display the interactive data table'),
   },
 
@@ -1445,6 +1495,14 @@ export const controls = {
     renderTrigger: true,
     default: true,
     description: t('Whether to display the legend (toggles)'),
+  },
+
+  send_time_range: {
+    type: 'CheckboxControl',
+    label: t('Propagate'),
+    renderTrigger: true,
+    default: false,
+    description: t('Send range filter events to other charts'),
   },
 
   show_labels: {
@@ -1852,6 +1910,13 @@ export const controls = {
     label: t('Cache Timeout (seconds)'),
     hidden: true,
     description: t('The number of seconds before expiring the cache'),
+  },
+
+  url_params: {
+    type: 'HiddenControl',
+    label: t('URL Parameters'),
+    hidden: true,
+    description: t('Extra parameters for use in jinja templated queries'),
   },
 
   order_by_entity: {
