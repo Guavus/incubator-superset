@@ -383,7 +383,7 @@ class SupersetSecurityManager(SecurityManager):
     def is_dashboard_viewer_pvm(self, pvm):
         return ( self.is_base_view_pvm(pvm) or
             pvm.permission.name in {
-                'can_dashboard', 'can_explore_json', 'can_recent_activity',
+                'can_dashboard', 'can_explore_json',
             } or (pvm.permission.name in {'can_list'} and pvm.view_menu.name in {'CssTemplateAsyncModelView', 'DashboardModelViewAsync' })
             )
 
