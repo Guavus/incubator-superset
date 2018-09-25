@@ -381,7 +381,7 @@ class SupersetSecurityManager(SecurityManager):
             })
 
     def is_dashboard_viewer_pvm(self, pvm):
-        return ( self.is_base_view_pvm(pvm) or
+        return ( self.is_base_view_pvm(pvm) or self.is_base_security_pvm(pvm) or
             pvm.permission.name in {
                 'can_dashboard', 'can_explore_json',
             } or (pvm.permission.name in {'can_list'} and pvm.view_menu.name in {'CssTemplateAsyncModelView', 'DashboardModelViewAsync' })
@@ -392,6 +392,15 @@ class SupersetSecurityManager(SecurityManager):
             pvm.permission.name in {
                 'can_fave_slices', 'can_fave_dashboards', 'can_recent_activity',
             })
+
+    def is_base_security_pvm(self, pvm):
+        return (
+            pvm.permission.name in {
+                'can_userinfo' , 'resetmypassword' , 'can_this_form_get' , 'can_this_form_post'
+            } and pvm.view_menu.name in { 'UserDBModelView', 'ResetMyPasswordView' } 
+            # above code will allow some options which are not in PVM 
+            # but i am shortcircuiting thsi for now as those permission will be not added to role
+            )
 
     def is_granter_pvm(self, pvm):
         return pvm.permission.name in {
