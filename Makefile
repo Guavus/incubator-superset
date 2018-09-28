@@ -16,9 +16,8 @@ publish-rpms:
 	@echo "= = = = = = = = > END TARGET : [publish-rpms] < = = = = = = ="
 
 
-build-rpms: 
-	dist
-	cd rpm-mgmt; rm -rf .package;  ./build_rpm.sh;  
+build-rpms: dist
+	cd rpm-mgmt && rm -rf .package && ./build_rpm.sh 
 
 
 clean:
