@@ -83,6 +83,7 @@ pipeline {
     stage('Code Quality with SonarQube') {
         steps {
             script {
+                echo "Code Quality with SonarQube"
                 // requires SonarQube Scanner 2.8+
                 // Value of this home is
                 // /var/jenkins_home/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonar
