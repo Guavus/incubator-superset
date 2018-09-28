@@ -1,8 +1,10 @@
+{% set timezone = appbuilder.app.config.get('TIMEZONE') %}
+{% set copyright = appbuilder.app.config.get('COPYRIGHT') %}
 <div class="navbar navbar-default navbar-fixed-bottom navbar-template navbar-default-template navbar-fixed-bottom-template">
     <div class="footer-left">
-      <label class='footer-left-label'>{{ appbuilder.get_app.config['TIMEZONE'] }}</label>
+      <label class='footer-left-label'>{{ timezone }}</label>
     </div>
     <div class="footer-right">
-        <label class='footer-right-label'>{{ appbuilder.get_app.config['COPYRIGHT'] }}</label>
+        <label class='footer-right-label'>{{ copyright }}</label>
     </div>
 </div>
