@@ -4,13 +4,13 @@
 SHELL := /bin/bash
 
 
-publish-all: \
+publish-all:
 	clean 
 	build-rpms 
 	publish-rpms
 
 
-publish-rpms: \
+publish-rpms:
 	@echo "= = = = = = = > START TARGET : [publish-rpms] < = = = = = = ="
 	cd rpm-mgmt; ./deploy_rpms.sh
 	@echo "= = = = = = = = > END TARGET : [publish-rpms] < = = = = = = ="
