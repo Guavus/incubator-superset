@@ -10,7 +10,7 @@ set -e
 
 pushd "$(dirname "$0")"
 
-source artifactory_mgmt.sh
+source artifactory.sh
 
 INSTALLER_RPM=`ls ../dist/installer`
 
