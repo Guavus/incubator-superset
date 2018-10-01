@@ -2,7 +2,7 @@ set -e
 
 pushd "$(dirname "$0")"
 
-source ../artifactory_mgmt.sh
+source artifactory_mgmt.sh
 
 PACKAGE_PATH="../dist/installer"
 PACKAGE_NAME="superset-solution-installer" 
