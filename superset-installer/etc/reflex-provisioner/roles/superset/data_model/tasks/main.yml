@@ -14,10 +14,9 @@
   postgresql_db:
     name: "{{ superset_postgres_db }}"
     login_host: "{{ superset_postgres_access_ip }}"
-    login_user: "postgres"
-    login_password: "postgres"
+    login_user: "{{ superset_owner_user }}"
+    login_password: "{{ superset_owner_password }}"
     encoding: "UTF-8"
     owner: "{{ superset_owner_user }}"
     port: "{{ superset_postgres_access_port }}"
-  become: yes
-  become_user:  postgres   
+   

@@ -10,7 +10,7 @@
   tasks: []
 
 
-- name: "Set VIP for NONHA setup"
+- name: "Set superset psql host IP"
   hosts:
     - management-nodes
   tags:
