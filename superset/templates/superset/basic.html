@@ -1,5 +1,6 @@
 {% import 'appbuilder/general/lib.html' as lib %}
-{% set serverRoot =  url_for('static', filename='') %}
+{% set serverRoot =  request.script_root %}
+
 
 <html>
   <head>
