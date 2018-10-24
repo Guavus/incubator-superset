@@ -13,6 +13,9 @@ const propTypes = {
   search: PropTypes.string,
 };
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+
 export default class DashboardTable extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -22,9 +25,10 @@ export default class DashboardTable extends React.PureComponent {
   }
   componentDidMount() {
     const url = (
-      '/dashboardasync/api/read' +
+      baseUrl + '/dashboardasync/api/read' +
       '?_oc_DashboardModelViewAsync=changed_on' +
       '&_od_DashboardModelViewAsync=desc');
+      console.log(baseUrl + ' ppp ' + url)
     $.getJSON(url, (data) => {
       this.setState({ dashboards: data.result });
     });

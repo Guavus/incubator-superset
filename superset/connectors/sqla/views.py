@@ -6,7 +6,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from flask import flash, Markup, redirect
+from flask import flash, Markup, redirect, url_for
 from flask_appbuilder import CompactCRUDMixin, expose
 from flask_appbuilder.actions import action
 from flask_appbuilder.models.sqla.interface import SQLAInterface
@@ -291,7 +291,9 @@ class TableModelView(DatasourceModelView, DeleteMixin, YamlExportMixin):  # noqa
         resp = super(TableModelView, self).edit(pk)
         if isinstance(resp, basestring):
             return resp
-        return redirect('/superset/explore/table/{}/'.format(pk))
+        url = url_for('Superset.explore', datasource_type='table')
+        url += "/{}".format(pk)
+        return redirect(url)
 
     @action(
         'refresh',
@@ -321,17 +323,22 @@ class TableModelView(DatasourceModelView, DeleteMixin, YamlExportMixin):  # noqa
                 tables=', '.join([t.table_name for t in failures]))
             flash(failure_msg, 'danger')
 
-        return redirect('/tablemodelview/list/')
+        return redirect(url_for('TableModelView.list'))
 
 
 appbuilder.add_view_no_menu(TableModelView)
 appbuilder.add_link(
     'Tables',
     label=__('Tables'),
-    href='/tablemodelview/list/?_flt_1_is_sqllab_view=y',
+    href='TableModelView.list',
     icon='fa-table',
     category='Sources',
     category_label=__('Sources'),
     category_icon='fa-table')
+
+tables_menu_item = appbuilder.menu.find('Tables')
+tables_get_url = tables_menu_item.get_url
+tables_menu_item.get_url = lambda: tables_get_url() + '?_flt_1_is_sqllab_view=y'
+
 
 appbuilder.add_separator('Sources')

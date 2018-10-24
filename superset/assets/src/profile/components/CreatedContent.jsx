@@ -26,7 +26,7 @@ class CreatedContent extends React.PureComponent {
     }));
     return (
       <TableLoader
-        dataEndpoint={`/superset/created_slices/${this.props.user.userId}/`}
+        dataEndpoint={`/rasmi/superset/created_slices/${this.props.user.userId}/`}
         className="table table-condensed"
         columns={['slice', 'favorited']}
         mutator={mutator}
@@ -45,7 +45,7 @@ class CreatedContent extends React.PureComponent {
       <TableLoader
         className="table table-condensed"
         mutator={mutator}
-        dataEndpoint={`/superset/created_dashboards/${this.props.user.userId}/`}
+        dataEndpoint={`/rasmi/superset/created_dashboards/${this.props.user.userId}/`}
         noDataText={t('No dashboards')}
         columns={['dashboard', 'favorited']}
         sortable

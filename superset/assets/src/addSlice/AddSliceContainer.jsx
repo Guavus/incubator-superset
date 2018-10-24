@@ -30,7 +30,7 @@ export default class AddSliceContainer extends React.PureComponent {
         viz_type: this.state.visType,
         datasource: this.state.datasourceValue,
       }));
-    return `/superset/explore/?form_data=${formData}`;
+    return `/rasmi/superset/explore/?form_data=${formData}`;
   }
 
   gotoSlice() {

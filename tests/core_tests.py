@@ -253,7 +253,7 @@ class CoreTests(SupersetTestCase):
     def test_tablemodelview_list(self):
         self.login(username='admin')
 
-        url = '/tablemodelview/list/'
+        url = 'TableModelView.list'
         resp = self.get_resp(url)
 
         # assert that a table is listed
@@ -619,7 +619,7 @@ class CoreTests(SupersetTestCase):
         add_datasource_page = self.get_resp(url)
         assert 'Upload a CSV' in add_datasource_page
 
-        url = '/csvtodatabaseview/form'
+        url = 'CsvToDatabaseView.form'
         form_get = self.get_resp(url)
         assert 'CSV to Database configuration' in form_get
 

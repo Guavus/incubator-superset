@@ -14,7 +14,7 @@ import json
 import logging
 import textwrap
 
-from flask import escape, g, Markup, request
+from flask import escape, g, Markup, request, url_for
 from flask_appbuilder import Model
 from flask_appbuilder.models.decorators import renders
 from flask_appbuilder.security.sqla.models import User
@@ -257,13 +257,15 @@ class Slice(Model, AuditMixinNullable, ImportMixin):
         update_time_range(form_data)
         return form_data
 
-    def get_explore_url(self, base_url='/superset/explore', overrides=None):
+    def get_explore_url(self, base_url='Superset.explore', overrides=None):
         overrides = overrides or {}
         form_data = {'slice_id': self.id}
         form_data.update(overrides)
         params = parse.quote(json.dumps(form_data))
-        return (
-            '{base_url}/?form_data={params}'.format(**locals()))
+
+        url = url_for(base_url)
+        url += '?form_data={params}'.format(**locals())
+        return url
 
     @property
     def slice_url(self):

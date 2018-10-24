@@ -27,7 +27,7 @@ export default class RecentActivity extends React.PureComponent {
           className="table table-condensed"
           mutator={mutator}
           sortable
-          dataEndpoint={`/superset/recent_activity/${this.props.user.userId}/?limit=${rowLimit}`}
+          dataEndpoint={`/rasmi/superset/recent_activity/${this.props.user.userId}/?limit=${rowLimit}`}
         />
       </div>
     );

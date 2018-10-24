@@ -10,20 +10,24 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/superset/profile/{{ current_user.username }}/">
+      <a class="navbar-brand" href="{{  url_for('Superset.profile', username=current_user.username) }}">
         <div class="header-img-div">
+          <!-- <img
+          src="{% if appbuilder.app_icon is callable %}{{ appbuilder.app_icon() }}{% else %}{{ appbuilder.app_icon }}{% endif %}"
+            alt="{{ appbuilder.app_name }}"
+          /> -->
+
           <img
-            src="{{ appbuilder.app_icon }}"
+          src="{{  url_for('static', filename=appbuilder.app_icon) }}"
             alt="{{ appbuilder.app_name }}"
           />
-    
           <div class='header-divider-line'>
               <span></span>
           </div>
-          <span>{{ appbuilder.app_name }}</span>
+          <span>{{ serverRoot }}</span>
       </div>
       </a>
-      
+
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">

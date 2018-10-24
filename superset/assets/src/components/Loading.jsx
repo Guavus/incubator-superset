@@ -13,7 +13,7 @@ export default function Loading({ size }) {
     <img
       className="loading"
       alt="Loading..."
-      src="/static/assets/images/loading.gif"
+      src="/rasmi/static/assets/images/loading.gif"
       style={{
         width: Math.min(size, 50),
         // height is auto

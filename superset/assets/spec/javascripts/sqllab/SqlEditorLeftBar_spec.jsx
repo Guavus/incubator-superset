@@ -132,7 +132,7 @@ describe('SqlEditorLeftBar', () => {
         return d.promise();
       });
       wrapper.instance().fetchSchemas(1);
-      expect(ajaxStub.getCall(0).args[0]).to.equal('/superset/schemas/1/');
+      expect(ajaxStub.getCall(0).args[0]).to.equal('/rasmi/superset/schemas/1/');
       expect(wrapper.state().schemaOptions).to.have.length(3);
     });
     it('should handle error', () => {

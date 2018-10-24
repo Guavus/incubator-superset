@@ -16,7 +16,7 @@ from multiprocessing.pool import ThreadPool
 import re
 
 from dateutil.parser import parse as dparse
-from flask import escape, Markup
+from flask import escape, Markup, url_for
 from flask_appbuilder import Model
 from flask_appbuilder.models.decorators import renders
 from flask_babel import lazy_gettext as _
@@ -466,7 +466,7 @@ class DruidDatasource(Model, BaseDatasource):
     metric_class = DruidMetric
     column_class = DruidColumn
 
-    baselink = 'druiddatasourcemodelview'
+    baseview = "DruidDatasourceModelView"
 
     # Columns
     datasource_name = Column(String(255))
@@ -558,7 +558,8 @@ class DruidDatasource(Model, BaseDatasource):
 
     @renders('datasource_name')
     def datasource_link(self):
-        url = '/superset/explore/{obj.type}/{obj.id}/'.format(obj=self)
+        url = url_for('Superset.explore', datasource_type=self.type,
+            datasource_id=self.id)
         name = escape(self.datasource_name)
         return Markup('<a href="{url}">{name}</a>'.format(**locals()))
 

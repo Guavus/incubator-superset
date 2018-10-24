@@ -11,7 +11,7 @@ import json
 import logging
 import re
 
-from flask import escape, Markup
+from flask import escape, Markup, url_for
 from flask_appbuilder.models.decorators import renders
 from flask_appbuilder.models.mixins import AuditMixin
 import humanize
@@ -259,7 +259,7 @@ class AuditMixinNullable(AuditMixin):
     def _user_link(self, user):
         if not user:
             return ''
-        url = '/superset/profile/{}/'.format(user.username)
+        url = url_for('Superset.profile', username=user.username)
         return Markup('<a href="{}">{}</a>'.format(url, escape(user) or ''))
 
     def changed_by_name(self):

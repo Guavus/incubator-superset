@@ -340,7 +340,7 @@ export class DatasourceEditor extends React.PureComponent {
           descr={t('Owner of the datasource')}
           control={
             <SelectAsyncControl
-              dataEndpoint="/users/api/read"
+              dataEndpoint="/rasmi/users/api/read"
               multi={false}
               mutator={data => data.pks.map((pk, i) => ({
                 value: pk,

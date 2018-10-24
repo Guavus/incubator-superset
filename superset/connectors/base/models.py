@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-
+from flask import url_for
 import json
 
 from past.builtins import basestring
@@ -28,7 +28,7 @@ class BaseDatasource(AuditMixinNullable, ImportMixin):
     # ---------------------------------------------------------------
     __tablename__ = None  # {connector_name}_datasource
     type = None  # datasoure type, str to be defined when deriving this class
-    baselink = None  # url portion pointing to ModelView endpoint
+    baseview = None  # url portion pointing to ModelView endpoint
     column_class = None  # link to derivative of BaseColumn
     metric_class = None  # link to derivative of BaseMetric
 
@@ -114,14 +114,14 @@ class BaseDatasource(AuditMixinNullable, ImportMixin):
 
     @property
     def url(self):
-        return '/{}/edit/{}'.format(self.baselink, self.id)
+        return url_for(self.baseview + ".edit", pk=self.id)
 
     @property
     def explore_url(self):
         if self.default_endpoint:
             return self.default_endpoint
         else:
-            return '/superset/explore/{obj.type}/{obj.id}/'.format(obj=self)
+            return url_for('Superset.explore', datasource_type=self.type, datasource_id=self.id)
 
     @property
     def column_formats(self):

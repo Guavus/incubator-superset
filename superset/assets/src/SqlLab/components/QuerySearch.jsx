@@ -143,7 +143,7 @@ class QuerySearch extends React.PureComponent {
       this.state.to ? `to=${this.getTimeFromSelection(this.state.to)}` : '',
     ];
 
-    const url = this.insertParams('/superset/search_queries', params);
+    const url = this.insertParams('/rasmi/superset/search_queries', params);
     $.getJSON(url, (data, status) => {
       if (status === 'success') {
         this.setState({ queriesArray: data, queriesLoading: false });
@@ -156,7 +156,7 @@ class QuerySearch extends React.PureComponent {
         <div id="search-header" className="row space-1">
           <div className="col-sm-2">
             <AsyncSelect
-              dataEndpoint="/users/api/read"
+              dataEndpoint="/rasmi/users/api/read"
               mutator={this.userMutator}
               value={this.state.userId}
               onChange={this.changeUser}
@@ -165,7 +165,7 @@ class QuerySearch extends React.PureComponent {
           <div className="col-sm-2">
             <AsyncSelect
               onChange={this.onChange}
-              dataEndpoint="/databaseasync/api/read?_flt_0_expose_in_sqllab=1"
+              dataEndpoint="/rasmi/databaseasync/api/read?_flt_0_expose_in_sqllab=1"
               value={this.state.databaseId}
               mutator={this.dbMutator}
             />

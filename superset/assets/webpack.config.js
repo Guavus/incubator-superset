@@ -27,7 +27,7 @@ const config = {
   },
   output: {
     path: BUILD_DIR,
-    publicPath: '/static/assets/dist/', // necessary for lazy-loaded chunks
+    publicPath: '/rasmi/static/assets/dist/', // necessary for lazy-loaded chunks
     filename: '[name].[chunkhash].entry.js',
     chunkFilename: '[name].[chunkhash].chunk.js',
   },

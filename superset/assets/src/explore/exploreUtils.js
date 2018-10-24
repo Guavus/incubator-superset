@@ -21,9 +21,9 @@ export function getAnnotationJsonUrl(slice_id, form_data, isNative) {
 
 export function getURIDirectory(formData, endpointType = 'base') {
   // Building the directory part of the URI
-  let directory = '/superset/explore/';
+  let directory = '/rasmi/superset/explore/';
   if (['json', 'csv', 'query'].indexOf(endpointType) >= 0) {
-    directory = '/superset/explore_json/';
+    directory = '/rasmi/superset/explore_json/';
   }
   return directory;
 }

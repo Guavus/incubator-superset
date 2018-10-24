@@ -150,7 +150,7 @@ class SavedQuery(Model, AuditMixinNullable):
     @property
     def pop_tab_link(self):
         return Markup("""
-            <a href="/superset/sqllab?savedQueryId={self.id}">
+            <a href="{{  url_for('Superset.sqllab', savedQueryId=self.id) }}">
                 <i class="fa fa-link"></i>
             </a>
         """.format(**locals()))

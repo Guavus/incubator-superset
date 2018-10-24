@@ -11,7 +11,7 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
 
-from flask import Flask, redirect
+from flask import Flask, redirect, url_for
 from flask_appbuilder import AppBuilder, IndexView, SQLA
 from flask_appbuilder.baseviews import expose
 from flask_compress import Compress
@@ -29,6 +29,9 @@ CONFIG_MODULE = os.environ.get('SUPERSET_CONFIG', 'superset.config')
 if not os.path.exists(config.DATA_DIR):
     os.makedirs(config.DATA_DIR)
 
+def get_backend_file():
+  return url_for('static', filename='assets/backendSync.json')
+
 with open(APP_DIR + '/static/assets/backendSync.json', 'r') as f:
     frontend_config = json.load(f)
 
@@ -39,7 +42,14 @@ conf = app.config
 #################################################################
 # Handling manifest file logic at app start
 #################################################################
+
+def get_manifest_file() :
+  return APP_DIR + url_for('static', filename='assets/dist/manifest.json')
+
+# MANIFEST_FILE = get_manifest_file
+
 MANIFEST_FILE = APP_DIR + '/static/assets/dist/manifest.json'
+
 manifest = {}
 
 
@@ -160,11 +170,28 @@ if app.config.get('UPLOAD_FOLDER'):
 for middleware in app.config.get('ADDITIONAL_MIDDLEWARE'):
     app.wsgi_app = middleware(app.wsgi_app)
 
+class PrefixMiddleware(object):
 
+    def __init__(self, app, prefix='/rasmi'):
+      self.app = app
+      self.prefix = prefix
+
+    def __call__(self, environ, start_response):
+
+       # if environ['PATH_INFO'].startswith(self.prefix):
+        environ['PATH_INFO'] = environ['PATH_INFO'][len(self.prefix):]
+
+        environ['SCRIPT_NAME'] = self.prefix
+        return self.app(environ, start_response)
+        # else:
+        #     start_response('404', [('Content-Type', 'text/plain')])
+        #     return ["This url does not belong to the app.".encode()]
+
+app.wsgi_app = PrefixMiddleware(app.wsgi_app)
 class MyIndexView(IndexView):
     @expose('/')
     def index(self):
-        return redirect('/superset/welcome')
+        return redirect(url_for('Superset.welcome'))
 
 
 custom_sm = app.config.get('CUSTOM_SECURITY_MANAGER') or SupersetSecurityManager

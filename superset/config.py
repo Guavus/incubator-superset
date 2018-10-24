@@ -10,7 +10,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-
+from flask import url_for
 from collections import OrderedDict
 import imp
 import json
@@ -47,7 +47,7 @@ SUPERSET_WORKERS = 2  # deprecated
 SUPERSET_CELERY_WORKERS = 32  # deprecated
 
 SUPERSET_WEBSERVER_ADDRESS = '0.0.0.0'
-SUPERSET_WEBSERVER_PORT = 8088
+SUPERSET_WEBSERVER_PORT = 8080
 SUPERSET_WEBSERVER_TIMEOUT = 60  # deprecated
 SUPERSET_DASHBOARD_POSITION_DATA_LIMIT = 65535
 EMAIL_NOTIFICATIONS = False
@@ -98,7 +98,13 @@ ENABLE_PROXY_FIX = False
 APP_NAME = 'Superset'
 
 # Uncomment to setup an App icon
-APP_ICON = '/static/assets/images/guavus_logo.svg'
+
+def get_app_icon():
+    return url_for('static', filename="assets/images/guavus_logo.svg")
+
+# APP_ICON = get_app_icon
+
+APP_ICON = "assets/images/guavus_logo.svg"
 
 # Druid query timezone
 # tz.tzutc() : Using utc timezone

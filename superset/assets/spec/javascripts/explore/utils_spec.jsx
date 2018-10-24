@@ -81,7 +81,7 @@ describe('exploreUtils', () => {
       });
       compareURI(
         URI(url),
-        URI('/superset/explore/')
+        URI('/rasmi/superset/explore/')
           .search({ standalone: 'true' }),
       );
       expect(payload).to.deep.equals(formData);
@@ -134,7 +134,7 @@ describe('exploreUtils', () => {
     it('generates proper base url with form_data', () => {
       compareURI(
         URI(getExploreLongUrl(formData, 'base')),
-        URI('/superset/explore/').search({ form_data: sFormData }),
+        URI('/rasmi/superset/explore/').search({ form_data: sFormData }),
       );
     });
   });

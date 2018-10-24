@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 import logging
 
-from flask import flash, Markup, redirect
+from flask import flash, Markup, redirect, url_for
 from flask_appbuilder import CompactCRUDMixin, expose
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder.security.decorators import has_access
@@ -272,14 +272,14 @@ class Elastic(BaseSupersetView):
                         cluster_name, utils.error_msg_from_exception(e)),
                     'danger')
                 logging.exception(e)
-                return redirect('/elasticclustermodelview/list/')
+                return redirect(url_for('ElasticClusterModelView.list'))
             cluster.metadata_last_refreshed = datetime.now()
             flash(
                 'Refreshed metadata from cluster '
                 '[' + cluster.cluster_name + ']',
                 'info')
         session.commit()
-        return redirect('/elasticdatasourcemodelview/list/')
+        return redirect(url_for('ElasticDatasourceModelView.list'))
 
 
 appbuilder.add_view_no_menu(Elastic)
@@ -287,7 +287,7 @@ appbuilder.add_view_no_menu(Elastic)
 appbuilder.add_link(
     'Refresh Elastic Metadata',
     label=__('Refresh Elastic Metadata'),
-    href='/elastic/refresh_datasources/',
+    href='Elastic.refresh_datasources',
     category='Sources',
     category_label=__('Sources'),
     category_icon='fa-database',

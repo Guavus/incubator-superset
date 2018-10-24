@@ -281,7 +281,7 @@ class SqlaTable(Model, BaseDatasource):
     is_sqllab_view = Column(Boolean, default=False)
     template_params = Column(Text)
 
-    baselink = 'tablemodelview'
+    baseview = "TableModelView"
 
     export_fields = (
         'table_name', 'main_dttm_col', 'description', 'default_endpoint',

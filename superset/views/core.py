@@ -263,7 +263,7 @@ class DatabaseView(SupersetModelView, DeleteMixin, YamlExportMixin):  # noqa
 appbuilder.add_link(
     'Import Dashboards',
     label=__('Import Dashboards'),
-    href='/superset/import_dashboards',
+    href='Superset.import_dashboards',
     icon='fa-cloud-upload',
     category='Manage',
     category_label=__('Manage'),
@@ -330,7 +330,8 @@ class CsvToDatabaseView(SimpleFormView):
             flash(
                 message,
                 'danger')
-            return redirect('/csvtodatabaseview/form')
+
+            return redirect(url_for('CsvToDatabaseView.form'))
 
         os.remove(path)
         # Go back to welcome page / splash screen
@@ -340,11 +341,7 @@ class CsvToDatabaseView(SimpleFormView):
                                             form.name.data,
                                             db_name))
         flash(message, 'info')
-        return redirect('/tablemodelview/list/')
-
-
-appbuilder.add_view_no_menu(CsvToDatabaseView)
-
+        return redirect('TableModelView.list')
 
 class DatabaseTablesAsync(DatabaseView):
     list_columns = ['id', 'all_table_names', 'all_schema_names']
@@ -572,7 +569,8 @@ class DashboardModelView(SupersetModelView, DeleteMixin):  # noqa
             items = [items]
         ids = ''.join('&id={}'.format(d.id) for d in items)
         return redirect(
-            '/dashboard/export_dashboards_form?{}'.format(ids[1:]))
+             url_for('DashboardModelView.export_dashboards_form') +
+            '?{}'.format(ids[1:]))
 
     @expose('/export_dashboards_form')
     def download_dashboards(self):
@@ -584,7 +582,7 @@ class DashboardModelView(SupersetModelView, DeleteMixin):  # noqa
                 mimetype='application/text')
         return self.render_template(
             'superset/export_dashboards.html',
-            dashboards_url='/dashboard/list',
+           dashboards_url=url_for('DashboardModelView.list')
         )
 
 
@@ -700,7 +698,6 @@ class KV(BaseSupersetView):
 
 appbuilder.add_view_no_menu(KV)
 
-
 class R(BaseSupersetView):
 
     """used for short urls"""
@@ -713,7 +710,7 @@ class R(BaseSupersetView):
             return redirect('/' + url.url)
         else:
             flash('URL to nowhere...', 'danger')
-            return redirect('/')
+            return redirect(url_for('Superset.welcome'))
 
     @log_this
     @expose('/shortner/', methods=['POST', 'GET'])
@@ -840,7 +837,7 @@ class Superset(BaseSupersetView):
                 db.session.add(access_request)
                 db.session.commit()
             flash(__('Access was requested'), 'info')
-            return redirect('/')
+            return redirect(url_for('Superset.welcome'))
 
         return self.render_template(
             'superset/request_access.html',
@@ -927,11 +924,11 @@ class Superset(BaseSupersetView):
         else:
             flash(__('You have no permission to approve this request'),
                   'danger')
-            return redirect('/accessrequestsmodelview/list/')
+            return redirect(url_for('AccessRequestModelView.list'))
         for r in requests:
             session.delete(r)
         session.commit()
-        return redirect('/accessrequestsmodelview/list/')
+        return redirect(url_for('AccessRequestsModelView.list'))
 
     def get_form_data(self, slice_id=None):
         form_data = {}
@@ -1011,7 +1008,8 @@ class Superset(BaseSupersetView):
     @expose('/slice/<slice_id>/')
     def slice(self, slice_id):
         form_data, slc = self.get_form_data(slice_id)
-        endpoint = '/superset/explore/?form_data={}'.format(
+        endpoint = url_for('Superset.explore')
+        endpoint += '?form_data={}'.format(
             parse.quote(json.dumps(form_data)),
         )
         if request.args.get('standalone') == 'true':
@@ -1178,7 +1176,7 @@ class Superset(BaseSupersetView):
                 models.Dashboard.import_obj(
                     dashboard, import_time=current_tt)
             db.session.commit()
-            return redirect('/dashboard/list/')
+            return redirect(url_for('Dashboard.list'))
         return self.render_template('superset/import_dashboards.html')
 
     @log_this
@@ -1223,6 +1221,8 @@ class Superset(BaseSupersetView):
             datasource_id, datasource_type, form_data)
 
         error_redirect = '/chart/list/'
+
+       # error_redirect =  url_for('Chart.list')
         datasource = ConnectorRegistry.get_datasource(
             datasource_type, datasource_id, db.session)
         if not datasource:
@@ -1235,11 +1235,11 @@ class Superset(BaseSupersetView):
             flash(
                 __(security_manager.get_datasource_access_error_msg(datasource)),
                 'danger')
-            return redirect(
-                'superset/request_access/?'
-                'datasource_type={datasource_type}&'
-                'datasource_id={datasource_id}&'
-                ''.format(**locals()))
+            return redirect(url_for(
+                'Superset.request_access',
+                datasource_type=datasource_type,
+                datasource_id=datasource_id
+            ))
 
         viz_type = form_data.get('viz_type')
         if not viz_type and datasource.default_endpoint:
@@ -1811,8 +1811,10 @@ class Superset(BaseSupersetView):
             if o.Dashboard.created_by:
                 user = o.Dashboard.created_by
                 d['creator'] = str(user)
-                d['creator_url'] = '/superset/profile/{}/'.format(
-                    user.username)
+                d['creator_url'] = url_for(
+                    'Superset.profile',
+                    username=user.username
+                )
             payload.append(d)
         return json_success(
             json.dumps(payload, default=utils.json_int_dttm_ser))
@@ -1951,8 +1953,10 @@ class Superset(BaseSupersetView):
             if o.Slice.created_by:
                 user = o.Slice.created_by
                 d['creator'] = str(user)
-                d['creator_url'] = '/superset/profile/{}/'.format(
-                    user.username)
+                d['creator_url'] = url_for(
+                    'Superset.profile',
+                    username=user.username
+                )
             payload.append(d)
         return json_success(
             json.dumps(payload, default=utils.json_int_dttm_ser))
@@ -2653,6 +2657,10 @@ class Superset(BaseSupersetView):
             error_msg=get_error_msg(),
         ), 500
 
+    @expose('/hello')
+    def hello(self):
+        return redirect(url_for('CsvToDatabaseView.form'))
+
     @expose('/welcome')
     def welcome(self):
         """Personalized welcome page"""
@@ -2769,7 +2777,7 @@ appbuilder.add_view_no_menu(CssTemplateAsyncModelView)
 appbuilder.add_link(
     'SQL Editor',
     label=_('SQL Editor'),
-    href='/superset/sqllab',
+    href='Superset.sqllab',
     category_icon='fa-flask',
     icon='fa-flask',
     category='SQL Lab',
@@ -2779,21 +2787,26 @@ appbuilder.add_link(
 appbuilder.add_link(
     'Query Search',
     label=_('Query Search'),
-    href='/superset/sqllab#search',
+    href='Superset.sqllab',  # "/superset/sqllab"
     icon='fa-search',
     category_icon='fa-flask',
     category='SQL Lab',
     category_label=__('SQL Lab'),
 )
 
-appbuilder.add_link(
+qs_menu_item = appbuilder.menu.find('Query Search')
+qs_get_url = qs_menu_item.get_url
+qs_menu_item.get_url = lambda: qs_get_url() + '#search'
+
+appbuilder.add_view(
+    CsvToDatabaseView,
     'Upload a CSV',
     label=__('Upload a CSV'),
-    href='/csvtodatabaseview/form',
     icon='fa-upload',
     category='Sources',
     category_label=__('Sources'),
     category_icon='fa-wrench')
+
 appbuilder.add_separator('Sources')
 
 
