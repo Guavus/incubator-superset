@@ -8,6 +8,9 @@ const propTypes = {
   user: PropTypes.object.isRequired,
 };
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+
 export default class Favorites extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -27,7 +30,7 @@ export default class Favorites extends React.PureComponent {
     }));
     return (
       <TableLoader
-        dataEndpoint={`/rasmi/superset/fave_slices/${this.props.user.userId}/`}
+        dataEndpoint={`${baseUrl}/superset/fave_slices/${this.props.user.userId}/`}
         className="table table-condensed"
         columns={['slice', 'creator', 'favorited']}
         mutator={mutator}
@@ -46,7 +49,7 @@ export default class Favorites extends React.PureComponent {
       <TableLoader
         className="table table-condensed"
         mutator={mutator}
-        dataEndpoint={`/rasmi/superset/fave_dashboards/${this.props.user.userId}/`}
+        dataEndpoint={`${baseUrl}/superset/fave_dashboards/${this.props.user.userId}/`}
         noDataText={t('No favorite dashboards yet, go click on stars!')}
         columns={['dashboard', 'creator', 'favorited']}
         sortable

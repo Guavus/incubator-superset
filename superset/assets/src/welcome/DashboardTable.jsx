@@ -28,7 +28,6 @@ export default class DashboardTable extends React.PureComponent {
       baseUrl + '/dashboardasync/api/read' +
       '?_oc_DashboardModelViewAsync=changed_on' +
       '&_od_DashboardModelViewAsync=desc');
-      console.log(baseUrl + ' ppp ' + url)
     $.getJSON(url, (data) => {
       this.setState({ dashboards: data.result });
     });

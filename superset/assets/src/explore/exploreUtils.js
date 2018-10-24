@@ -1,6 +1,9 @@
 /* eslint camelcase: 0 */
 import URI from 'urijs';
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+
 export function getChartKey(explore) {
   const slice = explore.slice;
   return slice ? (slice.slice_id) : 0;
@@ -21,9 +24,9 @@ export function getAnnotationJsonUrl(slice_id, form_data, isNative) {
 
 export function getURIDirectory(formData, endpointType = 'base') {
   // Building the directory part of the URI
-  let directory = '/rasmi/superset/explore/';
+  let directory = baseUrl + '/superset/explore/';
   if (['json', 'csv', 'query'].indexOf(endpointType) >= 0) {
-    directory = '/rasmi/superset/explore_json/';
+    directory = baseUrl + '/superset/explore_json/';
   }
   return directory;
 }

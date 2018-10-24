@@ -27,6 +27,10 @@ const checkboxGenerator = (d, onChange) => <CheckboxControl value={d} onChange={
 const styleMonospace = { fontFamily: 'monospace' };
 const DATA_TYPES = ['STRING', 'NUMBER', 'DATETIME'];
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+const endPoint = baseUrl + "/users/api/read";
+
 function CollectionTabTitle({ title, collection }) {
   return (
     <div>
@@ -340,7 +344,7 @@ export class DatasourceEditor extends React.PureComponent {
           descr={t('Owner of the datasource')}
           control={
             <SelectAsyncControl
-              dataEndpoint="/rasmi/users/api/read"
+              dataEndpoint= {endPoint}
               multi={false}
               mutator={data => data.pks.map((pk, i) => ({
                 value: pk,

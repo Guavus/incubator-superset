@@ -9,6 +9,8 @@ const APP_DIR = path.resolve(__dirname, './');
 // output dir
 const BUILD_DIR = path.resolve(__dirname, './dist');
 
+const URL_PREFIX = '/rasmi';
+
 const isDevMode = process.env.NODE_ENV !== 'production';
 
 const config = {
@@ -27,7 +29,7 @@ const config = {
   },
   output: {
     path: BUILD_DIR,
-    publicPath: '/rasmi/static/assets/dist/', // necessary for lazy-loaded chunks
+    publicPath: URL_PREFIX + '/static/assets/dist/', // necessary for lazy-loaded chunks
     filename: '[name].[chunkhash].entry.js',
     chunkFilename: '[name].[chunkhash].chunk.js',
   },

@@ -1,13 +1,16 @@
 import { sliceId as id } from './mockChartQueries';
 import { datasourceId } from '../../../fixtures/mockDatasource';
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+
 export const sliceId = id;
 
 export const sliceEntitiesForChart = {
   slices: {
     [sliceId]: {
       slice_id: sliceId,
-      slice_url: '/rasmi/superset/explore/?form_data=%7B%22slice_id%22%3A%2018%7D',
+      slice_url: baseUrl + '/superset/explore/?form_data=%7B%22slice_id%22%3A%2018%7D',
       slice_name: 'Genders',
       form_data: {
         slice_id: sliceId,
@@ -42,7 +45,7 @@ export const sliceEntitiesForDashboard = {
   slices: {
     127: {
       slice_id: 127,
-      slice_url: '/rasmi/superset/explore/?form_data=%7B%22slice_id%22%3A%20127%7D',
+      slice_url: baseUrl + '/superset/explore/?form_data=%7B%22slice_id%22%3A%20127%7D',
       slice_name: 'Region Filter',
       form_data: {},
       edit_url: '/chart/edit/127',
@@ -55,7 +58,7 @@ export const sliceEntitiesForDashboard = {
     },
     128: {
       slice_id: 128,
-      slice_url: '/rasmi/superset/explore/?form_data=%7B%22slice_id%22%3A%20128%7D',
+      slice_url: baseUrl + '/superset/explore/?form_data=%7B%22slice_id%22%3A%20128%7D',
       slice_name: "World's Population",
       form_data: {},
       edit_url: '/chart/edit/128',
@@ -68,7 +71,7 @@ export const sliceEntitiesForDashboard = {
     },
     129: {
       slice_id: 129,
-      slice_url: '/rasmi/superset/explore/?form_data=%7B%22slice_id%22%3A%20129%7D',
+      slice_url: baseUrl + '/superset/explore/?form_data=%7B%22slice_id%22%3A%20129%7D',
       slice_name: 'Most Populated Countries',
       form_data: {},
       edit_url: '/chart/edit/129',
@@ -81,7 +84,7 @@ export const sliceEntitiesForDashboard = {
     },
     130: {
       slice_id: 130,
-      slice_url: '/rasmi/superset/explore/?form_data=%7B%22slice_id%22%3A%20130%7D',
+      slice_url:  baseUrl + '/superset/explore/?form_data=%7B%22slice_id%22%3A%20130%7D',
       slice_name: 'Growth Rate',
       form_data: {},
       edit_url: '/chart/edit/130',
@@ -94,7 +97,7 @@ export const sliceEntitiesForDashboard = {
     },
     131: {
       slice_id: 131,
-      slice_url: '/rasmi/superset/explore/?form_data=%7B%22slice_id%22%3A%20131%7D',
+      slice_url: baseUrl + '/superset/explore/?form_data=%7B%22slice_id%22%3A%20131%7D',
       slice_name: '% Rural',
       form_data: {},
       edit_url: '/chart/edit/131',
@@ -107,7 +110,7 @@ export const sliceEntitiesForDashboard = {
     },
     132: {
       slice_id: 132,
-      slice_url: '/rasmi/superset/explore/?form_data=%7B%22slice_id%22%3A%20132%7D',
+      slice_url: baseUrl + '/superset/explore/?form_data=%7B%22slice_id%22%3A%20132%7D',
       slice_name: 'Life Expectancy VS Rural %',
       form_data: {},
       edit_url: '/chart/edit/132',
@@ -120,7 +123,7 @@ export const sliceEntitiesForDashboard = {
     },
     133: {
       slice_id: 133,
-      slice_url: '/rasmi/superset/explore/?form_data=%7B%22slice_id%22%3A%20133%7D',
+      slice_url: baseUrl + '/superset/explore/?form_data=%7B%22slice_id%22%3A%20133%7D',
       slice_name: 'Rural Breakdown',
       form_data: {},
       edit_url: '/chart/edit/133',
@@ -133,7 +136,7 @@ export const sliceEntitiesForDashboard = {
     },
     134: {
       slice_id: 134,
-      slice_url: '/rasmi/superset/explore/?form_data=%7B%22slice_id%22%3A%20134%7D',
+      slice_url: baseUrl + '/superset/explore/?form_data=%7B%22slice_id%22%3A%20134%7D',
       slice_name: "World's Pop Growth",
       form_data: {},
       edit_url: '/chart/edit/134',
@@ -146,7 +149,7 @@ export const sliceEntitiesForDashboard = {
     },
     135: {
       slice_id: 135,
-      slice_url: '/rasmi/superset/explore/?form_data=%7B%22slice_id%22%3A%20135%7D',
+      slice_url: baseUrl + '/superset/explore/?form_data=%7B%22slice_id%22%3A%20135%7D',
       slice_name: 'Box plot',
       form_data: {},
       edit_url: '/chart/edit/135',
@@ -159,7 +162,7 @@ export const sliceEntitiesForDashboard = {
     },
     136: {
       slice_id: 136,
-      slice_url: '/rasmi/superset/explore/?form_data=%7B%22slice_id%22%3A%20136%7D',
+      slice_url: baseUrl + '/superset/explore/?form_data=%7B%22slice_id%22%3A%20136%7D',
       slice_name: 'Treemap',
       form_data: {},
       edit_url: '/chart/edit/136',

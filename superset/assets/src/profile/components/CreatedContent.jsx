@@ -8,6 +8,9 @@ const propTypes = {
   user: PropTypes.object.isRequired,
 };
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+
 class CreatedContent extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -26,7 +29,7 @@ class CreatedContent extends React.PureComponent {
     }));
     return (
       <TableLoader
-        dataEndpoint={`/rasmi/superset/created_slices/${this.props.user.userId}/`}
+        dataEndpoint={`${baseUrl}/superset/created_slices/${this.props.user.userId}/`}
         className="table table-condensed"
         columns={['slice', 'favorited']}
         mutator={mutator}
@@ -45,7 +48,7 @@ class CreatedContent extends React.PureComponent {
       <TableLoader
         className="table table-condensed"
         mutator={mutator}
-        dataEndpoint={`/rasmi/superset/created_dashboards/${this.props.user.userId}/`}
+        dataEndpoint={`${baseUrl}/superset/created_dashboards/${this.props.user.userId}/`}
         noDataText={t('No dashboards')}
         columns={['dashboard', 'favorited']}
         sortable

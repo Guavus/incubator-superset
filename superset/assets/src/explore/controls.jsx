@@ -69,6 +69,9 @@ const ROW_LIMIT_OPTIONS = [10, 50, 100, 250, 500, 1000, 5000, 10000, 50000];
 
 const SERIES_LIMITS = [0, 5, 10, 25, 50, 100, 500];
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+
 export const D3_TIME_FORMAT_OPTIONS = [
   ['smart_date', 'Adaptative formating'],
   ['%d/%m/%Y', '%d/%m/%Y | 14/01/2019'],
@@ -2064,7 +2067,7 @@ export const controls = {
     validators: [v.nonEmpty],
     default: [],
     description: t('Pick a set of line charts to layer on top of one another'),
-    dataEndpoint: '/rasmi/sliceasync/api/read?_flt_0_viz_type=line&_flt_7_viz_type=line_multi',
+    dataEndpoint: baseUrl + '/sliceasync/api/read?_flt_0_viz_type=line&_flt_7_viz_type=line_multi',
     placeholder: t('Select charts'),
     onAsyncErrorMessage: t('Error while fetching charts'),
     mutator: (data) => {
@@ -2082,7 +2085,7 @@ export const controls = {
     validators: [],
     default: [],
     description: t('Choose one or more charts for right axis'),
-    dataEndpoint: '/rasmi/sliceasync/api/read?_flt_0_viz_type=line&_flt_7_viz_type=line_multi',
+    dataEndpoint: baseUrl + '/sliceasync/api/read?_flt_0_viz_type=line&_flt_7_viz_type=line_multi',
     placeholder: t('Select charts'),
     onAsyncErrorMessage: t('Error while fetching charts'),
     mutator: (data) => {
@@ -2113,7 +2116,7 @@ export const controls = {
     validators: [v.nonEmpty],
     default: [],
     description: t('Pick a set of deck.gl charts to layer on top of one another'),
-    dataEndpoint: '/rasmi/sliceasync/api/read?_flt_0_viz_type=deck_&_flt_7_viz_type=deck_multi',
+    dataEndpoint: baseUrl + '/sliceasync/api/read?_flt_0_viz_type=deck_&_flt_7_viz_type=deck_multi',
     placeholder: t('Select charts'),
     onAsyncErrorMessage: t('Error while fetching charts'),
     mutator: (data) => {

@@ -12,6 +12,9 @@ const propTypes = {
   })).isRequired,
 };
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+
 const styleSelectWidth = { width: 300 };
 
 export default class AddSliceContainer extends React.PureComponent {
@@ -30,7 +33,7 @@ export default class AddSliceContainer extends React.PureComponent {
         viz_type: this.state.visType,
         datasource: this.state.datasourceValue,
       }));
-    return `/rasmi/superset/explore/?form_data=${formData}`;
+    return baseUrl + `/superset/explore/?form_data=${formData}`;
   }
 
   gotoSlice() {

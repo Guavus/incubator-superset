@@ -8,12 +8,17 @@ const defaultProps = {
   size: 50,
 };
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+const imagePath = baseUrl + "/static/assets/images/loading.gif"
+
+
 export default function Loading({ size }) {
   return (
     <img
       className="loading"
       alt="Loading..."
-      src="/rasmi/static/assets/images/loading.gif"
+      src= {imagePath}
       style={{
         width: Math.min(size, 50),
         // height is auto

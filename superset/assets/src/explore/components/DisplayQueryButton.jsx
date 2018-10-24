@@ -36,6 +36,10 @@ const defaultProps = {
   animation: true,
 };
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+const imagePath = baseUrl + "/static/assets/images/loading.gif"
+
 export default class DisplayQueryButton extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -111,7 +115,7 @@ export default class DisplayQueryButton extends React.PureComponent {
       return (<img
         className="loading"
         alt="Loading..."
-        src="/rasmi/static/assets/images/loading.gif"
+        src= {imagePath}
       />);
     } else if (this.state.error) {
       return <pre>{this.state.error}</pre>;

@@ -8,6 +8,9 @@ const propTypes = {
   user: PropTypes.object,
 };
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+
 export default class RecentActivity extends React.PureComponent {
   render() {
     const rowLimit = 50;
@@ -27,7 +30,7 @@ export default class RecentActivity extends React.PureComponent {
           className="table table-condensed"
           mutator={mutator}
           sortable
-          dataEndpoint={`/rasmi/superset/recent_activity/${this.props.user.userId}/?limit=${rowLimit}`}
+          dataEndpoint={`${baseUrl}/superset/recent_activity/${this.props.user.userId}/?limit=${rowLimit}`}
         />
       </div>
     );

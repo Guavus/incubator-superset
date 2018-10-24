@@ -1,6 +1,8 @@
 import { getExploreUrlAndPayload } from '../exploreUtils';
 
 const $ = window.$ = require('jquery');
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
 
 export const FETCH_DASHBOARDS_SUCCEEDED = 'FETCH_DASHBOARDS_SUCCEEDED';
 export function fetchDashboardsSucceeded(choices) {
@@ -14,7 +16,7 @@ export function fetchDashboardsFailed(userId) {
 
 export function fetchDashboards(userId) {
   return function (dispatch) {
-    const url = '/rasmi/dashboardasync/api/read?_flt_0_owners=' + userId;
+    const url = baseUrl + '/dashboardasync/api/read?_flt_0_owners=' + userId;
     return $.ajax({
       type: 'GET',
       url,
