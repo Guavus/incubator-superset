@@ -172,7 +172,7 @@ for middleware in app.config.get('ADDITIONAL_MIDDLEWARE'):
 
 class PrefixMiddleware(object):
 
-    def __init__(self, app, prefix=''):
+    def __init__(self, app, prefix='/demo'):
       self.app = app
       self.prefix = prefix
 
