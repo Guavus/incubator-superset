@@ -26,6 +26,9 @@ POSTGRES_HOST = get_env_variable('POSTGRES_HOST')
 POSTGRES_PORT = get_env_variable('POSTGRES_PORT')
 POSTGRES_DB = get_env_variable('POSTGRES_DB')
 
+# Timeout duration for SQL Lab synchronous queries
+SQLLAB_TIMEOUT = 3600
+
 # The SQLAlchemy connection string.
 SQLALCHEMY_DATABASE_URI = 'postgresql://%s:%s@%s:%s/%s' % (POSTGRES_USER,
                                                            POSTGRES_PASSWORD,

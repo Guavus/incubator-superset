@@ -2,7 +2,7 @@
 
 set -ex
 START=$(date +%s)
-docker build -t guavus-superset -f Dockerfile .
+docker build -t guavus-superset -f docker/Dockerfile .
 END=$(date +%s)
 DIFF=$(( $END - $START ))
 echo "Build completed in $DIFF seconds"

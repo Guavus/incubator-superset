@@ -10,7 +10,7 @@ ENV LANG=C.UTF-8 \
 RUN apt-get update -y && apt-get install -y build-essential libssl-dev \
     libffi-dev python3-dev libsasl2-dev libldap2-dev \
     libsasl2-modules
-    
+
 RUN mkdir -p $HOME/incubator-superset
 
 WORKDIR $HOME/incubator-superset
