@@ -172,7 +172,7 @@ for middleware in app.config.get('ADDITIONAL_MIDDLEWARE'):
 
 class PrefixMiddleware(object):
 
-    def __init__(self, app, prefix='/demo'):
+    def __init__(self, app, prefix='/gateway/default'):
       self.app = app
       self.prefix = prefix
 
@@ -191,6 +191,7 @@ app.wsgi_app = PrefixMiddleware(app.wsgi_app)
 class MyIndexView(IndexView):
     @expose('/')
     def index(self):
+        #  return redirect('superset/welcome')
         return redirect(url_for('Superset.welcome'))
 
 

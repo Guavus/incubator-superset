@@ -104,6 +104,9 @@ def get_app_icon():
 
 # APP_ICON = get_app_icon
 
+
+ # APP_ICON = "static/assets/images/guavus_logo.svg"
+
 APP_ICON = "assets/images/guavus_logo.svg"
 
 # Druid query timezone
