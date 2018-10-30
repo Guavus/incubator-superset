@@ -18,23 +18,31 @@ from superset.views.base import (
     ListWidgetWithCheckboxes, SupersetModelView,
 )
 
-from .models import PandasColumn, PandasDatasource, PandasMetric
+from .models import FORMATS, PandasColumn, PandasDatasource, PandasMetric
+
+
 class ChoiceTypeSelectField(SelectField):
     """A SelectField based on a ChoiceType model field."""
+
     def process_data(self, value):
         """Use the code rather than the str() representation as data"""
         try:
             self.data = value.code
         except AttributeError:
             super(ChoiceTypeSelectField, self).process_data(value)
+
+
 class JSONField(StringField):
     """
     JSON field for WTForms that converts between the form string data
     and a dictionary representation, with validation
+
     See https://gist.github.com/dukebody/dcc371bf286534d546e9
     """
+
     def _value(self):
         return json.dumps(self.data) if self.data else ''
+
     def process_formdata(self, valuelist):
         if valuelist:
             try:
@@ -43,19 +51,24 @@ class JSONField(StringField):
                 raise ValueError('This field contains invalid JSON')
         else:
             self.data = None
+
     def pre_validate(self, form):
-        super().pre_validate(form)
+        super(StringField, self).pre_validate(form)
         if self.data:
             try:
                 json.dumps(self.data)
             except TypeError:
                 raise ValueError('This field contains invalid JSON')
+
+
 class PandasColumnInlineView(CompactCRUDMixin, SupersetModelView):  # noqa
     datamodel = SQLAInterface(PandasColumn)
+
     list_title = _('List Columns')
     show_title = _('Show Column')
     add_title = _('Add Column')
     edit_title = _('Edit Column')
+
     list_widget = ListWidgetWithCheckboxes
     edit_columns = [
         'column_name', 'verbose_name', 'description',
@@ -94,13 +107,19 @@ class PandasColumnInlineView(CompactCRUDMixin, SupersetModelView):  # noqa
         'max': _('Max'),
         'type': _('Type'),
     }
+
+
 appbuilder.add_view_no_menu(PandasColumnInlineView)
+
+
 class PandasMetricInlineView(CompactCRUDMixin, SupersetModelView, DeleteMixin):  # noqa
     datamodel = SQLAInterface(PandasMetric)
+
     list_title = _('List Metrics')
     show_title = _('Show Metric')
     add_title = _('Add Metric')
     edit_title = _('Edit Metric')
+
     list_columns = ['metric_name', 'verbose_name', 'metric_type']
     edit_columns = [
         'metric_name', 'description', 'verbose_name', 'metric_type',
@@ -139,19 +158,27 @@ class PandasMetricInlineView(CompactCRUDMixin, SupersetModelView, DeleteMixin): 
         'is_restricted': _('Is Restricted'),
         'warning_text': _('Warning Message'),
     }
+
     def post_add(self, metric):
         if metric.is_restricted:
             security.merge_perm(security_manager, 'metric_access', metric.get_perm())
+
     def post_update(self, metric):
         if metric.is_restricted:
             security.merge_perm(security_manager, 'metric_access', metric.get_perm())
+
+
 appbuilder.add_view_no_menu(PandasMetricInlineView)
+
+
 class PandasDatasourceModelView(DatasourceModelView, DeleteMixin):  # noqa
     datamodel = SQLAInterface(PandasDatasource)
+
     list_title = _('List File Datasources')
     show_title = _('Show File Datasource')
     add_title = _('Add File Datasource')
     edit_title = _('Edit File Datasource')
+
     list_columns = [
         'link', 'changed_by_', 'modified']
     order_columns = [
@@ -176,7 +203,7 @@ class PandasDatasourceModelView(DatasourceModelView, DeleteMixin):  # noqa
             description=(
                 'A JSON-formatted dictionary of additional parameters '
                 'used to request the remote file')),
-        'format': ChoiceTypeSelectField(_('Format'), choices=PandasDatasource.FORMATS),
+        'format': ChoiceTypeSelectField(_('Format'), choices=FORMATS),
         'additional_parameters': JSONField(
             _('Additional Read Parameters'),
             [validators.optional(), validators.length(max=500)],
@@ -249,6 +276,7 @@ class PandasDatasourceModelView(DatasourceModelView, DeleteMixin):  # noqa
         'main_dttm_col': _('Main Datetime Column'),
         'description': _('Description'),
     }
+
     def pre_add(self, datasource):
         number_of_existing_datasources = (
             db.session
@@ -259,6 +287,7 @@ class PandasDatasourceModelView(DatasourceModelView, DeleteMixin):  # noqa
         if number_of_existing_datasources > 1:
             raise Exception(
                 get_datasource_exist_error_msg(datasource.full_name))
+
         # Fail before adding if the datasource can't be found
         try:
             datasource.get_dataframe()
@@ -268,19 +297,24 @@ class PandasDatasourceModelView(DatasourceModelView, DeleteMixin):  # noqa
                 'File [{}] could not be read, '
                 'please double check the '
                 'Source URL and Read Method').format(datasource.name))
+
     def post_add(self, datasource, flash_message=True):
         datasource.get_metadata()
         security.merge_perm(security_manager, 'datasource_access', datasource.get_perm())
+
         if flash_message:
             flash(_(
                 'The datasource was created. '
                 'As part of this two phase configuration '
                 'process, you should now click the edit button by '
                 'the new datasource to configure it.'), 'info')
+
     def post_update(self, datasource):
         self.post_add(datasource, flash_message=False)
+
     def _delete(self, pk):
         DeleteMixin._delete(self, pk)
+
     @expose('/edit/<pk>', methods=['GET', 'POST'])
     @has_access
     def edit(self, pk):
@@ -289,6 +323,8 @@ class PandasDatasourceModelView(DatasourceModelView, DeleteMixin):  # noqa
         if isinstance(resp, basestring):
             return resp
         return redirect('/superset/explore/pandas/{}/'.format(pk))
+
+
 appbuilder.add_view(
     PandasDatasourceModelView,
     'File Datasources',
@@ -296,4 +332,5 @@ appbuilder.add_view(
     category='Sources',
     category_label=__('Sources'),
     icon='fa-file',)
+
 appbuilder.add_separator('Sources')
