@@ -18,6 +18,8 @@
 
 1. more in details check `https://code.visualstudio.com/docs/python/debugging`
 
+**note** Default python venv path is `venv/bin/python` . To change default  update in file `.vscode/WorkspaceSettings` .
+
 ## Html/Javascript
 
 1. Follow browser supported debugger tools
