@@ -129,6 +129,7 @@ def runserver(debug, console_log, use_reloader, address, port, timeout, workers,
             '-b ' + addr_str +
             '--limit-request-line 0 '
             '--limit-request-field_size 0 '
+            '--access-logfile ./superset.log '
             'superset:app').format(**locals())
         print(Fore.GREEN + 'Starting server with command: ')
         print(Fore.YELLOW + cmd)
