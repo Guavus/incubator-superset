@@ -1,4 +1,4 @@
-FROM python:3.6.0
+FROM python:3.6.5
 
 MAINTAINER Arpit Agarwal <arpit.agarwal@guavus.com>
 
@@ -17,7 +17,7 @@ WORKDIR $HOME/incubator-superset
 
 COPY ./ ./
 
-RUN pip install --upgrade setuptools pip && pip install wheel && python ./setup.py bdist_wheel && pip install ./dist/*.whl
+RUN pip install --upgrade pip && pip install pipenv && pipenv install setuptools && pipenv install wheel && pipenv install -e . && pipenv run python ./setup.py bdist_wheel && pipenv install ./dist/*.whl
 
 # Install nodejs for custom build
 # https://github.com/apache/incubator-superset/blob/master/docs/installation.rst#making-your-own-build
@@ -30,7 +30,6 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -; \
     apt-get install -y yarn
 
 RUN cd superset/assets && yarn && yarn run build && cd ../../
-
 
 ENV PATH=/home/work/incubator-superset/superset/bin:$PATH \
     PYTHONPATH=./superset/:$PYTHONPATH
