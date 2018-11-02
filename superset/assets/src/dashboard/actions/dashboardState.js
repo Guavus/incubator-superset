@@ -21,6 +21,9 @@ import {
   addDangerToast,
 } from '../../messageToasts/actions';
 
+const container = document.getElementById('app');
+const baseUrl = container.getAttribute('base-url');
+
 export const SET_UNSAVED_CHANGES = 'SET_UNSAVED_CHANGES';
 export function setUnsavedChanges(hasUnsavedChanges) {
   return { type: SET_UNSAVED_CHANGES, payload: { hasUnsavedChanges } };
@@ -48,7 +51,7 @@ export function removeSlice(sliceId) {
   return { type: REMOVE_SLICE, sliceId };
 }
 
-const FAVESTAR_BASE_URL = '/superset/favstar/Dashboard';
+const FAVESTAR_BASE_URL = baseUrl + '/superset/favstar/Dashboard';
 export const TOGGLE_FAVE_STAR = 'TOGGLE_FAVE_STAR';
 export function toggleFaveStar(isStarred) {
   return { type: TOGGLE_FAVE_STAR, isStarred };

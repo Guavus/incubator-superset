@@ -9,7 +9,7 @@ const APP_DIR = path.resolve(__dirname, './');
 // output dir
 const BUILD_DIR = path.resolve(__dirname, './dist');
 
-const URL_PREFIX = '/gateway/default';
+const URL_PREFIX = '/gateway/default/dashit';
 
 const isDevMode = process.env.NODE_ENV !== 'production';
 
