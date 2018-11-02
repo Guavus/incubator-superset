@@ -17,7 +17,7 @@ WORKDIR $HOME/incubator-superset
 
 COPY ./ ./
 
-RUN pip install --upgrade pip && pip install pipenv && pipenv install setuptools && pipenv install wheel && pipenv install -e . && pipenv run python ./setup.py bdist_wheel && pipenv install ./dist/*.whl
+RUN pip install --upgrade setuptools pip && pip install wheel && python ./setup.py bdist_wheel && pip install ./dist/*.whl
 
 # Install nodejs for custom build
 # https://github.com/apache/incubator-superset/blob/master/docs/installation.rst#making-your-own-build
