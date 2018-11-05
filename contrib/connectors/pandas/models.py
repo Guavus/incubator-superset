@@ -421,7 +421,6 @@ class PandasDatasource(Model, BaseDatasource):
                     # col_obj is None, probably because the col is a metric,
                     # in which case it is numeric anyway
                     pass
-                # query += '(\"{col}\" {op} \"{eq}\")'.format(col=col, op=op, eq=eq)
                 query += '({col} {op} \"{eq}\")'.format(col=col, op=op, eq=eq)
         return query
 
