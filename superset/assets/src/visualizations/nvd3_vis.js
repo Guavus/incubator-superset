@@ -865,7 +865,8 @@ export default function nvd3Vis(slice, payload) {
         // Display styles for Time Series Annotations
         d3.selectAll('.slice_container .nv-timeseries-annotation-layer.showMarkerstrue .nv-point')
           .style('stroke-opacity', 1)
-          .style('fill-opacity', 1);
+          .style('fill-opacity', 1)
+          .style('stroke-width', (vizType === 'line')?fd.annotation_layers[0].markerWidth: 1);
         d3.selectAll('.slice_container .nv-timeseries-annotation-layer.hideLinetrue')
           .style('stroke-width', 0);
       }
