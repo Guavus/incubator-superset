@@ -2636,6 +2636,14 @@
       "hidden": true,
       "description": "The id of the active slice"
     },
+    "slice_name": {
+      "type": "SelectControl",
+      "label": "Slice Name",
+      "validators": [
+      ],
+      "valueKey": "slice_name",
+      "description": "Select one linked slice"
+    },
     "cache_timeout": {
       "type": "HiddenControl",
       "label": "Cache Timeout (seconds)",
