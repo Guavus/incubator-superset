@@ -2636,13 +2636,13 @@
       "hidden": true,
       "description": "The id of the active slice"
     },
-    "slice_name": {
+    "linked_slice": {
       "type": "SelectControl",
-      "label": "Slice Name",
+      "label": "Slice",
       "validators": [
       ],
-      "valueKey": "slice_name",
-      "description": "Select one linked slice"
+      "description": "Select one slice to link",
+      "renderTrigger": false
     },
     "cache_timeout": {
       "type": "HiddenControl",

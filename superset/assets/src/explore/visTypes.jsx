@@ -30,7 +30,7 @@ export const sections = {
     label: t('Linked Slices'),
     expanded: true,
     controlSetRows: [
-      ['slice_name']
+      ['linked_slice']
     ],
   },
   colorScheme: {
