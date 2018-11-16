@@ -12,7 +12,7 @@ import StackTraceMessage from '../components/StackTraceMessage';
 import RefreshChartOverlay from '../components/RefreshChartOverlay';
 import visPromiseLookup from '../visualizations';
 import sandboxedEval from '../modules/sandbox';
-import { supersetURL } from '../utils/common';
+
 import './chart.css';
 
 const propTypes = {
@@ -154,22 +154,7 @@ class Chart extends React.PureComponent {
   }
 
   itemClick(data){
-    console.log('itemClick data --> ',data); 
-    console.log('slice  --> ',this); 
-    const dashId = 5;
-    var requestParams ={
-      action: "saveas",
-      add_to_dash: "existing",
-      goto_dash: true,
-      save_to_dashboard_id: dashId,
-      slice_id: this.formData.slice_id,
-      slice_name: "cloned_sliceid_"+this.formData.slice_id
-    }
-    this.props.actions.saveSlice(this.formData, requestParams)
-    .then((data) => {
-        // redirecting to dashbaord
-        window.location = supersetURL(data.dashboard);
-    });
+    this.props.itemClick(data);
   }
 
   clearError() {
