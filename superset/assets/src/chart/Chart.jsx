@@ -12,6 +12,7 @@ import StackTraceMessage from '../components/StackTraceMessage';
 import RefreshChartOverlay from '../components/RefreshChartOverlay';
 import visPromiseLookup from '../visualizations';
 import sandboxedEval from '../modules/sandbox';
+import { supersetURL } from '../utils/common';
 import './chart.css';
 
 const propTypes = {
@@ -44,11 +45,14 @@ const propTypes = {
   getFilters: PropTypes.func,
   onQuery: PropTypes.func,
   onDismissRefreshOverlay: PropTypes.func,
+  // chart events
+  itemClick:PropTypes.func,
 };
 
 const defaultProps = {
   addFilter: () => ({}),
   getFilters: () => ({}),
+  itemClick: () => ({}),
 };
 
 class Chart extends React.PureComponent {
@@ -71,6 +75,7 @@ class Chart extends React.PureComponent {
     this.height = this.height.bind(this);
     this.width = this.width.bind(this);
     this.visPromise = null;
+    this.itemClick = this.itemClick.bind(this);
   }
 
   componentDidMount() {
@@ -146,6 +151,25 @@ class Chart extends React.PureComponent {
 
   addFilter(col, vals, merge = true, refresh = true) {
     this.props.addFilter(col, vals, merge, refresh);
+  }
+
+  itemClick(data){
+    console.log('itemClick data --> ',data); 
+    console.log('slice  --> ',this); 
+    const dashId = 5;
+    var requestParams ={
+      action: "saveas",
+      add_to_dash: "existing",
+      goto_dash: true,
+      save_to_dashboard_id: dashId,
+      slice_id: this.formData.slice_id,
+      slice_name: "cloned_sliceid_"+this.formData.slice_id
+    }
+    this.props.actions.saveSlice(this.formData, requestParams)
+    .then((data) => {
+        // redirecting to dashbaord
+        window.location = supersetURL(data.dashboard);
+    });
   }
 
   clearError() {
