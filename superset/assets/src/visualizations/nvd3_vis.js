@@ -172,6 +172,7 @@ export default function nvd3Vis(slice, payload) {
       svg = d3.select(slice.selector).append('svg');
     }
     let height = slice.height();
+    let annotatedLayerMarkerWidth = 1;
     const isTimeSeries = TIMESERIES_VIZ_TYPES.indexOf(vizType) >= 0;
 
     // Handling xAxis ticks settings
@@ -862,12 +863,20 @@ export default function nvd3Vis(slice, payload) {
           .attr('width', width)
           .call(chart);
 
+        if(vizType === 'line' && fd.annotation_layers && fd.annotation_layers.length > 0)
+        {
+          fd.annotation_layers.forEach(annotatedLayer => { 
+            if(annotatedLayer.hasOwnProperty('markerWidth')) {
+              annotatedLayerMarkerWidth = annotatedLayer.markerWidth;
+            }
+          });
+        }
+          
         // Display styles for Time Series Annotations
         d3.selectAll('.slice_container .nv-timeseries-annotation-layer.showMarkerstrue .nv-point')
           .style('stroke-opacity', 1)
           .style('fill-opacity', 1)
-          .style('stroke-width', (vizType === 'line' && fd.annotation_layers && fd.annotation_layers.length > 0)?
-            fd.annotation_layers[0].markerWidth: 1);
+          .style('stroke-width', annotatedLayerMarkerWidth);
         d3.selectAll('.slice_container .nv-timeseries-annotation-layer.hideLinetrue')
           .style('stroke-width', 0);
       }
