@@ -865,7 +865,7 @@ export default function nvd3Vis(slice, payload) {
 
         if (vizType === 'line' && fd.annotation_layers && fd.annotation_layers.length > 0) {
           fd.annotation_layers.forEach(annotatedLayer => {
-            if (annotatedLayer.hasOwnProperty('markerWidth')) {
+            if (annotatedLayer.annotationType === AnnotationTypes.TIME_SERIES) {
               annotatedLayerMarkerWidth = annotatedLayer.markerWidth;
             }
           });
