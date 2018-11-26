@@ -1857,6 +1857,7 @@ export const controls = {
   linked_slice: {
     "type": "SelectControl",
     "label": "Slice",
+    "multi": true,
     "validators": [
     ],
     "description": "Select one slice to link",

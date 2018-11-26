@@ -197,11 +197,11 @@ class Dashboard extends React.PureComponent {
 
     this.getAllCharts().forEach(chart => {
       // filterKey is a string, immune array contains numbers
-      if (String(chart.id) !== filterKey && immune.indexOf(chart.id) === -1) {
+      if (String(chart.id) !== filterKey && immune.indexOf(chart.id) === -1 && this.isFilterkeyExistInLinkedSlices(chart, filterKey)) {
         const updatedFormData = getFormDataWithExtraFilters({
           chart,
           dashboardMetadata: this.props.dashboardInfo.metadata,
-          filters: this.props.dashboardState.filters,
+          filters: this.getLinkedSlicesFilters(chart),
           sliceId: chart.id,
         });
 
@@ -213,6 +213,29 @@ class Dashboard extends React.PureComponent {
         );
       }
     });
+  }
+
+  isFilterkeyExistInLinkedSlices(chart, filterKey) {
+    const linked_slices = chart.formData.linked_slice;
+    const propExist = chart.formData.hasOwnProperty("linked_slice");
+    if (linked_slices instanceof Array) {
+      return propExist && linked_slices.indexOf(parseInt(filterKey)) != -1
+    }
+    return propExist && linked_slices === parseInt(filterKey)
+  }
+
+  getLinkedSlicesFilters(chart) {
+    const filters = {};
+    const linked_slices = chart.formData.linked_slice;
+    if (linked_slices instanceof Array) {
+      linked_slices.forEach(element => {
+        if(this.props.dashboardState.filters.hasOwnProperty(element))
+          filters[element] = this.props.dashboardState.filters[element];
+      });
+    } else {
+      filters[linked_slices] = this.props.dashboardState.filters[linked_slices];
+    }
+    return filters;
   }
 
   render() {

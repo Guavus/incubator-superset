@@ -2638,6 +2638,7 @@
     },
     "linked_slice": {
       "type": "SelectControl",
+      "multi": true,
       "label": "Slice",
       "validators": [
       ],
