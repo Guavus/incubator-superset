@@ -103,10 +103,10 @@ export default function dashboardStateReducer(state = {}, action) {
         '__granularity',
       ];
       // TODO: we want to revisit the condition for more generic filter implementation
-      // if ( 
-      //   filterKeys.indexOf(col) >= 0 ||
-      //   action.chart.formData.groupby.indexOf(col) !== -1
-      // ) {
+      if ( 
+        filterKeys.indexOf(col) >= 0 ||
+        action.chart.formData.publish_columns.indexOf(col) !== -1
+      ) {
         let newFilter = {};
         if (!(sliceId in filters)) {
           // if no filters existed for the slice, set them
@@ -135,7 +135,7 @@ export default function dashboardStateReducer(state = {}, action) {
             delete filters[chartId];
           }
         });
-     // }
+      }
       return { ...state, filters, refresh };
     },
     [SET_UNSAVED_CHANGES]() {
