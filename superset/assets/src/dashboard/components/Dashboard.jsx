@@ -201,7 +201,7 @@ class Dashboard extends React.PureComponent {
         const updatedFormData = getFormDataWithExtraFilters({
           chart,
           dashboardMetadata: this.props.dashboardInfo.metadata,
-          filters: this.getLinkedSlicesFilters(chart),
+          filters: this.getExtraFilters(chart),
           sliceId: chart.id,
         });
 
@@ -216,26 +216,46 @@ class Dashboard extends React.PureComponent {
   }
 
   isFilterkeyExistInLinkedSlices(chart, filterKey) {
-    const linked_slices = chart.formData.linked_slice;
     const propExist = chart.formData.hasOwnProperty("linked_slice");
-    if (linked_slices instanceof Array) {
-      return propExist && linked_slices.indexOf(parseInt(filterKey)) != -1
+    let keyExists = false;
+    if (propExist) {
+      const linked_slices = chart.formData.linked_slice;
+      const key = parseInt(filterKey);
+      if (linked_slices instanceof Array) {
+        keyExists = linked_slices.indexOf(key) != -1
+      } else {
+        keyExists = linked_slices === key
+      }
     }
-    return propExist && linked_slices === parseInt(filterKey)
+    return keyExists
   }
 
-  getLinkedSlicesFilters(chart) {
-    const filters = {};
-    const linked_slices = chart.formData.linked_slice;
-    if (linked_slices instanceof Array) {
-      linked_slices.forEach(element => {
-        if(this.props.dashboardState.filters.hasOwnProperty(element))
-          filters[element] = this.props.dashboardState.filters[element];
-      });
-    } else {
-      filters[linked_slices] = this.props.dashboardState.filters[linked_slices];
-    }
+  getExtraFilters(chart) {
+    const slicesInState = this.getLinkedSliceWithFilters(chart.formData)
+    const filters = this.getFiltersFromSlices(slicesInState)
     return filters;
+  }
+
+  getFiltersFromSlices(slices) {
+    const filters = {};
+    slices.forEach( slice => {
+      filters[slice] = this.props.dashboardState.filters[slice];
+    })
+    return filters;
+  }
+
+  getLinkedSliceWithFilters(formData) {
+    let slicesInState = [];
+    const propExist = formData.hasOwnProperty("linked_slice");
+    if(propExist) {
+      const linked_slices = formData.linked_slice;
+      if (linked_slices instanceof Array) {
+        slicesInState  = linked_slices.filter(element => this.props.dashboardState.filters.hasOwnProperty(element));  
+      } else {
+       slicesInState = [linked_slices];
+      }
+    }
+    return slicesInState;
   }
 
   render() {
