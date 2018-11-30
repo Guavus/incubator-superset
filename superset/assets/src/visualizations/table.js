@@ -51,6 +51,10 @@ function tableVis(slice, payload) {
       'table-condensed table-hover dataTable no-footer', true)
     .attr('width', '100%');
 
+  const expressionMap = {};
+  slice.datasource.columns.forEach(column => {
+    expressionMap[column.column_name] = column.expression 
+  });
   const verboseMap = slice.datasource.verbose_map;
   const cols = data.columns.map((c) => {
     if (verboseMap[c]) {
@@ -63,6 +67,13 @@ function tableVis(slice, payload) {
     }
     return c;
   });
+
+  function buttoRenderer(column) {
+    console.log(slice.datasource)
+    const label = slice.datasource.verbose_map[column] || column
+    //console.log(slice.datasource.verbose_map[column]);
+    return `<button type="button" class="btn btn-sm btn-default">${label}</button>`
+  }
 
   table.append('thead').append('tr')
     .selectAll('th')
@@ -86,6 +97,10 @@ function tableVis(slice, payload) {
       const isMetric = metrics.indexOf(c) >= 0;
       if (c === '__timestamp') {
         html = tsFormatter(val);
+      }
+      if(c === '__buttonRenderer') {
+        html = buttoRenderer(c);
+        c = expressionMap[c];
       }
       if (typeof (val) === 'string') {
         html = `<span class="like-pre">${dompurify.sanitize(val)}</span>`;
