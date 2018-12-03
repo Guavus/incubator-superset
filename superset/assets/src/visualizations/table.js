@@ -98,10 +98,6 @@ function tableVis(slice, payload) {
       if (c === '__timestamp') {
         html = tsFormatter(val);
       }
-      if(c === '__buttonRenderer') {
-        html = buttoRenderer(c);
-        c = expressionMap[c];
-      }
       if (typeof (val) === 'string') {
         html = `<span class="like-pre">${dompurify.sanitize(val)}</span>`;
       }
@@ -110,6 +106,10 @@ function tableVis(slice, payload) {
       }
       if (c[0] === '%') {
         html = d3.format('.3p')(val);
+      }
+      if(c === '__buttonRenderer') {
+        html = buttoRenderer(c);
+        c = expressionMap[c];
       }
       return {
         col: c,
