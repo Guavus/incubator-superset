@@ -10,8 +10,8 @@ import * as esri from '../../node_modules/esri-leaflet/dist/esri-leaflet.js';
 
 /**
  * Leaflet Map Visualization
- * @param {*} slice 
- * @param {*} payload 
+ * @param {*} slice
+ * @param {*} payload
  */
 function leafletmap(slice, payload) {
 
@@ -64,7 +64,7 @@ function leafletmap(slice, payload) {
 
     function setLayout() {
         const container = slice.container;
-        // fix of leaflet js :: error 
+        // fix of leaflet js :: error
         //An error occurred while rendering the visualization: Error: Map container is already initialized.
         var el = container.el;
         if (el && el._leaflet_id) {
@@ -75,7 +75,7 @@ function leafletmap(slice, payload) {
     }
 
     function createColorColumns() {
-        // todo: current object is AdhocFilter,so propertynames are not match as we need 
+        // todo: current object is AdhocFilter,so propertynames are not match as we need
         // create AdhocColumn with correct names
         colorCols = {}
         if (formData.adhoc_columns && formData.adhoc_columns.length > 0) {
@@ -116,33 +116,31 @@ function leafletmap(slice, payload) {
         }
     }
 
+    function changeInRange0to1(val, max, min) {
+      if(max - min === 0) return 1;
+      return (val - min) / (max - min);
+    }
+
+    function colourGradientor(rgb_beginning,rgb_end,p,max,min){
+        var q = changeInRange0to1(p,max,min);
+        var w1 = q;
+        var w2 = 1 - q;
+        var rgb = [parseInt(rgb_beginning.r * w1 + rgb_end.r* w2),
+            parseInt(rgb_beginning.g * w1 + rgb_end.g* w2),
+                parseInt(rgb_beginning.b * w1 + rgb_end.b * w2),
+                parseInt(rgb_beginning.a * w1 + rgb_end.a * w2)];
+        return 'rgb('+rgb[0] +',' + rgb[1] +',' +rgb[2] +','+rgb_beginning.a + ')';
+    }
+
     function getColorForColumnVaule(colname, colvalue) {
-        // todo: current object is AdhocFilter,so propertynames are not match as we need 
+        // todo: current object is AdhocFilter,so propertynames are not match as we need
         // create AdhocColumn with correct names
         var col = colorCols[colname];
         var minValue = col['operator'];
         var maxvalue = col['sqlExpression'];
         var minValueClr = col['comparator'];
         var maxValueClr = col['clause'];
-
-        // if  minValueClr is r,g,b,a typed Object
-        if (minValueClr instanceof Object) {
-            minValueClr = getRgbColor(minValueClr);
-        }
-
-        // if  minValueClr is r,g,b,a typed Object
-        if (maxValueClr instanceof Object) {
-            maxValueClr = getRgbColor(maxValueClr);
-        }
-
-        // todo: add algo to decrease /increase color intensity ad per value
-        var colclr = minValueClr;
-        if (colvalue >= maxvalue) {
-
-            colclr = maxValueClr;
-        } else if (colvalue < minValue) {
-            colclr = MARKER_FILL_COLOR
-        }
+        var colclr = colourGradientor(minValueClr,maxValueClr, colvalue,maxvalue,minValue);
 
         return colclr;
     }
