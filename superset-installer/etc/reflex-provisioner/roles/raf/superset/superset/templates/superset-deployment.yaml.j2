@@ -39,7 +39,7 @@ spec:
         - name: SUPERSET_ENV
           value: local
         - name: IS_KERBEROS_ENABLED
-          value: true
+          value: "{{ superset_kerberos_enabled }}"
         image: {{ superset_docker_image_name }}:{{ superset_image_tag }}
         name: superset
         ports:
