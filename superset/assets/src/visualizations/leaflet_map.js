@@ -124,7 +124,7 @@ function leafletmap(slice, payload) {
     }
 
     function colourGradientor(rgb_beginning,rgb_end,p,max,min){
-        var rangeValue = getRangeValue(p,max,min);
+        var rangeValue = getRangeValue(p,parseInt(max),parseInt(min));
         var startWeight = rangeValue;
         var endWeight = 1 - rangeValue;
         var rgb = [parseInt(rgb_beginning.r * startWeight + rgb_end.r* endWeight),
