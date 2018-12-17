@@ -142,7 +142,16 @@ function leafletmap(slice, payload) {
         var maxvalue = col['sqlExpression'];
         var minValueClr = col['comparator'];
         var maxValueClr = col['clause'];
-        var colclr = colourGradientor(minValueClr,maxValueClr, colvalue,maxvalue,minValue);
+
+        // todo: add algo to decrease /increase color intensity ad per value
+        var colclr = getRgbColor(minValueClr);
+        if (colvalue > maxvalue) {
+          colclr = getRgbColor(maxValueClr);
+        } else if (colvalue < minValue) {
+          colclr = MARKER_FILL_COLOR
+        } else {
+          colclr = colourGradientor(minValueClr, maxValueClr, colvalue,maxvalue,minValue);
+        }
 
         return colclr;
     }
