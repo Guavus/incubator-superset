@@ -49,6 +49,31 @@ pipeline {
   }
   stages {
 
+    stage("Compute Docker Tag") {
+      steps {
+        echo "Run Commmands to compute Docker tag"
+        script {
+          if (buildType in ['feature','fix']) {
+            // docker tag for a feature or fix branch
+            env.dockerTag = ( env.BRANCH_NAME.split('/')[1] =~ /.+-\d+/ )[0]
+          } else if (buildType ==~ /PR-.*/ ){
+            // docker tag for a pull request
+            env.dockerTag = buildType
+          } else if (buildType in ['master']) {
+            // docker tag for a master branch
+            env.dockerTagVersion = "${env.buildVersion}-${env.buildNum}"
+            env.dockerTagStage = "dev"
+            env.dockerTag = "${env.dockerTagVersion}-${env.dockerTagStage}"
+          } else if ( buildType in ['release'] ){
+            // docker tag for a release branch
+            env.dockerTagVersion = "${env.branchVersion}-${env.buildNum}"
+            env.dockerTagStage = "dev"
+            env.dockerTag = "${env.dockerTagVersion}-${env.dockerTagStage}"
+          }
+        }
+        echo "Computed Docker Tag: " env.dockerTag
+      }
+    }
     stage("Build and test") {
       parallel {
 
@@ -104,6 +129,34 @@ pipeline {
       steps {
         // Stubs should be used to perform functional testing
         echo "Deploy the Artifact on ephemeral environment"
+      }
+    }
+
+    stage("Clean Prevous Docker Images") {
+        steps {
+            echo "Removing previous docker images..."
+            sh "make docker_clean"
+        }
+    }
+
+    stage('Create Docker Image') {
+      steps {
+        echo "Creating docker build..."
+        sh "make docker_build"
+      }
+    }
+
+    stage('Tagging Docker Image') {
+      steps {
+        echo "Tagging docker image..."
+        sh "make docker_tag DOCKER_IMAGE_TAG=${env.dockerTag}"
+      }
+    }
+
+    stage("Push docker images to artifactory") {
+      steps {
+        echo "Pushing docker image to artifactory..."
+        sh "make push DOCKER_IMAGE_TAG=${env.dockerTag}"
       }
     }
 
