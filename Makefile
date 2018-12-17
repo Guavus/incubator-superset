@@ -43,7 +43,8 @@ dist:
 docker_build:
 	@echo "= = = = = = = > START TARGET : [docker_build] < = = = = = = ="
 	echo $(COMMIT)“ ”  $(BRANCH_ID)“ ”$(APP_VERSION)“ “$(BUILD_NUMBER)
-	docker build -t $(DOCKER_IMAGE_NAME) --build-arg GIT_HEAD=$(COMMIT) --build-arg GIT_BRANCH=$(BRANCH_ID) --build-arg VERSION=$(APP_VERSION) --build-arg BUILD_NUMBER=$(BUILD_NUMBER) .
+	#docker build -t $(DOCKER_IMAGE_NAME) .
+	sh scripts/create_docker.sh
 	@echo "= = = = = = = = > END TARGET : [docker_build] < = = = = = = ="
 
 docker_tag:

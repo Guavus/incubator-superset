@@ -45,7 +45,7 @@ pipeline {
     buildNum = currentBuild.getNumber()
     buildType = BRANCH_NAME.split('/').first()
     branchVersion = BRANCH_NAME.split('/').last()
-    buildVersion = '1.0.4'
+    buildVersion = '1.0.16'
   }
   stages {
 
