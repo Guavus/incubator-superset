@@ -71,7 +71,7 @@ pipeline {
             env.dockerTag = "${env.dockerTagVersion}-${env.dockerTagStage}"
           }
         }
-        echo "Computed Docker Tag: " env.dockerTag
+        echo "Computed Docker Tag !!"
       }
     }
     stage("Build and test") {
