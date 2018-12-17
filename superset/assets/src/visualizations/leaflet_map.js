@@ -222,7 +222,7 @@ function leafletmap(slice, payload) {
     function mapItemClick(event) {
 
         if (enableClick) {
-            var vals = [];
+            var selections = [];
             // remove previous selected layers except selected
             Object.values(event.target._map._targets).forEach(element => {
                 if (element.hasOwnProperty('_path') && element._path.classList.contains('active-layer') && event.target._leaflet_id != element._leaflet_id) {
@@ -234,10 +234,10 @@ function leafletmap(slice, payload) {
                 event.target._path.classList.remove('active-layer');
             } else {
                 event.target._path.classList.add('active-layer');
-                vals = [event.target.feature.properties.id];
+                selections = [event.target.feature.properties.id];
             }
 
-            slice.addFilter(formData.geojson, vals, false);
+            slice.addFilter(formData.geojson, selections, false);
         }
 
     }
@@ -256,9 +256,9 @@ function leafletmap(slice, payload) {
     function getPopupContent(data) {
         let tooltip = "<div style='display:grid'>"
         for (let index = 0; index < tooltipColumns.length; index++) {
-            const columnname = tooltipColumns[index];
+            const columnName = tooltipColumns[index];
             tooltip += "<span>";
-            tooltip += "<b class='leaflet-tooltip-title'>" + columnname + "</b> : " + data[columnname];
+            tooltip += "<b class='leaflet-tooltip-title'>" + columnName + "</b> : " + data[columnName];
             tooltip += "</span>";
         }
         tooltip += "</div>";
