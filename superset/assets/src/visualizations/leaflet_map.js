@@ -116,19 +116,21 @@ function leafletmap(slice, payload) {
         }
     }
 
-    function changeInRange0to1(val, max, min) {
-      if(max - min === 0) return 1;
+    function getRangeValue(val, max, min) {
+      if(max - min === 0) {
+        return 1;
+      }
       return (val - min) / (max - min);
     }
 
     function colourGradientor(rgb_beginning,rgb_end,p,max,min){
-        var q = changeInRange0to1(p,max,min);
-        var w1 = q;
-        var w2 = 1 - q;
-        var rgb = [parseInt(rgb_beginning.r * w1 + rgb_end.r* w2),
-            parseInt(rgb_beginning.g * w1 + rgb_end.g* w2),
-                parseInt(rgb_beginning.b * w1 + rgb_end.b * w2),
-                parseInt(rgb_beginning.a * w1 + rgb_end.a * w2)];
+        var rangeValue = getRangeValue(p,max,min);
+        var startWeight = rangeValue;
+        var endWeight = 1 - rangeValue;
+        var rgb = [parseInt(rgb_beginning.r * startWeight + rgb_end.r* endWeight),
+            parseInt(rgb_beginning.g * startWeight + rgb_end.g* endWeight),
+                parseInt(rgb_beginning.b * startWeight + rgb_end.b * endWeight),
+                parseInt(rgb_beginning.a * startWeight + rgb_end.a * endWeight)];
         return 'rgb('+rgb[0] +',' + rgb[1] +',' +rgb[2] +','+rgb_beginning.a + ')';
     }
 
