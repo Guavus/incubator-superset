@@ -59,6 +59,7 @@ spec:
         - name: superset-configmap-volume
           configMap:
             name: superset-configmap
+            defaultMode: 0755
         - name: krb5-keytab-config-path
           hostPath:
             path: {{ superset_kerberos_config_dir }}/{{ superset_hive_keytab_name }}
