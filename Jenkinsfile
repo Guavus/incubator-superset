@@ -149,14 +149,14 @@ pipeline {
     stage('Tagging Docker Image') {
       steps {
         echo "Tagging docker image..."
-        sh "make docker_tag DOCKER_IMAGE_TAG=${env.buildVersion}"
+        sh "make docker_tag DOCKER_IMAGE_TAG=${env.dockerTag}"
       }
     }
 
     stage("Push docker images to artifactory") {
       steps {
         echo "Pushing docker image to artifactory..."
-        sh "make docker_push DOCKER_IMAGE_TAG=${env.buildVersion}"
+        sh "make docker_push DOCKER_IMAGE_TAG=${env.dockerTag}"
       }
     }
 
