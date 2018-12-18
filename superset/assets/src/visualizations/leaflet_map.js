@@ -127,11 +127,11 @@ function leafletmap(slice, payload) {
         var rangeValue = getRangeValue(p,parseInt(max),parseInt(min));
         var startWeight = rangeValue;
         var endWeight = 1 - rangeValue;
-        var rgb = [parseInt(rgb_beginning.r * startWeight + rgb_end.r* endWeight),
-            parseInt(rgb_beginning.g * startWeight + rgb_end.g* endWeight),
-                parseInt(rgb_beginning.b * startWeight + rgb_end.b * endWeight),
-                parseInt(rgb_beginning.a * startWeight + rgb_end.a * endWeight)];
-        return 'rgb('+rgb[0] +',' + rgb[1] +',' +rgb[2] +','+rgb_beginning.a + ')';
+        var rgb = [parseInt(rgb_beginning.r * endWeight + rgb_end.r* startWeight),
+            parseInt(rgb_beginning.g * endWeight + rgb_end.g* startWeight),
+                parseInt(rgb_beginning.b * endWeight + rgb_end.b * startWeight),
+                parseInt(rgb_beginning.a * endWeight + rgb_end.a * startWeight)];
+        return 'rgb('+rgb[0] +',' + rgb[1] +',' +rgb[2] +','+rgb[3] + ')';
     }
 
     function getColorForColumnVaule(colname, colvalue) {
