@@ -156,7 +156,7 @@ pipeline {
     stage("Push docker images to artifactory") {
       steps {
         echo "Pushing docker image to artifactory..."
-        sh "make push DOCKER_IMAGE_TAG=${env.buildVersion}"
+        sh "make docker_push DOCKER_IMAGE_TAG=${env.buildVersion}"
       }
     }
 
