@@ -10,6 +10,7 @@ from datetime import datetime
 import json
 import logging
 import re
+import subprocess
 
 from flask import escape, Markup
 from flask_appbuilder.models.decorators import renders
@@ -20,6 +21,7 @@ from sqlalchemy import and_, or_, UniqueConstraint
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm.exc import MultipleResultsFound
 import yaml
+import os
 
 from superset import security_manager
 from superset.utils import QueryStatus
@@ -33,6 +35,24 @@ def json_to_dict(json_str):
     else:
         return {}
 
+def has_kerberos_ticket():
+    IS_KERBEROS_ENABLED = get_env_variable('IS_KERBEROS_ENABLED')
+
+    if IS_KERBEROS_ENABLED is not None and subprocess.call(['klist', '-s']) == 0:
+        subprocess.call(['/usr/local/bin/auth-kerberized.sh'])
+
+def get_env_variable(var_name, default=None):
+    """Get the environment variable or raise exception."""
+    try:
+        if var_name in os.environ:
+            return os.environ[var_name]
+    except KeyError:
+        if default is not None:
+            return default
+        else:
+            error_msg = 'The environment variable {} was missing, abort...'\
+                        .format(var_name)
+            raise EnvironmentError(error_msg)
 
 class ImportMixin(object):
     export_parent = None
