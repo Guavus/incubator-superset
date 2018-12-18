@@ -49,13 +49,13 @@ docker_build:
 
 docker_tag:
 	@echo "= = = = = = = > START TARGET : [docker_tag] < = = = = = = ="
-	docker tag $(DOCKER_IMAGE_NAME) $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE_NAME):$(VERSION_WITH_BUILD)
+	docker tag $(DOCKER_IMAGE_NAME) $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
 	@echo $(DOCKER_IMAGE_NAME)
 	@echo "= = = = = = = > END TARGET : [docker_tag] < = = = = = = ="
 
 docker_push:
 	@echo "= = = = = = = > START TARGET : [docker_push] < = = = = = = ="
-	docker push $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE_NAME):$(VERSION_WITH_BUILD)
+	docker push $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
 	@echo "= = = = = = = > END TARGET : [docker_push] < = = = = = = ="
 
 
