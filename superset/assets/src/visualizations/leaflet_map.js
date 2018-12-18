@@ -125,13 +125,12 @@ function leafletmap(slice, payload) {
 
     function colourGradientor(rgb_beginning,rgb_end,p,max,min){
         var rangeValue = getRangeValue(p,parseInt(max),parseInt(min));
-        var startWeight = rangeValue;
-        var endWeight = 1 - rangeValue;
-        var rgb = [parseInt(rgb_beginning.r * endWeight + rgb_end.r* startWeight),
-            parseInt(rgb_beginning.g * endWeight + rgb_end.g* startWeight),
-                parseInt(rgb_beginning.b * endWeight + rgb_end.b * startWeight),
-                parseInt(rgb_beginning.a * endWeight + rgb_end.a * startWeight)];
-        return 'rgb('+rgb[0] +',' + rgb[1] +',' +rgb[2] +','+rgb[3] + ')';
+        var rgb = {}
+        rgb.r = parseInt((rgb_end.r - rgb_beginning.r) * rangeValue + rgb_beginning.r)
+        rgb.g = parseInt((rgb_end.g - rgb_beginning.g) * rangeValue + rgb_beginning.g)
+        rgb.b = parseInt((rgb_end.b - rgb_beginning.b) * rangeValue + rgb_beginning.b)
+        rgb.a = parseInt((rgb_end.a - rgb_beginning.a) * rangeValue + rgb_beginning.a)
+        return 'rgb('+rgb.r +',' + rgb.g +',' +rgb.b +','+rgb.a + ')';
     }
 
     function getColorForColumnVaule(colname, colvalue) {
