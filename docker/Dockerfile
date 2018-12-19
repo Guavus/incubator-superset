@@ -28,7 +28,7 @@ WORKDIR $HOME/incubator-superset
 
 COPY ./ ./
 
-RUN pip install --user --upgrade setuptools pip && pip install --user wheel && sudo python ./setup.py bdist_wheel && pip install --${user} ./dist/*.whl
+RUN sudo -H pip install --user --upgrade setuptools pip && pip install --user wheel && sudo python ./setup.py bdist_wheel && pip install --${user} ./dist/*.whl
 
 # Install nodejs for custom build
 # https://github.com/apache/incubator-superset/blob/master/docs/installation.rst#making-your-own-build
