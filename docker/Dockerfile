@@ -30,7 +30,7 @@ RUN sudo -H pip install --upgrade setuptools pip && sudo -H pip install wheel &&
 # Install nodejs for custom build
 # https://github.com/apache/incubator-superset/blob/master/docs/installation.rst#making-your-own-build
 # https://nodejs.org/en/download/package-manager/
-RUN sudo curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN sudo curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
 RUN sudo apt-get install -y nodejs
 RUN sudo curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -; \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list; \
