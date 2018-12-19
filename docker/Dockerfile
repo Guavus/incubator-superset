@@ -7,6 +7,17 @@ ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     HOME=/home/work
 
+ENV user=testuser
+
+RUN apt-get update
+RUN apt-get install sudo
+
+RUN adduser --disabled-password --gecos '' ${user}
+RUN adduser ${user} sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+USER ${user}
+
 RUN apt-get update -y && apt-get install -y build-essential libssl-dev \
     libffi-dev python3-dev libsasl2-dev libldap2-dev \
     libsasl2-modules
