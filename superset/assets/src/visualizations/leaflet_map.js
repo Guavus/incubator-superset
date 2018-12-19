@@ -4,9 +4,7 @@ import '../../node_modules/leaflet/dist/leaflet.css';
 import * as turf from '@turf/turf';
 import * as L from '../../node_modules/leaflet/dist/leaflet.js';
 import * as esri from '../../node_modules/esri-leaflet/dist/esri-leaflet.js';
-
-
-
+import * as GRAPHICON from './graphIcon.js';
 
 /**
  * Leaflet Map Visualization
@@ -175,8 +173,9 @@ function leafletmap(slice, payload) {
         if (showTooltip) {
             obj.tooltip = getPopupContent(data)
         }
-
-
+        if(formData.hasOwnProperty('all_columns_y')){
+          obj.direction = data[formData.all_columns_y];
+        }
         return obj;
     }
 
@@ -319,9 +318,20 @@ function leafletmap(slice, payload) {
                 }
             },
             pointToLayer: function (feature, latlng) {
-                var styles = getLayerStyles(feature)
-                styles.radius = MARKER_RADIUS;
-                return L.circleMarker(latlng, styles).on('click', mapItemClick);
+              var styles = getLayerStyles(feature)
+              styles.radius = MARKER_RADIUS;
+              var node;
+              if(feature.properties.hasOwnProperty('direction')){
+                var myIcon = new GRAPHICON.ENB({
+                  color: feature.properties[getSelectedColorColumn()].color,
+                  directionValue: feature.properties.direction,
+                  className: 'my-div-icon',
+                });
+                node = L.marker(latlng, { icon: myIcon }).on('click', mapItemClick);
+              } else {
+                node = L.circleMarker(latlng, styles).on('click', mapItemClick);
+              }
+              return node;
             },
         }).addTo(mapInstance);
     }

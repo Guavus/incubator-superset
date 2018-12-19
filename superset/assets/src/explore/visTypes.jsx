@@ -109,6 +109,7 @@ export const visTypes = {
           ['adhoc_columns'],
           ['rich_tooltip'],
           ['all_columns_x'],
+          ['all_columns_y'],
           ['adhoc_filters'],
           ['row_limit', 'include_time'],
         ],
@@ -120,7 +121,7 @@ export const visTypes = {
           ['color_picker'],
           ['stroke_color_picker'],
           ['cell_size']
-   
+
         ],
       },
       {
@@ -160,6 +161,12 @@ export const visTypes = {
         multi: true,
         default:[],
         description: t('Tooltip Data Columns'),
+      },
+      all_columns_y:{
+        label: 'Direction',
+        multi: false,
+        default: null,
+        description: t('Direction'),
       },
       cell_size:{
         default: .75,
