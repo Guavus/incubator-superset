@@ -37,7 +37,7 @@ RUN sudo curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -;
     sudo apt-get update; \
     sudo apt-get install -y yarn
 
-RUN sudo cd superset/assets && sudo yarn && sudo yarn run build && sudo cd ../../
+RUN cd superset/assets && sudo yarn && sudo yarn run build && cd ../../
 
 ENV PATH=/home/work/incubator-superset/superset/bin:$PATH \
     PYTHONPATH=./superset/:$PYTHONPATH
