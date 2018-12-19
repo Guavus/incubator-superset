@@ -1714,7 +1714,11 @@ class LeafletViz(BaseViz):
         d = super(LeafletViz, self).query_obj()
         fd = self.form_data
 
-        d['columns'] = [fd.get('geojson'), fd.get('polygon'),fd.get('all_columns_y')]
+        d['columns'] = [fd.get('geojson'), fd.get('polygon')]
+
+        if (fd.get('all_columns_y') is not None ):
+            d['columns'].append(fd.get('all_columns_y'))
+
         if fd.get('adhoc_columns') is not None and len(fd.get('adhoc_columns')) > 0 :
             adhoc_columns = fd.get('adhoc_columns')
             extra_cols = []
