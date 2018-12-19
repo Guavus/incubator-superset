@@ -16,12 +16,12 @@ RUN adduser --disabled-password --gecos '' ${user}
 RUN adduser ${user} sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-USER ${user}
-
 RUN apt-get update -y && apt-get install -y build-essential libssl-dev \
     libffi-dev python3-dev libsasl2-dev libldap2-dev \
     libsasl2-modules
-    
+
+USER ${user}
+
 RUN mkdir -p $HOME/incubator-superset
 
 WORKDIR $HOME/incubator-superset
