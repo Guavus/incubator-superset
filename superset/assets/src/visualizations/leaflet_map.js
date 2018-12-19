@@ -123,13 +123,13 @@ function leafletmap(slice, payload) {
       return (val - min) / (max - min);
     }
 
-    function colourGradientor(rgb_beginning,rgb_end,p,max,min){
+    function colourGradientor(lowValueColor,highValueColor,p,max,min){
         var rangeValue = getRangeValue(p,parseInt(max),parseInt(min));
         var rgb = {}
-        rgb.r = parseInt((rgb_end.r - rgb_beginning.r) * rangeValue + rgb_beginning.r)
-        rgb.g = parseInt((rgb_end.g - rgb_beginning.g) * rangeValue + rgb_beginning.g)
-        rgb.b = parseInt((rgb_end.b - rgb_beginning.b) * rangeValue + rgb_beginning.b)
-        rgb.a = parseInt((rgb_end.a - rgb_beginning.a) * rangeValue + rgb_beginning.a)
+        rgb.r = parseInt((highValueColor.r - lowValueColor.r) * rangeValue + lowValueColor.r)
+        rgb.g = parseInt((highValueColor.g - lowValueColor.g) * rangeValue + lowValueColor.g)
+        rgb.b = parseInt((highValueColor.b - lowValueColor.b) * rangeValue + lowValueColor.b)
+        rgb.a = parseInt((highValueColor.a - lowValueColor.a) * rangeValue + lowValueColor.a)
         return 'rgb('+rgb.r +',' + rgb.g +',' +rgb.b +','+rgb.a + ')';
     }
 
