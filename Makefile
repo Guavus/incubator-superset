@@ -68,7 +68,11 @@ docker_clean:
 	@echo "= = = = = = = > END TARGET : [docker_clean] < = = = = = = ="
 
 update_image_tag:
-    @echo "= = = = = = = > START TARGET : [update_image_tag] < = = = = = = ="	
+    @echo "= = = = = = = > START TARGET : [update_image_tag] < = = = = = = ="
+	@echo "= = = = = = = > START TARGET : [update_image_tag] < = = = = = = ="
+	@echo "= = = = = = = > START TARGET : [update_image_tag] < = = = = = = ="
+	@echo $(DOCKER_IMAGE_TAG)
+	@echo ${SUPERSET_IMAGE_PATH}
 	sed -i -e "s/^\(superset_image_tag*:*\).*$/superset_image_tag: \"${DOCKER_IMAGE_TAG}\"/"  ${SUPERSET_IMAGE_PATH}
 	@echo "= = = = = = = > END TARGET : [update_image_tag] < = = = = = = ="
 
