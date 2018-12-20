@@ -18,10 +18,12 @@ function drawHexagon(cntxt, x_1,y_1,y_2, options){
   cntxt.stroke();
   cntxt.closePath();
 
-  cntxt.font = "10px";
-  cntxt.fillStyle = "white";
-  cntxt.textAlign = "center";
-  cntxt.fillText(options.markerValue, 0, y_2/2);
+  if(options.markerValue){
+    cntxt.font = "10px";
+    cntxt.fillStyle = "white";
+    cntxt.textAlign = "center";
+    cntxt.fillText(options.markerValue, 0, y_2/2);
+  }
 }
 function drawArcLine(cntxt, x,y, x1,y1,x2,y2,radius,startAngle, endAngle){
   cntxt.lineWidth = 1;
