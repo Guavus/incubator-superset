@@ -23,7 +23,7 @@ function drawHexagon(cntxt, x_1,y_1,y_2, options){
   cntxt.textAlign = "center";
   cntxt.fillText(options.markerValue, 0, y_2/2);
 }
-function drawLineArc(cntxt, x,y, x1,y1,x2,y2,radius,startAngle, endAngle){
+function drawArcLine(cntxt, x,y, x1,y1,x2,y2,radius,startAngle, endAngle){
   cntxt.lineWidth = 1;
   cntxt.strokeStyle = '#19242A';
   cntxt.beginPath();
@@ -39,28 +39,28 @@ function drawLineArc(cntxt, x,y, x1,y1,x2,y2,radius,startAngle, endAngle){
   cntxt.stroke();
 }
 
-function setTopLeftHexagon(div,top, left){
+function setTopLeft(div,top, left){
   div.style.top = top + 'px';
   div.style.left = left + 'px';
 }
 
-function setTopLeft(options,div){
+function setHexagonPosition(options,div){
   if (options.directionValue > 240 && options.directionValue <= 360) {
-    setTopLeftHexagon(div, -35, -35);
+    setTopLeft(div, -35, -35);
   } else if (options.directionValue > 120 && options.directionValue <= 240) {
-    setTopLeftHexagon(div, -12.5, -47);
+    setTopLeft(div, -12.5, -47);
   }else if(options.directionValue >=0 && options.directionValue <=120){
-    setTopLeftHexagon(div, -12.5, -21);
+    setTopLeft(div, -12.5, -21);
   }
 }
 
 function drawArc(options, cntxt, x_1, y_1,y_2,inner_circle_radius){
   if (options.directionValue >=0 && options.directionValue <=120) {
-    drawLineArc(cntxt,-x_1, y_1, 0, 0, -x_1, y_2-y_1, inner_circle_radius,11*Math.PI/6, Math.PI/2)
+    drawArcLine(cntxt,-x_1, y_1, 0, 0, -x_1, y_2-y_1, inner_circle_radius,11*Math.PI/6, Math.PI/2)
   } else if (options.directionValue > 120 && options.directionValue <= 240) {
-    drawLineArc(cntxt,x_1, y_1, 0, 0, x_1, y_2-y_1, inner_circle_radius,Math.PI/2, 7*Math.PI/6)
+    drawArcLine(cntxt,x_1, y_1, 0, 0, x_1, y_2-y_1, inner_circle_radius,Math.PI/2, 7*Math.PI/6)
   } else if (options.directionValue > 240 && options.directionValue <= 360) {
-    drawLineArc(cntxt,0, y_2, -x_1, y_2 - y_1, x_1, y_2 - y_1, inner_circle_radius, 7*Math.PI/6,  11*Math.PI/6)
+    drawArcLine(cntxt,0, y_2, -x_1, y_2 - y_1, x_1, y_2 - y_1, inner_circle_radius, 7*Math.PI/6,  11*Math.PI/6)
   }
 }
 
@@ -97,7 +97,7 @@ export var ENB = L.Icon.extend({
 
     div.appendChild(graphicsBox);
     div.style.position = 'absolute';
-    setTopLeft(options, div);
+    setHexagonPosition(options, div);
     this._setIconStyles(div, 'icon');
 
     return div;
