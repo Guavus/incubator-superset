@@ -54,14 +54,11 @@ pipeline {
       steps {
         echo "Run Commmands to compute Docker tag"
         script {
+          echo "************* BUILD VERSION ********************"
+          echo "${env.buildVersion}"
+          echo "************************************************"
           if (buildType in ['feature','fix']) {
-            // docker tag for a feature or fix branch
-            echo "*******************************"
-            echo "*******************************"
-            echo "${env.buildVersion}"
-            echo "*******************************"
-            echo "*******************************"
-
+            // docker tag for a feature or fix branch  
             env.dockerTag = ( env.BRANCH_NAME.split('/')[1] =~ /.+-\d+/ )[0]
           } else if (buildType ==~ /PR-.*/ ){
             // docker tag for a pull request
@@ -139,7 +136,7 @@ pipeline {
       }
     }
 
-    stage("Clean Prevous Docker Images") {
+    stage("Clean Previous Docker Images") {
         steps {
             echo "Removing previous docker images..."
             sh "make docker_clean"
