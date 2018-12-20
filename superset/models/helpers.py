@@ -35,9 +35,16 @@ def json_to_dict(json_str):
     else:
         return {}
 
+# the function will check if kerberos ticket is available 
+# there could be few of the cases where this function would be called
+# 1. When charts/dashboard query for hive data
+# 2. When hive data is being accessed with SQL queries via SQL editor
+# 3. When new datasource has to be added/updated
+# 4. When tables has to be added from existing datasource
 def has_kerberos_ticket():
     IS_KERBEROS_ENABLED = get_env_variable('IS_KERBEROS_ENABLED')
-
+    # check if ticket is still valid, if not then 
+    # call a shell sricpt which will make a connection to kerberos cluster
     if IS_KERBEROS_ENABLED is not None and subprocess.call(['klist', '-s']) == 0:
         subprocess.call(['/usr/local/bin/auth-kerberized.sh'])
 
