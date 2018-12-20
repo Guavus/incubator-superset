@@ -41,11 +41,14 @@ pipeline {
   agent any
 
     environment {
-    // Define global environment variables in this section
+    // Define global environment variables in this 
+    env.WORKSPACE = pwd()
+    def file = readFile "${env.WORKSPACE}/VERSION"
+
     buildNum = currentBuild.getNumber()
     buildType = BRANCH_NAME.split('/').first()
     branchVersion = BRANCH_NAME.split('/').last()
-    buildVersion = '1.0.14'
+    buildVersion = file.split("\n")[0]
   }
   stages {
 
@@ -55,6 +58,13 @@ pipeline {
         script {
           if (buildType in ['feature','fix']) {
             // docker tag for a feature or fix branch
+
+            echo "*******************************"
+            echo "*******************************"
+            echo env.buildVersion
+            echo "*******************************"
+            echo "*******************************"
+            
             env.dockerTag = ( env.BRANCH_NAME.split('/')[1] =~ /.+-\d+/ )[0]
           } else if (buildType ==~ /PR-.*/ ){
             // docker tag for a pull request
