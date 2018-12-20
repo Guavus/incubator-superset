@@ -5,7 +5,7 @@
 /*
  * L.ENB is a circle overlay with a permanent pixel radius.
  */
-function drawHexagon(cntxt, x_1,y_1,y_2){
+function drawHexagon(cntxt, x_1,y_1,y_2, options){
   cntxt.moveTo(0, 0);
   cntxt.lineTo(x_1, y_1);
   cntxt.lineTo(x_1, (y_2 - y_1));
@@ -17,6 +17,12 @@ function drawHexagon(cntxt, x_1,y_1,y_2){
   cntxt.fill();
   cntxt.stroke();
   cntxt.closePath();
+
+  cntxt.font = "10px";
+  cntxt.fillStyle = "white";
+  cntxt.textAlign = "center";
+  cntxt.fillText(options.markerValue, 0, y_2/2);
+
 }
 function drawCenterArc(cntxt,x_1,y_1,y_2,inner_circle_radius) {
   cntxt.lineWidth = 1;
@@ -66,6 +72,7 @@ function drawLeftArc(cntxt,x_1,y_1,y_2,inner_circle_radius){
   cntxt.stroke();
 }
 
+
 export var ENB = L.Icon.extend({
   createIcon: function (oldIcon) {
     const div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div');
@@ -102,7 +109,7 @@ export var ENB = L.Icon.extend({
       cntxt.beginPath();
       cntxt.fillStyle = grd;
       cntxt.strokeStyle = grd;
-      drawHexagon(cntxt,x_1,y_1,y_2);
+      drawHexagon(cntxt,x_1,y_1,y_2,options);
       drawRightArc(cntxt, x_1, y_1,y_2,inner_circle_radius)
     }
     else if (options.directionValue > 120 && options.directionValue <= 240) {
@@ -113,7 +120,7 @@ export var ENB = L.Icon.extend({
       cntxt.beginPath();
       cntxt.fillStyle = grd;
       cntxt.strokeStyle = grd;
-      drawHexagon(cntxt,x_1,y_1,y_2);
+      drawHexagon(cntxt,x_1,y_1,y_2,options);
       drawLeftArc(cntxt, x_1, y_1,y_2,inner_circle_radius)
     }
     else if (options.directionValue > 240 && options.directionValue <= 360) {
@@ -124,7 +131,7 @@ export var ENB = L.Icon.extend({
       cntxt.beginPath();
       cntxt.fillStyle = grd;
       cntxt.strokeStyle = grd;
-      drawHexagon(cntxt,x_1,y_1,y_2);
+      drawHexagon(cntxt,x_1,y_1,y_2,options);
       drawCenterArc(cntxt, x_1, y_1,y_2,inner_circle_radius);
     }
 

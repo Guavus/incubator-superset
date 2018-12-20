@@ -1719,6 +1719,9 @@ class LeafletViz(BaseViz):
         if (fd.get('all_columns_y') is not None ):
             d['columns'].append(fd.get('all_columns_y'))
 
+        if (fd.get('latitude') is not None ):
+            d['columns'].append(fd.get('latitude'))
+
         if fd.get('adhoc_columns') is not None and len(fd.get('adhoc_columns')) > 0 :
             adhoc_columns = fd.get('adhoc_columns')
             extra_cols = []

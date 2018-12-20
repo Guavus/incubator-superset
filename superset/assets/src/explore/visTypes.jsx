@@ -110,6 +110,7 @@ export const visTypes = {
           ['rich_tooltip'],
           ['all_columns_x'],
           ['all_columns_y'],
+          ['latitude'],
           ['adhoc_filters'],
           ['row_limit', 'include_time'],
         ],
@@ -167,6 +168,12 @@ export const visTypes = {
         multi: false,
         default: null,
         description: t('Direction'),
+      },
+      latitude:{
+        label: 'Marker Value Field',
+        multi: false,
+        default: null,
+        description: t('Marker Value Field used for display information in markers as a text'),
       },
       cell_size:{
         default: .75,

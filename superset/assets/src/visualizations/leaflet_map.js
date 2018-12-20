@@ -176,6 +176,10 @@ function leafletmap(slice, payload) {
         if(formData.hasOwnProperty('all_columns_y')){
           obj.direction = data[formData.all_columns_y];
         }
+
+        if(formData.hasOwnProperty('latitude')){
+          obj.markerValue = data[formData.latitude];
+        }
         return obj;
     }
 
@@ -241,38 +245,51 @@ function leafletmap(slice, payload) {
         }
     }
 
-    function mapItemClick(event) {
-
-        if (enableClick) {
-            var selections = [];
-            // remove previous selected layers except selected
-            Object.values(event.target._map._targets).forEach(element => {
-                if (element.hasOwnProperty('_path') && element._path.classList.contains('active-layer') && event.target._leaflet_id != element._leaflet_id) {
-                    element._path.classList.remove('active-layer');
-                }
-            });
-
-            if(event.target.hasOwnProperty('_path')){
-              if (event.target._path.classList.contains('active-layer')) {
-                event.target._path.classList.remove('active-layer');
-              } else {
-                event.target._path.classList.add('active-layer');
-                selections = [event.target.feature.properties.id];
-              }
-            }
-            if(event.target.hasOwnProperty('_icon')){
-              if (event.target._icon.classList.contains('active-layer-canvas')) {
-                event.target._icon.classList.remove('active-layer-canvas');
-              } else {
-                event.target._icon.classList.add('active-layer-canvas');
-                selections = [event.target.feature.properties.id];
-              }
-            }
-
-
-            slice.addFilter(formData.geojson, selections, false);
+    function eventTargetPath(event){
+      var selections = [];
+      // remove previous selected layers except selected
+      Object.values(event.target._map._targets).forEach(element => {
+        if (element.hasOwnProperty('_path') && element._path.classList.contains('active-layer') && event.target._leaflet_id != element._leaflet_id) {
+            element._path.classList.remove('active-layer');
         }
+      });
+      if (event.target._path.classList.contains('active-layer')) {
+        event.target._path.classList.remove('active-layer');
+      } else {
+        event.target._path.classList.add('active-layer');
+        selections = [event.target.feature.properties.id];
+      }
+      return selections;
+    }
 
+    function eventTargetIcon(event){
+      var selections = [];
+      // remove previous selected layers except selected
+      Object.values(event.target._map._targets).forEach(element => {
+        if (element.hasOwnProperty('_icon') && element._icon.classList.contains('active-layer-canvas')
+          && event.target._leaflet_id != element._leaflet_id) {
+            element._icon.classList.remove('active-layer-canvas');
+        }
+      });
+      if (event.target._icon.classList.contains('active-layer-canvas')) {
+        event.target._icon.classList.remove('active-layer-canvas');
+      } else {
+        event.target._icon.classList.add('active-layer-canvas');
+        selections = [event.target.feature.properties.id];
+      }
+      return selections;
+    }
+
+    function mapItemClick(event) {
+      if (enableClick) {
+          var selections = [];
+          if(event.target.hasOwnProperty('_path')){
+            selections = eventTargetPath(event);
+          } else if(event.target.hasOwnProperty('_icon')){
+            selections =eventTargetIcon(event);
+          }
+          slice.addFilter(formData.geojson, selections, false);
+      }
     }
 
     function getSelectedColorColumn() {
@@ -336,6 +353,7 @@ function leafletmap(slice, payload) {
                 var myIcon = new GRAPHICON.ENB({
                   color: feature.properties[getSelectedColorColumn()].color,
                   directionValue: feature.properties.direction,
+                  markerValue: feature.properties.markerValue,
                   className: 'my-div-icon',
                 });
                 node = L.marker(latlng, { icon: myIcon }).on('click', mapItemClick);
