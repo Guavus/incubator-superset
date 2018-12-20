@@ -42,11 +42,11 @@ pipeline {
 
     environment {
     // Define global environment variables in this 
-    
+    WORKSPACE = pwd()
     buildNum = currentBuild.getNumber()
     buildType = BRANCH_NAME.split('/').first()
     branchVersion = BRANCH_NAME.split('/').last()
-    buildVersion = '1.0.14'
+    buildVersion = readFile "${env.WORKSPACE}/VERSION"
   }
   stages {
 
@@ -56,9 +56,6 @@ pipeline {
         script {
           if (buildType in ['feature','fix']) {
             // docker tag for a feature or fix branch
-            env.WORKSPACE = pwd()
-            env.buildVersion = readFile "${env.WORKSPACE}/VERSION"
-
             echo "*******************************"
             echo "*******************************"
             echo "${env.buildVersion}"
