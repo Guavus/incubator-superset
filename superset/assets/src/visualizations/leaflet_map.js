@@ -173,11 +173,11 @@ function leafletmap(slice, payload) {
         if (showTooltip) {
             obj.tooltip = getPopupContent(data)
         }
-        if(formData.hasOwnProperty('all_columns_y')){
+        if(formData.hasOwnProperty('all_columns_y') && formData.all_columns_y){
           obj.direction = data[formData.all_columns_y];
         }
 
-        if(formData.hasOwnProperty('latitude')){
+        if(formData.hasOwnProperty('latitude') && formData.latitude){
           obj.markerValue = data[formData.latitude];
         }
         return obj;
@@ -245,36 +245,19 @@ function leafletmap(slice, payload) {
         }
     }
 
-    function eventTargetPath(event){
+    function getSelection(event, property, cssClass){
       var selections = [];
       // remove previous selected layers except selected
       Object.values(event.target._map._targets).forEach(element => {
-        if (element.hasOwnProperty('_path') && element._path.classList.contains('active-layer') && event.target._leaflet_id != element._leaflet_id) {
-            element._path.classList.remove('active-layer');
-        }
-      });
-      if (event.target._path.classList.contains('active-layer')) {
-        event.target._path.classList.remove('active-layer');
-      } else {
-        event.target._path.classList.add('active-layer');
-        selections = [event.target.feature.properties.id];
-      }
-      return selections;
-    }
-
-    function eventTargetIcon(event){
-      var selections = [];
-      // remove previous selected layers except selected
-      Object.values(event.target._map._targets).forEach(element => {
-        if (element.hasOwnProperty('_icon') && element._icon.classList.contains('active-layer-canvas')
+        if (element.hasOwnProperty(property) && element[property].classList.contains(cssClass)
           && event.target._leaflet_id != element._leaflet_id) {
-            element._icon.classList.remove('active-layer-canvas');
+            element[property].classList.remove(cssClass);
         }
       });
-      if (event.target._icon.classList.contains('active-layer-canvas')) {
-        event.target._icon.classList.remove('active-layer-canvas');
+      if (event.target[property].classList.contains(cssClass)) {
+        event.target[property].classList.remove(cssClass);
       } else {
-        event.target._icon.classList.add('active-layer-canvas');
+        event.target[property].classList.add(cssClass);
         selections = [event.target.feature.properties.id];
       }
       return selections;
@@ -284,9 +267,9 @@ function leafletmap(slice, payload) {
       if (enableClick) {
           var selections = [];
           if(event.target.hasOwnProperty('_path')){
-            selections = eventTargetPath(event);
+            selections = getSelection(event, '_path', 'active-layer')
           } else if(event.target.hasOwnProperty('_icon')){
-            selections =eventTargetIcon(event);
+            selections = getSelection(event, '_icon', 'active-layer-canvas');
           }
           slice.addFilter(formData.geojson, selections, false);
       }

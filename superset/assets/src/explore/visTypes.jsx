@@ -173,6 +173,7 @@ export const visTypes = {
         label: 'Marker Value Field',
         multi: false,
         default: null,
+        validators: [],
         description: t('Marker Value Field used for display information in markers as a text'),
       },
       cell_size:{
