@@ -70,6 +70,6 @@ docker_clean:
 update_image_tag:
 	@echo $(DOCKER_IMAGE_TAG)
 	@echo ${SUPERSET_IMAGE_PATH}
-	sed -i -e "s/^\(superset_image_tag*:*\).*$/superset_image_tag: \"${DOCKER_IMAGE_TAG}\"/"  ${SUPERSET_IMAGE_PATH}
+	sed -i -e "s/^\(superset_image_tag*:*\).*\$/superset_image_tag: \"${DOCKER_IMAGE_TAG}\"/"  ${SUPERSET_IMAGE_PATH}
 
 .PHONY: publish-all publish-rpms clean dist build-rpms docker_build docker_tag docker_push docker_clean update_image_tag
