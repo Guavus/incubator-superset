@@ -42,16 +42,25 @@ pipeline {
 
     environment {
     // Define global environment variables in this 
-    env.WORKSPACE = pwd()
-    def file = readFile "${env.WORKSPACE}/VERSION"
-
+    
     buildNum = currentBuild.getNumber()
     buildType = BRANCH_NAME.split('/').first()
     branchVersion = BRANCH_NAME.split('/').last()
-    buildVersion = file.split("\n")[0]
+    buildVersion = '1.0.14'
   }
   stages {
-
+    stage("Compute Build Version") {
+      steps {
+        echo "Run Commmands to compute Build Version"
+        script {
+          env.WORKSPACE = pwd()
+          def file = readFile "${env.WORKSPACE}/VERSION"
+          env.buildVersion = readFile('VERSION').trim()
+        }
+        echo "${file}"
+        echo "${env.buildVersion}"
+      }
+    }
     stage("Compute Docker Tag") {
       steps {
         echo "Run Commmands to compute Docker tag"
@@ -64,7 +73,7 @@ pipeline {
             echo env.buildVersion
             echo "*******************************"
             echo "*******************************"
-            
+
             env.dockerTag = ( env.BRANCH_NAME.split('/')[1] =~ /.+-\d+/ )[0]
           } else if (buildType ==~ /PR-.*/ ){
             // docker tag for a pull request
