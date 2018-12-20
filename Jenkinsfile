@@ -47,7 +47,8 @@ pipeline {
     buildType = BRANCH_NAME.split('/').first()
     branchVersion = BRANCH_NAME.split('/').last()
     buildVersion = readFile "${env.WORKSPACE}/VERSION"
-    supersetImagePath = ${env.WORKSPACE}/superset-installer/etc/reflex-provisioner/inventory/templates/group_vars/global/all/raf/superset.yml
+    supersetImage = '/superset-installer/etc/reflex-provisioner/inventory/templates/group_vars/global/all/raf/superset.yml'
+    supersetImagePath = '${WORKSPACE}/${supersetImage}'
   }
   stages {
 
