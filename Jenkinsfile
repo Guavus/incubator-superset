@@ -57,9 +57,7 @@ pipeline {
           if (buildType in ['feature','fix']) {
             // docker tag for a feature or fix branch
             env.WORKSPACE = pwd()
-            def file = readFile "${env.WORKSPACE}/VERSION"
-            env.buildVersion = readFile('VERSION').trim()
-            echo "${file}"
+            env.buildVersion = readFile "${env.WORKSPACE}/VERSION"
 
             echo "*******************************"
             echo "*******************************"
