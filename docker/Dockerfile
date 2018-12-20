@@ -13,13 +13,13 @@ RUN apt-get update -y && apt-get install -y build-essential libssl-dev \
     libffi-dev python3-dev libsasl2-dev libldap2-dev \
     libsasl2-modules libsasl2-2 libsasl2-modules-gssapi-mit krb5-user
     
+RUN mkdir -p $HOME/incubator-superset
+
 RUN mkdir -p /etc/security/keytabs/
 
 WORKDIR $HOME/incubator-superset
 
 COPY ./ ./
-
-RUN mkdir -p $HOME/incubator-superset
 
 RUN pip install --upgrade setuptools pip && pip install wheel && python ./setup.py bdist_wheel && pip install ./dist/*.whl
 
