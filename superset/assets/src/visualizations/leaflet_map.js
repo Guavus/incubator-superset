@@ -252,12 +252,23 @@ function leafletmap(slice, payload) {
                 }
             });
 
-            if (event.target._path.classList.contains('active-layer')) {
+            if(event.target.hasOwnProperty('_path')){
+              if (event.target._path.classList.contains('active-layer')) {
                 event.target._path.classList.remove('active-layer');
-            } else {
+              } else {
                 event.target._path.classList.add('active-layer');
                 selections = [event.target.feature.properties.id];
+              }
             }
+            if(event.target.hasOwnProperty('_icon')){
+              if (event.target._icon.classList.contains('active-layer-canvas')) {
+                event.target._icon.classList.remove('active-layer-canvas');
+              } else {
+                event.target._icon.classList.add('active-layer-canvas');
+                selections = [event.target.feature.properties.id];
+              }
+            }
+
 
             slice.addFilter(formData.geojson, selections, false);
         }

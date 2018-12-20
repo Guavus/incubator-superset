@@ -18,7 +18,7 @@ function drawHexagon(cntxt, x_1,y_1,y_2){
   cntxt.stroke();
   cntxt.closePath();
 }
-function drawCenterArc(cntxt, options,x_1,y_1,y_2,inner_circle_radius) {
+function drawCenterArc(cntxt,x_1,y_1,y_2,inner_circle_radius) {
   cntxt.lineWidth = 1;
   cntxt.strokeStyle = '#19242A';
   cntxt.beginPath();
@@ -33,7 +33,7 @@ function drawCenterArc(cntxt, options,x_1,y_1,y_2,inner_circle_radius) {
   cntxt.arc(0, y_2, inner_circle_radius, 7*Math.PI/6,  11*Math.PI/6);
   cntxt.stroke();
 }
-function drawRightArc(cntxt, options,x_1,y_1,y_2, inner_circle_radius){
+function drawRightArc(cntxt,x_1,y_1,y_2, inner_circle_radius){
 
   cntxt.lineWidth = 1;
   cntxt.strokeStyle = '#19242A';
@@ -50,7 +50,7 @@ function drawRightArc(cntxt, options,x_1,y_1,y_2, inner_circle_radius){
   cntxt.stroke();
 }
 
-function drawLeftArc(cntxt, options,x_1,y_1,y_2,inner_circle_radius){
+function drawLeftArc(cntxt,x_1,y_1,y_2,inner_circle_radius){
   cntxt.lineWidth = 1;
   cntxt.strokeStyle = '#19242A';
   cntxt.beginPath();
@@ -103,7 +103,7 @@ export var ENB = L.Icon.extend({
       cntxt.fillStyle = grd;
       cntxt.strokeStyle = grd;
       drawHexagon(cntxt,x_1,y_1,y_2);
-      drawRightArc(cntxt, options, x_1, y_1,y_2,inner_circle_radius)
+      drawRightArc(cntxt, x_1, y_1,y_2,inner_circle_radius)
     }
     else if (options.directionValue > 120 && options.directionValue <= 240) {
       grd = cntxt.createLinearGradient(x_1, y_1, -x_1, y_2-y_1);
@@ -114,7 +114,7 @@ export var ENB = L.Icon.extend({
       cntxt.fillStyle = grd;
       cntxt.strokeStyle = grd;
       drawHexagon(cntxt,x_1,y_1,y_2);
-      drawLeftArc(cntxt, options, x_1, y_1,y_2,inner_circle_radius)
+      drawLeftArc(cntxt, x_1, y_1,y_2,inner_circle_radius)
     }
     else if (options.directionValue > 240 && options.directionValue <= 360) {
       grd = cntxt.createLinearGradient(0, 0, 0, y_2 - offset * 1.5);
@@ -125,7 +125,7 @@ export var ENB = L.Icon.extend({
       cntxt.fillStyle = grd;
       cntxt.strokeStyle = grd;
       drawHexagon(cntxt,x_1,y_1,y_2);
-      drawCenterArc(cntxt, options, x_1, y_1,y_2,inner_circle_radius);
+      drawCenterArc(cntxt, x_1, y_1,y_2,inner_circle_radius);
     }
 
     div.appendChild(graphicsBox);
@@ -140,9 +140,6 @@ export var ENB = L.Icon.extend({
       div.style.top = -12.5 + 'px';
       div.style.left = -20 + 'px';
     }
-
-    //  div.style.backgroundColor = 'yellow';
-
     this._setIconStyles(div, 'icon');
 
     return div;
