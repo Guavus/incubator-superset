@@ -47,6 +47,7 @@ pipeline {
     buildType = BRANCH_NAME.split('/').first()
     branchVersion = BRANCH_NAME.split('/').last()
     buildVersion = readFile "${env.WORKSPACE}/VERSION"
+    supersetImagePath = ${env.WORKSPACE}/superset-installer/etc/reflex-provisioner/inventory/templates/group_vars/global/all/raf/superset.yml
   }
   stages {
 
@@ -76,6 +77,12 @@ pipeline {
           }
         }
         echo "Computed Docker Tag !!"
+      }
+    }
+    stage("Update Superset Image Tag") {
+      steps {
+        echo "Updating Superset image tag..."
+        sh "make update_image_tag DOCKER_IMAGE_TAG=${env.dockerTag} SUPERSET_IMAGE_PATH=${env.supersetImagePath}"
       }
     }
     stage("Build and test") {
