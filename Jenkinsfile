@@ -49,28 +49,21 @@ pipeline {
     buildVersion = '1.0.14'
   }
   stages {
-    stage("Compute Build Version") {
-      steps {
-        echo "Run Commmands to compute Build Version"
-        script {
-          env.WORKSPACE = pwd()
-          def file = readFile "${env.WORKSPACE}/VERSION"
-          env.buildVersion = readFile('VERSION').trim()
-        }
-        echo "${file}"
-        echo "${env.buildVersion}"
-      }
-    }
+
     stage("Compute Docker Tag") {
       steps {
         echo "Run Commmands to compute Docker tag"
         script {
           if (buildType in ['feature','fix']) {
             // docker tag for a feature or fix branch
+            env.WORKSPACE = pwd()
+            def file = readFile "${env.WORKSPACE}/VERSION"
+            env.buildVersion = readFile('VERSION').trim()
+            echo "${file}"
 
             echo "*******************************"
             echo "*******************************"
-            echo env.buildVersion
+            echo "${env.buildVersion}"
             echo "*******************************"
             echo "*******************************"
 
