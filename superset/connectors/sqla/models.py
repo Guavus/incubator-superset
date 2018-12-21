@@ -31,6 +31,8 @@ from superset.models.core import Database
 from superset.models.helpers import QueryResult, has_kerberos_ticket
 from superset.models.helpers import set_perm
 from superset.utils import DTTM_ALIAS, QueryStatus
+import re
+from datetime import timedelta
 
 config = app.config
 
@@ -771,6 +773,47 @@ class SqlaTable(Model, BaseDatasource):
         status = QueryStatus.SUCCESS
         error_message = None
         df = None
+        #check engine
+        engine = self.database.get_sqla_engine(None)
+        # add check for hive and time filter
+        if(query_obj['is_timeseries'] and (engine.url.drivername == 'hive')):
+            startdate = query_obj['from_dttm']
+            print(startdate)
+            enddate = query_obj['to_dttm']
+            print(enddate)
+            #---------- logic to convert time range to query string-----------------
+            st = startdate
+            en = enddate
+            timeSeq = list()
+            # sample gran is 1hr and point are created as per delta of gran ,
+            # so we need to take care of grand while forming query
+            gran_seconds = 3600 
+            while st < en:
+                timeSeq.append(st.strftime("(year=%Y AND month = %m AND day = %d AND hour = %H AND minute=%M)"))
+                st = st + timedelta(seconds = gran_seconds)
+
+            whereClause = " OR ".join(timeSeq) 
+                     
+            print(whereClause)  
+
+            #---------- end logic to convert time range to query string -----------------
+            queryStr  =  whereClause
+            
+            # regex for replace  where clause timrrange query ts <= 123455.00
+            # http://txt2re.com use this site to generate regex
+            # here time in float so regex will update as per time format in sql
+          
+            regex_st = "(`)((?:[a-z][a-z]+))(`)(\\s+)(>)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
+            regex_et = "(AND)(\\s+)(`)((?:[a-z][a-z]+))(`)(\\s+)(<)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
+
+            x = re.sub(regex_st, queryStr, sql)
+            print(x)
+            x = re.sub(regex_et, '\n', x)
+            print(x)
+
+            # here we need to  rest x as sql
+            #sql = x
+            
         try:
             df = self.database.get_df(sql, self.schema)
         except Exception as e:
