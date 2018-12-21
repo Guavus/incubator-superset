@@ -82,8 +82,10 @@ pipeline {
     }
     stage("Update Superset Image Tag") {
       steps {
-        echo "Updating Superset image tag..."
+        // Updating Superset image tag in superset.yml
+        echo "Updating Superset image tag"
         sh "make update_image_tag DOCKER_IMAGE_TAG=${env.dockerTag} SUPERSET_IMAGE_PATH=${env.supersetImagePath}"
+        echo "Updated Superset image tag"
       }
     }
     stage("Build and test") {

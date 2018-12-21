@@ -25,19 +25,19 @@ WORKDIR $HOME/incubator-superset
 
 COPY ./ ./
 
-RUN sudo -H pip install --upgrade setuptools pip && sudo -H pip install wheel && sudo python ./setup.py bdist_wheel && sudo -H pip install ./dist/*.whl
+RUN pip install --upgrade setuptools pip && pip install wheel && python ./setup.py bdist_wheel && pip install ./dist/*.whl
 
 # Install nodejs for custom build
 # https://github.com/apache/incubator-superset/blob/master/docs/installation.rst#making-your-own-build
 # https://nodejs.org/en/download/package-manager/
-RUN sudo curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
-RUN sudo apt-get install -y nodejs
-RUN sudo curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -; \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list; \
-    sudo apt-get update; \
-    sudo apt-get install -y yarn
+RUN curl -sL https://deb.nodesource.com/setup_8.x |  bash -
+RUN apt-get install -y nodejs
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -; \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list; \
+    apt-get update; \
+    apt-get install -y yarn
 
-RUN cd superset/assets && sudo yarn && sudo yarn run build && cd ../../
+RUN cd superset/assets && yarn && yarn run build && cd ../../
 
 ENV PATH=/home/work/incubator-superset/superset/bin:$PATH \
     PYTHONPATH=./superset/:$PYTHONPATH
