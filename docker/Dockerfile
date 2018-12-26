@@ -5,9 +5,11 @@ MAINTAINER Arpit Agarwal <arpit.agarwal@guavus.com>
 # Configure environment
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
-    HOME=/home/work
-
-ENV DEBIAN_FRONTEND=noninteractive
+    user=guavus-raf \
+    HOME=/home/${user} \
+    DEBIAN_FRONTEND=noninteractive
+    
+RUN useradd --user-group --create-home --no-log-init --shell /bin/bash ${user}
 
 RUN apt-get update -y && apt-get install -y build-essential libssl-dev \
     libffi-dev python3-dev libsasl2-dev libldap2-dev \
@@ -18,8 +20,6 @@ RUN mkdir -p $HOME/incubator-superset
 RUN mkdir -p /etc/security/keytabs/
 
 RUN mkdir -p /etc/cert/
-
-RUN chmod +x /etc/cert/
 
 WORKDIR $HOME/incubator-superset
 
@@ -39,12 +39,14 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -; \
 
 RUN cd superset/assets && yarn && yarn run build && cd ../../
 
-ENV PATH=/home/work/incubator-superset/superset/bin:$PATH \
+ENV PATH=/home/${user}/incubator-superset/superset/bin:$PATH \
     PYTHONPATH=./superset/:$PYTHONPATH
 
 COPY docker-init.sh /usr/local/bin/
 
+RUN chmod +x /etc/cert
 RUN chmod +x /usr/local/bin
+RUN chown -R ${user}:${user} $HOME
 
 EXPOSE 8088
 
