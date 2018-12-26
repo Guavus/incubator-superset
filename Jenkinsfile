@@ -68,12 +68,12 @@ pipeline {
           } else if (buildType in ['master']) {
             // docker tag for a master branch
             env.dockerTagVersion = "${env.buildVersion}-${env.buildNum}"
-            env.dockerTagStage = "pod"
+            env.dockerTagStage = "prod"
             env.dockerTag = "${env.dockerTagVersion}-${env.dockerTagStage}"
           } else if ( buildType in ['release'] ){
             // docker tag for a release branch
             env.dockerTagVersion = "${env.branchVersion}-${env.buildNum}"
-            env.dockerTagStage = "pod"
+            env.dockerTagStage = "prod"
             env.dockerTag = "${env.dockerTagVersion}-${env.dockerTagStage}"
           }
         }
