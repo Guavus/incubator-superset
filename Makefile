@@ -9,7 +9,7 @@ SANITIZED_VERSION = $(shell echo $(VERSION) | sed -e "s/\//-/g")
 BUILD_NUMBER?=0
 VERSION=$(BRANCH_ID)
 
-SUPERSET_IMAGE_PATH = ${WORKSPACE}
+SUPERSET_INVENTORY_FILE_PATH = ${WORKSPACE}
 
 VERSION_WITH_BUILD= $(DOCKER_IMAGE_TAG) #$(SANITIZED_APP_VERSION)_$(BUILD_NUMBER)
 
@@ -44,7 +44,6 @@ dist:
 
 docker_build:
 	@echo "= = = = = = = > START TARGET : [docker_build] < = = = = = = ="
-	@echo ${SUPERSET_IMAGE_PATH}
 	echo $(COMMIT)“ ”  $(BRANCH_ID)“ ”$(APP_VERSION)“ “$(BUILD_NUMBER)
 	#docker build -t $(DOCKER_IMAGE_NAME) .
 	sh scripts/create_docker.sh
@@ -69,7 +68,7 @@ docker_clean:
 
 update_image_tag:
 	@echo $(DOCKER_IMAGE_TAG)
-	@echo ${SUPERSET_IMAGE_PATH}
-	sed -i -e "s/^\(superset_image_tag*:*\).*$$/superset_image_tag: \"${DOCKER_IMAGE_TAG}\"/"  ${SUPERSET_IMAGE_PATH}
+	@echo ${SUPERSET_INVENTORY_FILE_PATH}
+	sed -i -e "s/^\(superset_image_tag*:*\).*$$/superset_image_tag: \"${DOCKER_IMAGE_TAG}\"/"  ${SUPERSET_INVENTORY_FILE_PATH}
 
 .PHONY: publish-all publish-rpms clean dist build-rpms docker_build docker_tag docker_push docker_clean update_image_tag

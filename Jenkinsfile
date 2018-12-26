@@ -47,8 +47,8 @@ pipeline {
     buildType = BRANCH_NAME.split('/').first()
     branchVersion = BRANCH_NAME.split('/').last()
     buildVersion = readFile "${env.WORKSPACE}/VERSION"
-    supersetImage = 'superset-installer/etc/reflex-provisioner/inventory/templates/group_vars/global/all/raf/superset.yml'
-    supersetImagePath = '${WORKSPACE}/${supersetImage}'
+    supersetInventoryFilePath = 'superset-installer/etc/reflex-provisioner/inventory/templates/group_vars/global/all/raf/superset.yml'
+    jenkinsInventoryFilePath = '${WORKSPACE}/${supersetInventoryFilePath}'
   }
   stages {
 
@@ -59,7 +59,7 @@ pipeline {
           echo "************* BUILD VERSION ********************"
           echo "${env.buildVersion}"
           echo "************************************************"
-          if (buildType in ['feature','fix']) {
+          if (buildType in ['feature','fix','feat']) {
             // docker tag for a feature or fix branch  
             env.dockerTag = ( env.BRANCH_NAME.split('/')[1] =~ /.+-\d+/ )[0]
           } else if (buildType ==~ /PR-.*/ ){
@@ -68,12 +68,12 @@ pipeline {
           } else if (buildType in ['master']) {
             // docker tag for a master branch
             env.dockerTagVersion = "${env.buildVersion}-${env.buildNum}"
-            env.dockerTagStage = "dev"
+            env.dockerTagStage = "pod"
             env.dockerTag = "${env.dockerTagVersion}-${env.dockerTagStage}"
           } else if ( buildType in ['release'] ){
             // docker tag for a release branch
             env.dockerTagVersion = "${env.branchVersion}-${env.buildNum}"
-            env.dockerTagStage = "dev"
+            env.dockerTagStage = "pod"
             env.dockerTag = "${env.dockerTagVersion}-${env.dockerTagStage}"
           }
         }
@@ -84,7 +84,7 @@ pipeline {
       steps {
         // Updating Superset image tag in superset.yml
         echo "Updating Superset image tag"
-        sh "make update_image_tag DOCKER_IMAGE_TAG=${env.dockerTag} SUPERSET_IMAGE_PATH=${env.supersetImagePath}"
+        sh "make update_image_tag DOCKER_IMAGE_TAG=${env.dockerTag} SUPERSET_INVENTORY_FILE_PATH=${env.jenkinsInventoryFilePath}"
         echo "Updated Superset image tag"
       }
     }
