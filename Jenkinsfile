@@ -63,7 +63,7 @@ pipeline {
     stage('Create RPMs') {
       steps {
         echo "Run Commmand to trigger rpm build"
-        sh  "build_rpm.sh ${VERSION} ${RELEASE}"
+        sh  "./build_rpm.sh ${VERSION} ${RELEASE}"
       }
     }
 
