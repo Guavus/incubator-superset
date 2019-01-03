@@ -2,8 +2,6 @@
 @Library('jenkins_lib')_
 
 pipeline {
-
-pipeline {
   agent any
 
     environment {
