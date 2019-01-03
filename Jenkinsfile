@@ -1,6 +1,7 @@
 #!/usr/bin/env groovy
-@Library(‘jenkins_lib’)_
+@Library('jenkins_lib')_
 
+pipeline {
 
 pipeline {
   agent any
