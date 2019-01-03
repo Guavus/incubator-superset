@@ -2,9 +2,10 @@ set -e
 
 pushd "$(dirname "$0")"
 
+mkdir -p dist/installer
+
 PACKAGE_PATH="./dist/installer"
 PACKAGE_NAME="superset-installer" 
-
 
 VERSION=$1
 REL=$2
