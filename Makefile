@@ -19,13 +19,13 @@ SHELL := /bin/bash
 publish-all:
 	clean 
 	build-rpms 
-	publish-rpms
+	# publish-rpms
 
 
-publish-rpms:
-	@echo "= = = = = = = > START TARGET : [publish-rpms] < = = = = = = ="
-	cd rpm-mgmt; ./deploy_rpms.sh
-	@echo "= = = = = = = = > END TARGET : [publish-rpms] < = = = = = = ="
+# publish-rpms:
+# 	@echo "= = = = = = = > START TARGET : [publish-rpms] < = = = = = = ="
+# 	cd rpm-mgmt; ./deploy_rpms.sh
+# 	@echo "= = = = = = = = > END TARGET : [publish-rpms] < = = = = = = ="
 
 
 build-rpms: dist
@@ -55,10 +55,10 @@ docker_tag:
 	@echo $(DOCKER_IMAGE_TAG)
 	@echo "= = = = = = = > END TARGET : [docker_tag] < = = = = = = ="
 
-docker_push:
-	@echo "= = = = = = = > START TARGET : [docker_push] < = = = = = = ="
-	docker push $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
-	@echo "= = = = = = = > END TARGET : [docker_push] < = = = = = = ="
+# docker_push:
+# 	@echo "= = = = = = = > START TARGET : [docker_push] < = = = = = = ="
+# 	docker push $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
+# 	@echo "= = = = = = = > END TARGET : [docker_push] < = = = = = = ="
 
 
 docker_clean:
@@ -71,4 +71,4 @@ update_image_tag:
 	@echo ${SUPERSET_INVENTORY_FILE_PATH}
 	sed -i -e "s/^\(superset_image_tag*:*\).*$$/superset_image_tag: \"${DOCKER_IMAGE_TAG}\"/"  ${SUPERSET_INVENTORY_FILE_PATH}
 
-.PHONY: publish-all publish-rpms clean dist build-rpms docker_build docker_tag docker_push docker_clean update_image_tag
+.PHONY: publish-all publish-rpms clean dist build-rpms docker_build docker_tag docker_clean update_image_tag

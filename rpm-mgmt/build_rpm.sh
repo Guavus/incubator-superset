@@ -3,9 +3,11 @@ set -e
 pushd "$(dirname "$0")"
 
 source artifactory.sh
+export version=`cat ../.VERSION`
 
 PACKAGE_PATH="../dist/installer"
 PACKAGE_NAME="superset-installer" 
+
 
 VERSION=$version
 DATE=`date +'%Y%m%d'`

@@ -52,34 +52,14 @@ pipeline {
   }
   stages {
 
-    stage("Compute Docker Tag") {
+    stage("Define Release version"){
       steps {
-        echo "Run Commmands to compute Docker tag"
         script {
-          echo "************* BUILD VERSION ********************"
-          echo "${env.buildVersion}"
-          echo "************************************************"
-          if (buildType in ['feature','fix','feat']) {
-            // docker tag for a feature or fix branch  
-            env.dockerTag = ( env.BRANCH_NAME.split('/')[1] =~ /.+-\d+/ )[0]
-          } else if (buildType ==~ /PR-.*/ ){
-            // docker tag for a pull request
-            env.dockerTag = buildType
-          } else if (buildType in ['master']) {
-            // docker tag for a master branch
-            env.dockerTagVersion = "${env.buildVersion}-${env.buildNum}"
-            env.dockerTagStage = "prod"
-            env.dockerTag = "${env.dockerTagVersion}-${env.dockerTagStage}"
-          } else if ( buildType in ['release'] ){
-            // docker tag for a release branch
-            env.dockerTagVersion = "${env.branchVersion}-${env.buildNum}"
-            env.dockerTagStage = "prod"
-            env.dockerTag = "${env.dockerTagVersion}-${env.dockerTagStage}"
-          }
+          versionDefine()
         }
-        echo "Computed Docker Tag !!"
       }
     }
+
     stage("Update Superset Image Tag") {
       steps {
         // Updating Superset image tag in superset.yml
@@ -123,14 +103,23 @@ pipeline {
     stage('Create RPMs') {
       steps {
         echo "Run Commmand to trigger rpm build"
-        sh "make build-rpms"
+        //sh "make build-rpms"
+        sh .rpm-mgmt/build_rpm.sh 
       }
     }
 
-    stage("Push rpm images in artifactory") {
-      steps {
-        echo "Run Commmand to push rpm image in artifactory"
-        sh "make publish-rpms"
+    // stage("Push rpm images in artifactory") {
+    //   steps {
+    //     echo "Run Commmand to push rpm image in artifactory"
+    //     sh "make publish-rpms"
+    //   }
+    // }
+
+    stage("Push rpm images in artifactory"){
+      steps{
+        script{
+          rpm_push( env.buildType, 'dist/installer', 'ggn-dev-rpms/superset-installer' )
+        }
       }
     }
 
@@ -167,10 +156,18 @@ pipeline {
       }
     }
 
-    stage("Push docker images to artifactory") {
-      steps {
-        echo "Pushing docker image to artifactory..."
-        sh "make docker_push DOCKER_IMAGE_TAG=${env.dockerTag}"
+    // stage("Push docker images to artifactory") {
+    //   steps {
+    //     echo "Pushing docker image to artifactory..."
+    //     sh "make docker_push DOCKER_IMAGE_TAG=${env.dockerTag}"
+    //   }
+    // }
+
+    stage("Push docker images to artifactory"){
+      steps{
+        script{
+              docker_push( env.buildType, 'guavus-superset' )
+        }
       }
     }
 
