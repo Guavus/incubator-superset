@@ -2,6 +2,7 @@ set -e
 
 pushd "$(dirname "$0")"
 
+rm -rf dist
 mkdir -p dist/installer
 
 PACKAGE_PATH="./dist/installer"

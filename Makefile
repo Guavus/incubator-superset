@@ -16,32 +16,6 @@ VERSION_WITH_BUILD= $(DOCKER_IMAGE_TAG) #$(SANITIZED_APP_VERSION)_$(BUILD_NUMBER
 SHELL := /bin/bash
 
 
-publish-all:
-	clean 
-	build-rpms 
-	# publish-rpms
-
-
-# publish-rpms:
-# 	@echo "= = = = = = = > START TARGET : [publish-rpms] < = = = = = = ="
-# 	cd rpm-mgmt; ./deploy_rpms.sh
-# 	@echo "= = = = = = = = > END TARGET : [publish-rpms] < = = = = = = ="
-
-
-build-rpms: dist
-	cd rpm-mgmt && rm -rf .package && ./build_rpm.sh 
-
-
-clean:
-	@echo "= = = = = = = > START TARGET : [clean] < = = = = = = ="
-	rm -rf dist
-	@echo "= = = = = = = = > END TARGET : [clean] < = = = = = = ="
-
-
-dist:
-	mkdir -p dist/installer
-
-
 docker_build:
 	@echo "= = = = = = = > START TARGET : [docker_build] < = = = = = = ="
 	echo $(COMMIT)“ ”  $(BRANCH_ID)“ ”$(APP_VERSION)“ “$(BUILD_NUMBER)
@@ -54,11 +28,6 @@ docker_tag:
 	docker tag $(DOCKER_IMAGE_NAME) $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
 	@echo $(DOCKER_IMAGE_TAG)
 	@echo "= = = = = = = > END TARGET : [docker_tag] < = = = = = = ="
-
-# docker_push:
-# 	@echo "= = = = = = = > START TARGET : [docker_push] < = = = = = = ="
-# 	docker push $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
-# 	@echo "= = = = = = = > END TARGET : [docker_push] < = = = = = = ="
 
 
 docker_clean:
