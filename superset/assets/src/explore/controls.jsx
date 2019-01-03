@@ -1802,6 +1802,44 @@ export const controls = {
     label: t('Ranges'),
     default: '',
     description: t('Ranges to highlight with shading'),
+    arcGISValue:'',
+    isArcGISValueChange:false,
+    lastValue:'',
+    isLastValueChange:false,
+    mapStateToProps: (state) => {
+      const props = {};
+      if (state && state.controls) {
+        props.options = state.controls.ranges;
+        if(state.controls.hasOwnProperty('labels_outside')){
+          if(state.controls.labels_outside.value){
+            if(!props.options.isArcGISValueChange){
+              props.options.value = ''
+            } else{
+              props.options.value = props.options.arcGISValue;
+            }
+          }else {
+            if(!props.options.isLastValueChange){
+              props.options.value = props.options.default;
+            } else{
+              props.options.value = props.options.lastValue;
+            }
+          }
+        }
+      }
+      props.textChange = (e) => {
+        if(state.controls.hasOwnProperty('labels_outside')){
+          if(state.controls.labels_outside.value){
+            props.options.arcGISValue = e;
+            props.options.isArcGISValueChange = true;
+          }else {
+            props.options.lastValue = e;
+            props.options.isLastValueChange = true;
+          }
+        }
+      }
+
+      return props;
+    }
   },
 
   range_labels: {
