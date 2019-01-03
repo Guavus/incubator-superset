@@ -118,8 +118,8 @@ function leafletmap(slice, payload) {
       return (val - min) / (max - min);
     }
 
-    function colourGradientor(lowValueColor,highValueColor,p,max,min){
-        var rangeValue = getRangeValue(p,parseInt(max),parseInt(min));
+    function colourGradientor(lowValueColor, highValueColor, colvalue, max, min){
+        var rangeValue = getRangeValue(colvalue, parseFloat(max), parseFloat(min));
         var rgb = {}
         rgb.r = parseInt((highValueColor.r - lowValueColor.r) * rangeValue + lowValueColor.r)
         rgb.g = parseInt((highValueColor.g - lowValueColor.g) * rangeValue + lowValueColor.g)
@@ -342,6 +342,7 @@ function leafletmap(slice, payload) {
         mapInstance.removeLayer(geoJsonLayer);
         console.log(selectedColorColumn);
         renderPolygonLayer();
+        addHeatMapColorLegend();
     }
     function getColumnOptions() {
         var str = "<select>";
@@ -372,6 +373,48 @@ function leafletmap(slice, payload) {
         renderBasicMap();
         renderPolygonLayer();
         addColumnsDropdownToMap();
+        addHeatMapColorLegend();
+    }
+
+    function addHeatMapColorLegend(){
+      var colname  = getSelectedColorColumn()
+      var col = colorCols[colname];
+      var minValue = col['operator'];
+      var maxvalue = col['sqlExpression'];
+      var legends = splitRangeIntoEqualParts(parseFloat(minValue), parseFloat(maxvalue), 5);
+
+      var legend = L.control({ position: 'topleft' });
+      legend.onAdd = () => {
+        var div
+        if($('#heat-map-color-legend').length > 0){
+          div = $('#heat-map-color-legend')[0];
+        } else {
+          div = L.DomUtil.create('div');
+          div.setAttribute('id', 'heat-map-color-legend')
+        }
+        div.innerHTML = getHeatMapColorLegendHTML(colname, legends);
+        return div;
+      };
+      legend.addTo(mapInstance);
+    }
+
+    function getHeatMapColorLegendHTML(colname, legends){
+      var html = ""
+      for(var i=0; i<legends.length; i++){
+        html += "<div class='legend-div' id='legend_"+i+"' style='background-color:" + getColorForColumnVaule(colname, legends[i])+ "'></div>"
+      }
+      return html;
+    }
+
+    function splitRangeIntoEqualParts(left, right, parts) {
+      var result = [],
+          delta = (right - left) / (parts - 1);
+      while (left < right) {
+          result.push(left);
+          left += delta;
+      }
+      result.push(right);
+      return result;
     }
 
     function init() {
