@@ -1,6 +1,5 @@
 # Note for editing Makefile : Makefile requires Tab to identify commands
 
-DOCKER_REPOSITORY = artifacts.ggn.in.guavus.com:4244
 DOCKER_IMAGE_NAME = guavus-superset
 DOCKER_IMAGE_TAG = latest
 
@@ -25,7 +24,7 @@ docker_build:
 
 docker_tag:
 	@echo "= = = = = = = > START TARGET : [docker_tag] < = = = = = = ="
-	docker tag $(DOCKER_IMAGE_NAME) $(DOCKER_REPOSITORY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
+	docker tag $(DOCKER_IMAGE_NAME) $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
 	@echo $(DOCKER_IMAGE_TAG)
 	@echo "= = = = = = = > END TARGET : [docker_tag] < = = = = = = ="
 
