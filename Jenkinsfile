@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-
+@Library(‘jenkins_lib’)_
 
 
 pipeline {
@@ -119,7 +119,7 @@ pipeline {
     }
 
   }
-  
+
   post {
     always {
       slackalert('jenkins-ui-alerts')
