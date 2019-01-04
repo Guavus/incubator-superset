@@ -381,7 +381,7 @@ function leafletmap(slice, payload) {
       var col = colorCols[colname];
       var minValue = col['operator'];
       var maxvalue = col['sqlExpression'];
-      var legends = splitRangeIntoEqualParts(parseFloat(minValue), parseFloat(maxvalue), 5);
+      var legends = splitRangeIntoEqualParts(parseFloat(minValue), parseFloat(maxvalue), 10);
 
       var legend = L.control({ position: 'topleft' });
       legend.onAdd = () => {
@@ -391,6 +391,10 @@ function leafletmap(slice, payload) {
         } else {
           div = L.DomUtil.create('div');
           div.setAttribute('id', 'heat-map-color-legend')
+
+          //to show legend horizontally, un-comment below line
+          //div.classList.add("horizontal");
+
         }
         div.innerHTML = getHeatMapColorLegendHTML(colname, legends);
         return div;
@@ -399,10 +403,12 @@ function leafletmap(slice, payload) {
     }
 
     function getHeatMapColorLegendHTML(colname, legends){
-      var html = ""
+      var html = "<div class='percentage-value'>0%</div>"
+
       for(var i=0; i<legends.length; i++){
         html += "<div class='legend-div' id='legend_"+i+"' style='background-color:" + getColorForColumnVaule(colname, legends[i])+ "'></div>"
       }
+      html += "<div class='percentage-value'>100%</div>"
       return html;
     }
 
