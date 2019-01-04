@@ -61,7 +61,7 @@ from .base import (
     json_error_response, SupersetFilter, SupersetModelView, YamlExportMixin,
 )
 from .utils import bootstrap_user_data
-from superset.views.superset_decorators import check_target_url
+from superset.views.superset_decorators import redirect_to_target_url
 
 config = app.config
 stats_logger = config.get('STATS_LOGGER')
@@ -2665,7 +2665,7 @@ class Superset(BaseSupersetView):
             error_msg=get_error_msg(),
         ), 500
 
-    @check_target_url
+    @redirect_to_target_url
     @expose('/welcome')
     def welcome(self):
         """Personalized welcome page"""

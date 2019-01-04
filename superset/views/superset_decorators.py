@@ -3,7 +3,7 @@ from flask import (
     redirect, session
 )
 
-def check_target_url(f):
+def redirect_to_target_url(f):
     def wraps(self, *args, **kwargs):
         if 'target_url' in session:
             if session['target_url'] != '':
