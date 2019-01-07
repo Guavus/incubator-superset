@@ -778,43 +778,74 @@ class SqlaTable(Model, BaseDatasource):
         # add check for hive and time filter
         if(query_obj['is_timeseries'] and (engine.url.drivername == 'hive')):
             startdate = query_obj['from_dttm']
-            print(startdate)
+            print('startdate--',startdate)
             enddate = query_obj['to_dttm']
-            print(enddate)
+            print('enddate--',enddate)
             #---------- logic to convert time range to query string-----------------
             st = startdate
             en = enddate
-            timeSeq = list()
-            # sample gran is 1hr and point are created as per delta of gran ,
-            # so we need to take care of grand while forming query
-            gran_seconds = 3600 
-            while st < en:
-                timeSeq.append(st.strftime("(year=%Y AND month = %m AND day = %d AND hour = %H AND minute=%M)"))
-                st = st + timedelta(seconds = gran_seconds)
 
-            whereClause = " OR ".join(timeSeq) 
-                     
-            print(whereClause)  
+            if st and en:
+                #print('st timestamp',st.timestamp())
+                #print('ed timestamp',en.timestamp())
+                timestamp_diff = en.timestamp() - st.timestamp()
+                print('diff timestamp',timestamp_diff)
 
-            #---------- end logic to convert time range to query string -----------------
-            queryStr  =  whereClause
+                timeSeq = list()
+                # sample gran is 900 and point are created as per delta of gran ,
+                # so we need to take care of grand while forming query
+                gran_seconds = 900 
+                # 6h
+                if( timestamp_diff <= 21600 ):
+                    gran_seconds = 900
+                # 6h-1d    
+                elif( timestamp_diff > 21600 and timestamp_diff <= 86400):
+                    gran_seconds = 3600
+                # 1d-1m    
+                elif ( timestamp_diff > 86400 and  timestamp_diff <= 2629743 ):
+                    gran_seconds = 86400
+                #1m-1yr    
+                elif ( timestamp_diff > 2629743 and timestamp_diff <= 31556926 ) :
+                    gran_seconds = 2629743
+                #1yr    
+                elif( timestamp_diff > 31556926 ):   
+                    gran_seconds  = 31556926 
+
+                while st < en:
+                    if ( gran_seconds == 900 ):
+                        timeSeq.append(st.strftime("(year=%Y AND month = %m AND day = %d AND hour = %H AND minute=%M)"))
+                    elif ( gran_seconds == 3600 ):
+                       timeSeq.append(st.strftime("( year = %Y AND month = %m AND day = %d AND hour = %H )"))
+                    elif ( gran_seconds == 86400 ) : 
+                        timeSeq.append(st.strftime("( year = %Y AND month = %m AND day = %d )"))  
+                    elif ( gran_seconds == 2629743 ) : 
+                        timeSeq.append(st.strftime("( year = %Y AND month = %m )"))
+                    elif ( gran_seconds == 31556926 ) : 
+                        timeSeq.append(st.strftime("( year = %Y)"))            
+                    
+                    st = st + timedelta(seconds = gran_seconds)
+
+                whereClause = " OR ".join(timeSeq) 
+                        
+                #print('whereClause---- ',whereClause)  
+
+                #---------- end logic to convert time range to query string -----------------
+                
+                # regex for replace  where clause timrrange query ts <= 123455.00
+                # http://txt2re.com use this site to generate regex
+                # here time in float so regex will update as per time format in sql
             
-            # regex for replace  where clause timrrange query ts <= 123455.00
-            # http://txt2re.com use this site to generate regex
-            # here time in float so regex will update as per time format in sql
-          
-            regex_st = "(`)((?:[a-z][a-z]+))(`)(\\s+)(>)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
-            regex_et = "(AND)(\\s+)(`)((?:[a-z][a-z]+))(`)(\\s+)(<)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
+                regex_st = "((?:[a-z][a-z]+))(\\s+)(>)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
+                regex_et = "(AND)(\\s+)((?:[a-z][a-z]+))(\\s+)(<)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
+                #print('original sql ------ ',sql)
+                x = re.sub(regex_st, whereClause, sql)
+                x = re.sub(regex_et, '\n', x)
+                #print('replaced sql ------ ',x)
 
-            x = re.sub(regex_st, queryStr, sql)
-            print(x)
-            x = re.sub(regex_et, '\n', x)
-            print(x)
-
-            # here we need to  rest x as sql
-            #sql = x
+                sql = x
             
         try:
+            print('applied sql---->',sql)
             df = self.database.get_df(sql, self.schema)
         except Exception as e:
             status = QueryStatus.FAILED
