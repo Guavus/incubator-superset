@@ -129,7 +129,7 @@ function leafletmap(slice, payload) {
         return 'rgb('+rgb.r +',' + rgb.g +',' +rgb.b +','+rgb.a + ')';
     }
 
-    function getColorForColumnVaule(colname, colvalue) {
+    function getColorForColumnValue(colname, colvalue) {
         // todo: current object is AdhocFilter,so propertynames are not match as we need
         // create AdhocColumn with correct names
         var col = colorCols[colname];
@@ -147,7 +147,7 @@ function leafletmap(slice, payload) {
         return {
             'name': colname,
             'value': colvalue,
-            'color': getColorForColumnVaule(colname, colvalue)
+            'color': getColorForColumnValue(colname, colvalue)
         }
     }
 
@@ -386,11 +386,12 @@ function leafletmap(slice, payload) {
         maxvalue: col['sqlExpression'],
         L: L,
         id: 'map-legend-container',
-        getColorForColumnVaule: getColorForColumnVaule,
+        getColorForColumnValue: getColorForColumnValue,
         mapInstance: mapInstance
       });
       legend.addMapLegend();
     }
+
 
     function init() {
 

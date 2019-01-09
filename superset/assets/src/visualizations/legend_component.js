@@ -47,7 +47,7 @@ export class LegendComponent {
     let html = `<div class='map-legend-label'>0%</div>`
 
     for (let i = 0; i < legends.length; i++) {
-      html += `<div class='map-legend-div' id='legend_${i}' style='background-color: ${this.data.getColorForColumnVaule(colname, legends[i])}'></div>`
+      html += `<div class='map-legend-div' id='legend_${i}' style='background-color: ${this.data.getColorForColumnValue(colname, legends[i])}'></div>`
     }
     html += `<div class='map-legend-label'>100%</div>`
     return html;
