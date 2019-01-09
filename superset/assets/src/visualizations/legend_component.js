@@ -1,12 +1,11 @@
 /*
 data should contain below params
   {
-    colorColumn => name of column,
     minValue => min value to generate legend,
     maxvalue => max value to generate legend,
     L => leaflet,
     id => where do you want to add legend container,
-    getColorForColumnVaule =>  get color gradient as per column value  ,
+    getLegendColor =>  get legend color as per solution,
     mapInstance =>  where do you want to add legend
   }
 */
@@ -18,7 +17,6 @@ export class LegendComponent {
   }
 
   addMapLegend() {
-    const colname = this.data.colorColumn;
     const minValue = this.data.minValue;
     const maxvalue = this.data.maxvalue;
     const legends = this.splitRangeIntoEqualParts(parseFloat(minValue), parseFloat(maxvalue), 10);
@@ -36,18 +34,18 @@ export class LegendComponent {
         //div.classList.add("map-legend-container-horizontal");
 
       }
-      div.innerHTML = this.getLegendComponent(colname, legends);
+      div.innerHTML = this.getLegendComponent(legends);
       return div;
     };
     legend.addTo(this.data.mapInstance);
   }
 
 
-  getLegendComponent(colname, legends) {
+  getLegendComponent(legends) {
     let html = `<div class='map-legend-label'>0%</div>`
 
     for (let i = 0; i < legends.length; i++) {
-      html += `<div class='map-legend-div' id='legend_${i}' style='background-color: ${this.data.getColorForColumnValue(colname, legends[i])}'></div>`
+      html += `<div class='map-legend-div' id='legend_${i}' style='background-color: ${this.data.getLegendColor(legends[i])}'></div>`
     }
     html += `<div class='map-legend-label'>100%</div>`
     return html;

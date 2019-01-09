@@ -381,17 +381,19 @@ function leafletmap(slice, payload) {
       var colname  = getSelectedColorColumn()
       var col = colorCols[colname];
       var legend = new LegendComponent({
-        colorColumn: colname,
         minValue: col['operator'],
         maxvalue: col['sqlExpression'],
         L: L,
         id: 'map-legend-container',
-        getColorForColumnValue: getColorForColumnValue,
+        getLegendColor: getLegendColor,
         mapInstance: mapInstance
       });
       legend.addMapLegend();
     }
 
+    function getLegendColor(val){
+      return getColorForColumnValue(getSelectedColorColumn(), val)
+    }
 
     function init() {
 
