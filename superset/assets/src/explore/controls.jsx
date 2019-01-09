@@ -1802,39 +1802,36 @@ export const controls = {
     label: t('Ranges'),
     default: '',
     description: t('Ranges to highlight with shading'),
-    arcGISValue:'',
-    isArcGISValueChange:false,
-    lastValue:'',
-    isLastValueChange:false,
+    labels_outside : {
+      true: {
+        lastValue: '',
+        isValueChanged:false
+      },
+      false :{
+        lastValue: '',
+        isValueChanged:false
+      }
+    },
     mapStateToProps: (state) => {
       const props = {};
       if (state && state.controls) {
         props.options = state.controls.ranges;
         if(state.controls.hasOwnProperty('labels_outside')){
-          if(state.controls.labels_outside.value){
-            if(!props.options.isArcGISValueChange){
-              props.options.value = ''
-            } else{
-              props.options.value = props.options.arcGISValue;
-            }
-          }else {
-            if(!props.options.isLastValueChange){
-              props.options.value = props.options.default;
-            } else{
-              props.options.value = props.options.lastValue;
-            }
+          const val = props.options.labels_outside[state.controls.labels_outside.value];
+          if(val.isValueChanged){
+            props.options.value = val.lastValue;
+          } else {
+            props.options.value = (state.controls.labels_outside.value) ? '' : props.options.default;
           }
         }
       }
       props.textChange = (e) => {
         if(state.controls.hasOwnProperty('labels_outside')){
-          if(state.controls.labels_outside.value){
-            props.options.arcGISValue = e;
-            props.options.isArcGISValueChange = true;
-          }else {
-            props.options.lastValue = e;
-            props.options.isLastValueChange = true;
+          const labelOutsideValue = state.controls.labels_outside.value
+          if(!props.options.labels_outside[labelOutsideValue].isValueChanged){
+            props.options.labels_outside[labelOutsideValue].isValueChanged = true;
           }
+          props.options.labels_outside[labelOutsideValue].lastValue = e;
         }
       }
 
