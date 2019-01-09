@@ -5,6 +5,7 @@ import * as turf from '@turf/turf';
 import * as L from '../../node_modules/leaflet/dist/leaflet.js';
 import * as esri from '../../node_modules/esri-leaflet/dist/esri-leaflet.js';
 import * as GRAPHICON from './graphIcon.js';
+import { LegendComponent } from './legend_component.js';
 
 /**
  * Leaflet Map Visualization
@@ -342,7 +343,7 @@ function leafletmap(slice, payload) {
         mapInstance.removeLayer(geoJsonLayer);
         console.log(selectedColorColumn);
         renderPolygonLayer();
-        addHeatMapColorLegend();
+        addMapLegends();
     }
     function getColumnOptions() {
         var str = "<select>";
@@ -373,54 +374,22 @@ function leafletmap(slice, payload) {
         renderBasicMap();
         renderPolygonLayer();
         addColumnsDropdownToMap();
-        addHeatMapColorLegend();
+        addMapLegends();
     }
 
-    function addHeatMapColorLegend(){
+    function addMapLegends(){
       var colname  = getSelectedColorColumn()
       var col = colorCols[colname];
-      var minValue = col['operator'];
-      var maxvalue = col['sqlExpression'];
-      var legends = splitRangeIntoEqualParts(parseFloat(minValue), parseFloat(maxvalue), 10);
-
-      var legend = L.control({ position: 'topleft' });
-      legend.onAdd = () => {
-        var div
-        if($('#heat-map-color-legend').length > 0){
-          div = $('#heat-map-color-legend')[0];
-        } else {
-          div = L.DomUtil.create('div');
-          div.setAttribute('id', 'heat-map-color-legend')
-
-          //to show legend horizontally, un-comment below line
-          //div.classList.add("horizontal");
-
-        }
-        div.innerHTML = getHeatMapColorLegendHTML(colname, legends);
-        return div;
-      };
-      legend.addTo(mapInstance);
-    }
-
-    function getHeatMapColorLegendHTML(colname, legends){
-      var html = "<div class='percentage-value'>0%</div>"
-
-      for(var i=0; i<legends.length; i++){
-        html += "<div class='legend-div' id='legend_"+i+"' style='background-color:" + getColorForColumnVaule(colname, legends[i])+ "'></div>"
-      }
-      html += "<div class='percentage-value'>100%</div>"
-      return html;
-    }
-
-    function splitRangeIntoEqualParts(left, right, parts) {
-      var result = [],
-          delta = (right - left) / (parts - 1);
-      while (left < right) {
-          result.push(left);
-          left += delta;
-      }
-      result.push(right);
-      return result;
+      var legend = new LegendComponent({
+        colorColumn: colname,
+        minValue: col['operator'],
+        maxvalue: col['sqlExpression'],
+        L: L,
+        id: 'map-legend-container',
+        getColorForColumnVaule: getColorForColumnVaule,
+        mapInstance: mapInstance
+      });
+      legend.addMapLegend();
     }
 
     function init() {

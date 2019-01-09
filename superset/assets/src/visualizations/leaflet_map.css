@@ -28,27 +28,27 @@
     background:white !important
 }
 
+/* style for map legend */
 
-
-#heat-map-color-legend{
+#map-legend-container{
   margin-top: 30px;
 }
 
-.legend-div{
+.map-legend-div{
   width: 20px;
   height:10px;
   margin-left: 2px;
 }
 
-.horizontal{
+.map-legend-container-horizontal{
   display: flex;
 }
-.horizontal .legend-div{
+.map-legend-container-horizontal .map-legend-div{
   margin-left: 0px;
   margin-top: 4px;
 }
 
-.percentage-value{
+.map-legend-label{
   width: 20px;
   text-align: center;
   margin-left: 2px;
