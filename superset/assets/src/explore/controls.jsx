@@ -1802,7 +1802,7 @@ export const controls = {
     label: t('Ranges'),
     default: '',
     description: t('Ranges to highlight with shading'),
-    labels_outside : {
+    arcGIS_state : {
       true: {
         lastValue: '',
         isValueChanged:false
@@ -1817,7 +1817,7 @@ export const controls = {
       if (state && state.controls) {
         props.options = state.controls.ranges;
         if(state.controls.hasOwnProperty('labels_outside')){
-          const val = props.options.labels_outside[state.controls.labels_outside.value];
+          const val = props.options.arcGIS_state[state.controls.labels_outside.value];
           if(val.isValueChanged){
             props.options.value = val.lastValue;
           } else {
@@ -1828,10 +1828,10 @@ export const controls = {
       props.textChange = (e) => {
         if(state.controls.hasOwnProperty('labels_outside')){
           const labelOutsideValue = state.controls.labels_outside.value
-          if(!props.options.labels_outside[labelOutsideValue].isValueChanged){
-            props.options.labels_outside[labelOutsideValue].isValueChanged = true;
+          if(!props.options.arcGIS_state[labelOutsideValue].isValueChanged){
+            props.options.arcGIS_state[labelOutsideValue].isValueChanged = true;
           }
-          props.options.labels_outside[labelOutsideValue].lastValue = e;
+          props.options.arcGIS_state[labelOutsideValue].lastValue = e;
         }
       }
 
