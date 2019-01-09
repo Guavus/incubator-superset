@@ -451,6 +451,16 @@ ENABLE_FLASK_COMPRESS = True
 TIMEZONE = 'UTC'
 COPYRIGHT = '© 2018 Guavus'
 
+HIVE_PARTITIONS = {
+    'yearField': 'year',
+    'monthField':'month',
+    'dayField':'day',
+    'hourField':'hour',
+    'minuteField':'minute',
+}
+
+CREATE_HIVE_PARTITION_SQL_QUERY = True
+
 try:
     if CONFIG_PATH_ENV_VAR in os.environ:
         # Explicitly import config module that is not in pythonpath; useful

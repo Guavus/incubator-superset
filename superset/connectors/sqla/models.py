@@ -37,6 +37,7 @@ from datetime import timedelta
 config = app.config
 
 
+
 class AnnotationDatasource(BaseDatasource):
     """ Dummy object so we can query annotations using 'Viz' objects just like
         regular datasources.
@@ -776,7 +777,8 @@ class SqlaTable(Model, BaseDatasource):
         #check engine
         engine = self.database.get_sqla_engine(None)
         # add check for hive and time filter
-        if(query_obj['is_timeseries'] and (engine.url.drivername == 'hive')):
+        if( config.get('CREATE_HIVE_PARTITION_SQL_QUERY') and query_obj['is_timeseries'] and (engine.url.drivername == 'hive') ):
+            hive_parts = config.get('HIVE_PARTITIONS')
             startdate = query_obj['from_dttm']
             print('startdate--',startdate)
             enddate = query_obj['to_dttm']
@@ -813,15 +815,15 @@ class SqlaTable(Model, BaseDatasource):
 
                 while st < en:
                     if ( gran_seconds == 900 ):
-                        timeSeq.append(st.strftime("(year=%Y AND month = %m AND day = %d AND hour = %H AND minute=%M)"))
+                        timeSeq.append(st.strftime("( "+hive_parts['yearField']+" = %Y AND "+hive_parts['monthField']+" = %m AND "+hive_parts['dayField']+" = %d AND "+hive_parts['hourField']+" = %H AND "+hive_parts['minuteField']+" =%M)"))
                     elif ( gran_seconds == 3600 ):
-                       timeSeq.append(st.strftime("( year = %Y AND month = %m AND day = %d AND hour = %H )"))
+                        timeSeq.append(st.strftime("( "+hive_parts['yearField']+" = %Y AND "+hive_parts['monthField']+" = %m AND "+hive_parts['dayField']+" = %d AND "+hive_parts['hourField']+" = %H )"))
                     elif ( gran_seconds == 86400 ) : 
-                        timeSeq.append(st.strftime("( year = %Y AND month = %m AND day = %d )"))  
+                        timeSeq.append(st.strftime("( "+hive_parts['yearField']+" = %Y AND "+hive_parts['monthField']+" = %m AND "+hive_parts['dayField']+" = %d )"))  
                     elif ( gran_seconds == 2629743 ) : 
-                        timeSeq.append(st.strftime("( year = %Y AND month = %m )"))
+                        timeSeq.append(st.strftime("( "+hive_parts['yearField']+" = %Y AND "+hive_parts['monthField']+" = %m )"))
                     elif ( gran_seconds == 31556926 ) : 
-                        timeSeq.append(st.strftime("( year = %Y)"))            
+                        timeSeq.append(st.strftime("( "+hive_parts['yearField']+" = %Y)"))            
                     
                     st = st + timedelta(seconds = gran_seconds)
 
