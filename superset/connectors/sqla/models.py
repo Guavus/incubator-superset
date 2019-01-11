@@ -31,8 +31,7 @@ from superset.models.core import Database
 from superset.models.helpers import QueryResult, has_kerberos_ticket
 from superset.models.helpers import set_perm
 from superset.utils import DTTM_ALIAS, QueryStatus
-import re
-from datetime import timedelta
+
 
 config = app.config
 
@@ -774,80 +773,13 @@ class SqlaTable(Model, BaseDatasource):
         status = QueryStatus.SUCCESS
         error_message = None
         df = None
-        #check engine
-        engine = self.database.get_sqla_engine(None)
-        # add check for hive and time filter
-        if( config.get('CREATE_HIVE_PARTITION_SQL_QUERY') and query_obj['is_timeseries'] and (engine.url.drivername == 'hive') ):
-            hive_parts = config.get('HIVE_PARTITIONS')
-            startdate = query_obj['from_dttm']
-            print('startdate--',startdate)
-            enddate = query_obj['to_dttm']
-            print('enddate--',enddate)
-            #---------- logic to convert time range to query string-----------------
-            st = startdate
-            en = enddate
-
-            if st and en:
-                #print('st timestamp',st.timestamp())
-                #print('ed timestamp',en.timestamp())
-                timestamp_diff = en.timestamp() - st.timestamp()
-                print('diff timestamp',timestamp_diff)
-
-                timeSeq = list()
-                # sample gran is 900 and point are created as per delta of gran ,
-                # so we need to take care of grand while forming query
-                gran_seconds = 900 
-                # 6h
-                if( timestamp_diff <= 21600 ):
-                    gran_seconds = 900
-                # 6h-1d    
-                elif( timestamp_diff > 21600 and timestamp_diff <= 86400):
-                    gran_seconds = 3600
-                # 1d-1m    
-                elif ( timestamp_diff > 86400 and  timestamp_diff <= 2629743 ):
-                    gran_seconds = 86400
-                #1m-1yr    
-                elif ( timestamp_diff > 2629743 and timestamp_diff <= 31556926 ) :
-                    gran_seconds = 2629743
-                #1yr    
-                elif( timestamp_diff > 31556926 ):   
-                    gran_seconds  = 31556926 
-
-                while st < en:
-                    if ( gran_seconds == 900 ):
-                        timeSeq.append(st.strftime("( "+hive_parts['yearField']+" = %Y AND "+hive_parts['monthField']+" = %m AND "+hive_parts['dayField']+" = %d AND "+hive_parts['hourField']+" = %H AND "+hive_parts['minuteField']+" =%M)"))
-                    elif ( gran_seconds == 3600 ):
-                        timeSeq.append(st.strftime("( "+hive_parts['yearField']+" = %Y AND "+hive_parts['monthField']+" = %m AND "+hive_parts['dayField']+" = %d AND "+hive_parts['hourField']+" = %H )"))
-                    elif ( gran_seconds == 86400 ) : 
-                        timeSeq.append(st.strftime("( "+hive_parts['yearField']+" = %Y AND "+hive_parts['monthField']+" = %m AND "+hive_parts['dayField']+" = %d )"))  
-                    elif ( gran_seconds == 2629743 ) : 
-                        timeSeq.append(st.strftime("( "+hive_parts['yearField']+" = %Y AND "+hive_parts['monthField']+" = %m )"))
-                    elif ( gran_seconds == 31556926 ) : 
-                        timeSeq.append(st.strftime("( "+hive_parts['yearField']+" = %Y)"))            
-                    
-                    st = st + timedelta(seconds = gran_seconds)
-
-                whereClause = " OR ".join(timeSeq) 
-                        
-                #print('whereClause---- ',whereClause)  
-
-                #---------- end logic to convert time range to query string -----------------
-                
-                # regex for replace  where clause timrrange query ts <= 123455.00
-                # http://txt2re.com use this site to generate regex
-                # here time in float so regex will update as per time format in sql
-            
-                regex_st = "((?:[a-z][a-z]+))(\\s+)(>)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
-                regex_et = "(AND)(\\s+)((?:[a-z][a-z]+))(\\s+)(<)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
-                #print('original sql ------ ',sql)
-                x = re.sub(regex_st, whereClause, sql)
-                x = re.sub(regex_et, '\n', x)
-                #print('replaced sql ------ ',x)
-
-                sql = x
+        
+        """Apply HIVE_QUERY_GENERATOR """
+        HIVE_QUERY_GENERATOR = config.get('HIVE_QUERY_GENERATOR')
+        if HIVE_QUERY_GENERATOR:
+            sql = HIVE_QUERY_GENERATOR(sql,query_obj,self.database)
             
         try:
-            print('applied sql---->',sql)
             df = self.database.get_df(sql, self.schema)
         except Exception as e:
             status = QueryStatus.FAILED
