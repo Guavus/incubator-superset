@@ -17,8 +17,7 @@ import json
 import os
 import sys
 
-import re
-from datetime import timedelta
+from superset.hive_query import defaultHiveQueryGenerator
 
 from dateutil import tz
 from flask_appbuilder.security.manager import AUTH_DB
@@ -454,64 +453,13 @@ ENABLE_FLASK_COMPRESS = True
 TIMEZONE = 'UTC'
 COPYRIGHT = '© 2018 Guavus'
 
-# in seconds
-HIVE_TABLE_GRAN  = 900
-
-HIVE_PARTITIONS = {
-    'yearField': 'year',
-    'monthField':'month',
-    'dayField':'day',
-    'hourField':'hour',
-    'minuteField':'minute',
-}
- 
-
-
-def DEFAULT_HIVE_QUERY_GENERATOR(sql, query_obj,database):
-
-    #check engine
-    engine = database.get_sqla_engine(None)
-    # add check for hive and convert sql query
-    if( query_obj['is_timeseries'] and (engine.url.drivername == 'hive') ):
-        print('-- DEFAULT_HIVE_QUERY_GENERATOR --')
-        hive_parts = HIVE_PARTITIONS
-        st = query_obj['from_dttm']
-        print('startdate--',st)
-        en = query_obj['to_dttm']
-        print('enddate--',en)
-        if st and en:
-            timeSeq = list()
-            
-            gran_seconds = HIVE_TABLE_GRAN 
-
-            while st <= en:
-                timeSeq.append(st.strftime("( "+hive_parts['yearField']+" = %Y AND "+hive_parts['monthField']+" = %m AND "+hive_parts['dayField']+" = %d AND "+hive_parts['hourField']+" = %H AND "+hive_parts['minuteField']+" =%M)"))
-                st = st + timedelta(seconds = gran_seconds)
-
-            whereClause = " OR ".join(timeSeq) 
-        
-            regex_st = "((?:[a-z][a-z]+))(\\s+)(>)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
-            regex_et = "(AND)(\\s+)((?:[a-z][a-z]+))(\\s+)(<)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
-           
-            sql_updated = re.sub(regex_st, whereClause, sql)
-            sql_updated = re.sub(regex_et, '\n', sql_updated)
-           
-            print('sql_updated ---->',sql_updated)
-           
-            return sql_updated 
-
-        else:
-            return   sql         
-    
-    else:
-        return   sql      
 
 # A function that intercepts the SQL to be executed and can alter it.
 #
 #    def HIVE_QUERY_GENERATOR(sql, query_obj):
 #        dttm = datetime.now().isoformat()
 #        return sql +" WHERE XYZ > 0 "
-HIVE_QUERY_GENERATOR  = DEFAULT_HIVE_QUERY_GENERATOR
+HIVE_QUERY_GENERATOR  = defaultHiveQueryGenerator
 
 try:
     if CONFIG_PATH_ENV_VAR in os.environ:
