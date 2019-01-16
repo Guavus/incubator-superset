@@ -79,10 +79,14 @@ def defaultHiveQueryGenerator(sql, query_obj,database):
             if st and en and gran_seconds :
                 timeSeq = list()
                 while st <= en:
-                    timeSeq.append(st.strftime("( "+partitions['year']+" = %Y AND "+partitions['month']+" = %m AND "+partitions['day']+" = %d AND "+partitions['hour']+" = %H AND "+partitions['minute']+" =%M)"))
+                    timeSeq.append(st.strftime("( "+partitions['year']+" = %Y AND "+partitions['month']+" = %m AND "+partitions['day']+" = %d AND "+partitions['hour']+" = %H AND "+partitions['minute']+" = %M )"))
                     st = st + timedelta(seconds = gran_seconds)
 
                 whereClause = " OR ".join(timeSeq) 
+
+                # all time based  condition  should be in AND with other filters
+                if timeSeq and len(timeSeq) > 1 :
+                   whereClause = " ( " + whereClause + " ) "
             
                 regex_st = "(`)((?:[a-z][a-z]+))(`)(\\s+)(>)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
                 regex_et = "(AND)(\\s+)(`)((?:[a-z][a-z]+))(`)(\\s+)(<)(=)(\\s+)([+-]?\\d*\\.\\d+)(?![-+0-9\\.])"
