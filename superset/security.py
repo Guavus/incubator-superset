@@ -82,7 +82,6 @@ OBJECT_SPEC_PERMISSIONS = set([
 class SupersetSecurityManager(SecurityManager):
 
     def __init__(self,appbuilder):
-        # app = self.appbuilder.get_app
         appbuilder.get_app.config.setdefault('AUTH_LDAP_SEARCH_FILTER', '')
         super(SupersetSecurityManager, self).__init__(appbuilder)
     
