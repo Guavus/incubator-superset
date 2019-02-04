@@ -16,6 +16,7 @@ import imp
 import json
 import os
 import sys
+from datetime import datetime
 
 from dateutil import tz
 from flask_appbuilder.security.manager import AUTH_DB
@@ -449,7 +450,7 @@ ENABLE_FLASK_COMPRESS = True
 
 #add timezone and copyright property for footer display
 TIMEZONE = 'UTC'
-COPYRIGHT = '© 2018 Guavus'
+COPYRIGHT = '© '+ datetime.today().strftime('%Y') +' Guavus'
 
 try:
     if CONFIG_PATH_ENV_VAR in os.environ:
