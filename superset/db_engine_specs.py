@@ -1257,7 +1257,7 @@ class HiveEngineSpec(PrestoEngineSpec):
         backend_name = url.get_backend_name()
 
         # Must be Hive connection, enable impersonation, and set param auth=LDAP|KERBEROS
-        if (backend_name == 'hive' and 'auth' in url.query.keys() and
+        if (backend_name == 'hive' and
                 impersonate_user is True and username is not None):
             configuration['hive.server2.proxy.user'] = username
         return configuration

@@ -735,6 +735,10 @@ class Database(Model, AuditMixinNullable, ImportMixin):
     @utils.memoized(
         watch=('impersonate_user', 'sqlalchemy_uri_decrypted', 'extra'))
     def get_sqla_engine(self, schema=None, nullpool=True, user_name=None):
+        username = g.user.username if g.user is not None else None
+        if user_name is None and self.impersonate_user:
+            user_name = username
+
         extra = self.get_extra()
         url = make_url(self.sqlalchemy_uri_decrypted)
         url = self.db_engine_spec.adjust_database_uri(url, schema)
@@ -762,12 +766,13 @@ class Database(Model, AuditMixinNullable, ImportMixin):
                 self.impersonate_user,
                 effective_username))
         if configuration:
-            params['connect_args'] = {'configuration': configuration}
+            d = params.get('connect_args', {})
+            d['configuration'] = configuration
+            params['connect_args'] = d
 
         if('connect_args' in params):
             params['connect_args'].update(get_updated_connect_args(url,params['connect_args']))
             remove_http_params_from(url,params['connect_args'])
-
         DB_CONNECTION_MUTATOR = config.get('DB_CONNECTION_MUTATOR')
         if DB_CONNECTION_MUTATOR:
             url, params = DB_CONNECTION_MUTATOR(
