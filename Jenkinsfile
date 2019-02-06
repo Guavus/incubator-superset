@@ -2,7 +2,7 @@
 @Library('jenkins_lib')_
 
 pipeline {
-  agent any
+  agent {label ‘slave01’}
 
     environment {
     // Define global environment variables in this 
