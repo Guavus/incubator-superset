@@ -43,4 +43,4 @@ update_image_tag:
 	@echo ${SUPERSET_INVENTORY_FILE_PATH}
 	sed -i -e "s/^\(superset_image_tag*:*\).*$$/superset_image_tag: \"${DOCKER_IMAGE_TAG}\"/"  ${SUPERSET_INVENTORY_FILE_PATH}
 
-.PHONY: publish-all publish-rpms clean dist build-rpms docker_build docker_tag docker_push docker_clean update_image_tag
+.PHONY: publish-all publish-rpms clean dist build-rpms docker_build docker_tag docker_clean update_image_tag
