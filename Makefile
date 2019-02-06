@@ -28,6 +28,10 @@ docker_tag:
 	@echo $(DOCKER_IMAGE_TAG)
 	@echo "= = = = = = = > END TARGET : [docker_tag] < = = = = = = ="
 
+docker_push:
+	@echo "= = = = = = = > START TARGET : [docker_push] < = = = = = = ="
+	docker push $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
+	@echo "= = = = = = = > END TARGET : [docker_push] < = = = = = = ="
 
 docker_clean:
 	@echo "= = = = = = = > START TARGET : [docker_clean] < = = = = = = ="
