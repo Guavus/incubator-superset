@@ -76,6 +76,13 @@ pipeline {
       }
     }
 
+    stage('Create Wheel file') {
+      steps {
+        echo "Run Commmand to create wheel file"
+        sh  "./create_whl.sh"
+      }
+    }
+
     stage("Deploy the particular plugin") {
       when {
         expression {

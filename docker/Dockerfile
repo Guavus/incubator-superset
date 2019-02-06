@@ -14,14 +14,18 @@ RUN useradd --user-group --create-home --no-log-init --shell /bin/bash ${user}
 RUN apt-get update -y
 
 RUN apt-get install -y build-essential libssl-dev \
-    libffi-dev python3-dev libsasl2-dev libldap2-dev libxi-dev \
-    curl \
-    python3-pip \
-    libsasl2-modules libsasl2-2 libsasl2-modules-gssapi-mit krb5-user
-
-RUN mkdir -p $HOME/incubator-superset \
+        libffi-dev python3-dev libsasl2-dev libldap2-dev \
+        curl \
+        python3-pip \
+        libsasl2-modules libsasl2-2 libsasl2-modules-gssapi-mit krb5-user \
+        && \
+    mkdir -p $HOME/incubator-superset \
     mkdir -p /etc/security/keytabs/ \
-    mkdir -p /etc/cert/
+    mkdir -p /etc/cert/ \
+    && \
+    apt-get autoremove -y && \
+    apt-get clean && rm -rf "/var/lib/apt/lists/*" && \
+    echo OK
 
 WORKDIR $HOME/incubator-superset
 
