@@ -16,6 +16,7 @@ RUN apt-get update -y
 RUN apt-get install -y build-essential libssl-dev \
         libffi-dev python3-dev libsasl2-dev libldap2-dev \
         curl \
+        python3.6 \
         python3-pip \
         libsasl2-modules libsasl2-2 libsasl2-modules-gssapi-mit krb5-user \
         && \
@@ -31,7 +32,9 @@ WORKDIR $HOME/incubator-superset
 
 COPY ./ ./
 
-RUN pip3 install ./dist/*.whl
+RUN pip3 install --no-cache-dir \
+        ./dist/*.whl \
+        click==6.7
 
 RUN curl -sL https://deb.nodesource.com/setup_8.x |  bash -
 RUN apt-get install -y nodejs
@@ -41,6 +44,8 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -; \
     apt-get install -y yarn
 
 RUN cd superset/assets && yarn && yarn run build && cd ../../
+
+RUN apt-get purge --auto-remove -y nodejs
 
 ENV PATH=/home/${user}/incubator-superset/superset/bin:$PATH \
     PYTHONPATH=./superset/:$PYTHONPATH
