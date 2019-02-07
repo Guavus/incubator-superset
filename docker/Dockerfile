@@ -38,6 +38,7 @@ WORKDIR $HOME/incubator-superset
 COPY ./ ./
 
 RUN pip install --upgrade setuptools pip \
+    && pip install wheel && python ./setup.py bdist_wheel \ 
     && pip install ./dist/*.whl \
     && rm -rf /root/.cache/pip
 
@@ -50,7 +51,6 @@ RUN cd superset/assets \
     apt-get remove -y \
         \*-dev \
         build-essential \
-        python-pip \
         python-wheel
 
 RUN apt-get purge --auto-remove -y nodejs
