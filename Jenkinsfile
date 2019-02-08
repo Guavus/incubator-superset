@@ -75,13 +75,13 @@ pipeline {
         }
       }
     }
-
-    stage('Create Wheel file') {
-      steps {
-        echo "Run Commmand to create wheel file"
-        sh  "./create_whl.sh"
-      }
-    }
+    // Creating Wheel file outside docker..Commenting for now
+    // stage('Create Wheel file') {
+    //   steps {
+    //     echo "Run Commmand to create wheel file"
+    //     sh  "./create_whl.sh"
+    //   }
+    // }
 
     stage("Deploy the particular plugin") {
       when {
