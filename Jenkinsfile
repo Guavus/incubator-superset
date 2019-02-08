@@ -117,6 +117,12 @@ pipeline {
       }
     }
 
+    stage("Clean Previous Docker Images") {
+        steps {
+            echo "Removing previous docker images..."
+            sh "make docker_clean"
+        }
+    }
   }
 
   post {
