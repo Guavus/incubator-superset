@@ -79,7 +79,7 @@ setup(
         'idna',
         'isodate',
         'markdown<3.0.0',
-        'pandas>=0.18.0',
+        'pandas==0.23.1',
         'parsedatetime',
         'pathlib2',
         'polyline',
