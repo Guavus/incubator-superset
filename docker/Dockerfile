@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.6.5
 MAINTAINER Arpit Agarwal <arpit.agarwal@guavus.com>
 
 # Configure environment
@@ -14,7 +14,7 @@ RUN useradd --user-group --create-home --no-log-init --shell /bin/bash ${user}
 RUN apt-get update -y
 
 RUN apt-get install -y build-essential libssl-dev \
-        libffi-dev python3-dev libsasl2-dev libldap2-dev libxi-dev \
+        libffi-dev python3-dev libsasl2-dev libldap2-dev \
         libsasl2-modules libsasl2-2 libsasl2-modules-gssapi-mit krb5-user \
         && \
     mkdir -p $HOME/incubator-superset \
@@ -25,7 +25,7 @@ RUN apt-get install -y build-essential libssl-dev \
     apt-get clean && rm -rf "/var/lib/apt/lists/*" && \
     echo OK
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && apt-get install -y nodejs
 
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
