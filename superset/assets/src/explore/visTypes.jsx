@@ -443,12 +443,12 @@ export const visTypes = {
       },
       sqlaTimeSeries: {
         controlSetRows: [
-          ['since', 'until'],
+          // ['since', 'until'],
         ],
       },
       druidTimeSeries: {
         controlSetRows: [
-          ['since', 'until'],
+          // ['since', 'until'],
         ],
       },
     },
