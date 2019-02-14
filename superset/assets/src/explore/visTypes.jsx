@@ -119,7 +119,6 @@ export const visTypes = {
         label: t('Polygon/Marker'),
         expanded: true,
         controlSetRows: [
-          ['color_picker'],
           ['stroke_color_picker'],
           ['cell_size']
 
@@ -140,7 +139,7 @@ export const visTypes = {
     ],
     controlOverrides: {
       labels_outside:{
-        label: t('Use Esri Leaflet'),
+        label: t('Use arcGIS Server'),
         default: false,
         renderTrigger: false,
         description: t('Use Esri Leaflet Library to render tiles for ArcGIS Server'),
@@ -187,11 +186,6 @@ export const visTypes = {
       stroke_color_picker:{
         label: t('Border Color'),
         description: t('Set the opacity to 0 if you do not want to override the color specified in the GeoJSON'),
-        renderTrigger: false,
-      },
-      color_picker:{
-        label: t('Default Fill Color'),
-        description: t('Use this to define a default fill color for outside range values'),
         renderTrigger: false,
       },
       geojson:{
@@ -246,6 +240,7 @@ export const visTypes = {
         description: t('Map Server URL'),
         renderTrigger: false,
         default: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+        validators: [v.nonEmpty]
       },
       row_limit:{
         default: 50,

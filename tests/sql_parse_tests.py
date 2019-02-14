@@ -1,9 +1,19 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
 import unittest
 
 from superset import sql_parse
@@ -12,7 +22,7 @@ from superset import sql_parse
 class SupersetTestCase(unittest.TestCase):
 
     def extract_tables(self, query):
-        sq = sql_parse.SupersetQuery(query)
+        sq = sql_parse.ParsedQuery(query)
         return sq.tables
 
     def test_simple_select(self):
@@ -157,7 +167,6 @@ class SupersetTestCase(unittest.TestCase):
     # DESCRIBE | DESC qualifiedName
     def test_describe(self):
         self.assertEquals({'t1'}, self.extract_tables('DESCRIBE t1'))
-        self.assertEquals({'t1'}, self.extract_tables('DESC t1'))
 
     # SHOW PARTITIONS FROM qualifiedName (WHERE booleanExpression)?
     # (ORDER BY sortItem (',' sortItem)*)? (LIMIT limit=(INTEGER_VALUE | ALL))?
@@ -300,13 +309,151 @@ class SupersetTestCase(unittest.TestCase):
         self.assertEquals({'t1', 't2'}, self.extract_tables(query))
 
     def test_update_not_select(self):
-        sql = sql_parse.SupersetQuery('UPDATE t1 SET col1 = NULL')
+        sql = sql_parse.ParsedQuery('UPDATE t1 SET col1 = NULL')
         self.assertEquals(False, sql.is_select())
         self.assertEquals(False, sql.is_readonly())
 
     def test_explain(self):
-        sql = sql_parse.SupersetQuery('EXPLAIN SELECT 1')
+        sql = sql_parse.ParsedQuery('EXPLAIN SELECT 1')
 
         self.assertEquals(True, sql.is_explain())
         self.assertEquals(False, sql.is_select())
         self.assertEquals(True, sql.is_readonly())
+
+    def test_complex_extract_tables(self):
+        query = """SELECT sum(m_examples) AS "sum__m_example"
+            FROM
+              (SELECT COUNT(DISTINCT id_userid) AS m_examples,
+                      some_more_info
+               FROM my_b_table b
+               JOIN my_t_table t ON b.ds=t.ds
+               JOIN my_l_table l ON b.uid=l.uid
+               WHERE b.rid IN
+                   (SELECT other_col
+                    FROM inner_table)
+                 AND l.bla IN ('x', 'y')
+               GROUP BY 2
+               ORDER BY 2 ASC) AS "meh"
+            ORDER BY "sum__m_example" DESC
+            LIMIT 10;"""
+        self.assertEquals(
+            {'my_l_table', 'my_b_table', 'my_t_table', 'inner_table'},
+            self.extract_tables(query))
+
+    def test_complex_extract_tables2(self):
+        query = """SELECT *
+            FROM table_a AS a, table_b AS b, table_c as c
+            WHERE a.id = b.id and b.id = c.id"""
+        self.assertEquals(
+            {'table_a', 'table_b', 'table_c'},
+            self.extract_tables(query))
+
+    def test_mixed_from_clause(self):
+        query = """SELECT *
+            FROM table_a AS a, (select * from table_b) AS b, table_c as c
+            WHERE a.id = b.id and b.id = c.id"""
+        self.assertEquals(
+            {'table_a', 'table_b', 'table_c'},
+            self.extract_tables(query))
+
+    def test_nested_selects(self):
+        query = """
+            select (extractvalue(1,concat(0x7e,(select GROUP_CONCAT(TABLE_NAME)
+            from INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA like "%bi%"),0x7e)));
+        """
+        self.assertEquals(
+            {'INFORMATION_SCHEMA.COLUMNS'},
+            self.extract_tables(query))
+        query = """
+            select (extractvalue(1,concat(0x7e,(select GROUP_CONCAT(COLUMN_NAME)
+            from INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_NAME="bi_achivement_daily"),0x7e)));
+        """
+        self.assertEquals(
+            {'INFORMATION_SCHEMA.COLUMNS'},
+            self.extract_tables(query))
+
+    def test_complex_extract_tables3(self):
+        query = """SELECT somecol AS somecol
+            FROM
+              (WITH bla AS
+                 (SELECT col_a
+                  FROM a
+                  WHERE 1=1
+                    AND column_of_choice NOT IN
+                      ( SELECT interesting_col
+                       FROM b ) ),
+                    rb AS
+                 ( SELECT yet_another_column
+                  FROM
+                    ( SELECT a
+                     FROM c
+                     GROUP BY the_other_col ) not_table
+                  LEFT JOIN bla foo ON foo.prop = not_table.bad_col0
+                  WHERE 1=1
+                  GROUP BY not_table.bad_col1 ,
+                           not_table.bad_col2 ,
+                  ORDER BY not_table.bad_col_3 DESC , not_table.bad_col4 ,
+                                                    not_table.bad_col5) SELECT random_col
+               FROM d
+               WHERE 1=1
+               UNION ALL SELECT even_more_cols
+               FROM e
+               WHERE 1=1
+               UNION ALL SELECT lets_go_deeper
+               FROM f
+               WHERE 1=1
+            WHERE 2=2
+            GROUP BY last_col
+            LIMIT 50000;"""
+        self.assertEquals(
+            {'a', 'b', 'c', 'd', 'e', 'f'},
+            self.extract_tables(query))
+
+    def test_complex_cte_with_prefix(self):
+        query = """
+        WITH CTE__test (SalesPersonID, SalesOrderID, SalesYear)
+        AS (
+            SELECT SalesPersonID, SalesOrderID, YEAR(OrderDate) AS SalesYear
+            FROM SalesOrderHeader
+            WHERE SalesPersonID IS NOT NULL
+        )
+        SELECT SalesPersonID, COUNT(SalesOrderID) AS TotalSales, SalesYear
+        FROM CTE__test
+        GROUP BY SalesYear, SalesPersonID
+        ORDER BY SalesPersonID, SalesYear;
+        """
+        self.assertEquals({'SalesOrderHeader'}, self.extract_tables(query))
+
+    def test_basic_breakdown_statements(self):
+        multi_sql = """
+        SELECT * FROM ab_user;
+        SELECT * FROM ab_user LIMIT 1;
+        """
+        parsed = sql_parse.ParsedQuery(multi_sql)
+        statements = parsed.get_statements()
+        self.assertEquals(len(statements), 2)
+        expected = [
+            'SELECT * FROM ab_user',
+            'SELECT * FROM ab_user LIMIT 1',
+        ]
+        self.assertEquals(statements, expected)
+
+    def test_messy_breakdown_statements(self):
+        multi_sql = """
+        SELECT 1;\t\n\n\n  \t
+        \t\nSELECT 2;
+        SELECT * FROM ab_user;;;
+        SELECT * FROM ab_user LIMIT 1
+        """
+        parsed = sql_parse.ParsedQuery(multi_sql)
+        statements = parsed.get_statements()
+        self.assertEquals(len(statements), 4)
+        expected = [
+            'SELECT 1',
+            'SELECT 2',
+            'SELECT * FROM ab_user',
+            'SELECT * FROM ab_user LIMIT 1',
+        ]
+        self.assertEquals(statements, expected)

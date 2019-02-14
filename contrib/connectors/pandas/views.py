@@ -18,6 +18,8 @@ from superset.views.base import (
     ListWidgetWithCheckboxes, SupersetModelView,
 )
 
+from superset.utils.core import markdown
+
 from .models import FORMATS, PandasColumn, PandasDatasource, PandasMetric
 
 
@@ -73,11 +75,14 @@ class PandasColumnInlineView(CompactCRUDMixin, SupersetModelView):  # noqa
     edit_columns = [
         'column_name', 'verbose_name', 'description',
         'type', 'groupby', 'filterable',
-        'datasource', 'count_distinct', 'sum', 'avg', 'min', 'max']
+        'datasource', 
+        # 'count_distinct', 'sum', 'avg', 'min', 'max'
+        ]
     add_columns = edit_columns
     list_columns = [
         'column_name', 'verbose_name', 'type', 'groupby', 'filterable',
-        'count_distinct', 'sum', 'avg', 'min', 'max']
+        # 'count_distinct', 'sum', 'avg', 'min', 'max'
+        ]
     page_size = 500
     description_columns = {
         'is_dttm': _(
@@ -100,11 +105,11 @@ class PandasColumnInlineView(CompactCRUDMixin, SupersetModelView):  # noqa
         'groupby': _('Groupable'),
         'filterable': _('Filterable'),
         'datasource': _('Datasource'),
-        'count_distinct': _('Count Distinct'),
-        'sum': _('Sum'),
-        'avg': _('Average'),
-        'min': _('Min'),
-        'max': _('Max'),
+        # 'count_distinct': _('Count Distinct'),
+        # 'sum': _('Sum'),
+        # 'avg': _('Average'),
+        # 'min': _('Min'),
+        # 'max': _('Max'),
         'type': _('Type'),
     }
 
@@ -126,17 +131,17 @@ class PandasMetricInlineView(CompactCRUDMixin, SupersetModelView, DeleteMixin): 
         'source', 'expression', 'datasource', 'd3format', 'is_restricted',
         'warning_text']
     description_columns = {
-        'source': utils.markdown(
+        'source': markdown(
             'a comma-separated list of column(s) used to calculate '
             ' the metric. Example: `claim_amount`', True),
-        'expression': utils.markdown(
+        'expression': markdown(
             'a valid Pandas expression as supported by the underlying '
             'backend. Example: `count()`', True),
         'is_restricted': _('Whether the access to this metric is restricted '
                            'to certain roles. Only roles with the permission '
                            "'metric access on XXX (the name of this metric)' "
                            'are allowed to access this metric'),
-        'd3format': utils.markdown(
+        'd3format': markdown(
             'd3 formatting string as defined [here]'
             '(https://github.com/d3/d3-format/blob/master/README.md#format). '
             'For instance, this default formatting applies in the Table '

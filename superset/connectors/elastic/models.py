@@ -18,15 +18,20 @@ from flask_appbuilder.models.decorators import renders
 import pandas as pd
 from six import string_types
 import sqlalchemy as sa
+import pandas as pd
+from six import string_types
+import sqlalchemy as sa
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
                         Text)
 from sqlalchemy.orm import backref, relationship
 
-from superset import db, import_util, security_manager, utils
+from superset.utils import import_datasource
+
+from superset import db, security_manager, utils
 from superset.connectors.base.models import (BaseColumn, BaseDatasource,
                                              BaseMetric)
-from superset.models.helpers import AuditMixinNullable, QueryResult, set_perm
-from superset.utils import flasher
+from superset.models.helpers import AuditMixinNullable, QueryResult
+from superset.utils.core import flasher
 
 
 class ElasticCluster(Model, AuditMixinNullable):
@@ -44,6 +49,13 @@ class ElasticCluster(Model, AuditMixinNullable):
 
     def __repr__(self):
         return self.cluster_name
+
+    @property
+    def data(self):
+        return {
+            'name': self.cluster_name,
+            'backend': 'elastic',
+        }
 
     @property
     def data(self):
@@ -190,7 +202,7 @@ class ElasticColumn(Model, BaseColumn):
                 ElasticColumn.datasource_name == lookup_column.datasource_name,
                 ElasticColumn.column_name == lookup_column.column_name).first()
 
-        return import_util.import_simple_obj(db.session, i_column, lookup_obj)
+        return import_datasource.import_simple_obj(db.session, i_column, lookup_obj)
 
 
 class ElasticMetric(Model, BaseMetric):
@@ -239,7 +251,7 @@ class ElasticMetric(Model, BaseMetric):
             return db.session.query(ElasticMetric).filter(
                 ElasticMetric.datasource_name == lookup_metric.datasource_name,
                 ElasticMetric.metric_name == lookup_metric.metric_name).first()
-        return import_util.import_simple_obj(db.session, i_metric, lookup_obj)
+        return import_datasource.import_simple_obj(db.session, i_metric, lookup_obj)
 
 
 class ElasticDatasource(Model, BaseDatasource):
@@ -579,5 +591,5 @@ class ElasticDatasource(Model, BaseDatasource):
         )
 
 
-sa.event.listen(ElasticDatasource, 'after_insert', set_perm)
-sa.event.listen(ElasticDatasource, 'after_update', set_perm)
+sa.event.listen(ElasticDatasource, 'after_insert', security_manager.set_perm)
+sa.event.listen(ElasticDatasource, 'after_update', security_manager.set_perm)

@@ -1,6 +1,25 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 /* eslint-env browser */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { t } from '@superset-ui/translation';
 
 import HeaderActionsDropdown from './HeaderActionsDropdown';
 import EditableTitle from '../../components/EditableTitle';
@@ -9,7 +28,6 @@ import FaveStar from '../../components/FaveStar';
 import UndoRedoKeylisteners from './UndoRedoKeylisteners';
 
 import { chartPropShape } from '../util/propShapes';
-import { t } from '../../locales';
 import {
   UNDO_LIMIT,
   SAVE_TYPE_OVERWRITE,
@@ -28,6 +46,7 @@ const propTypes = {
   expandedSlices: PropTypes.object.isRequired,
   css: PropTypes.string.isRequired,
   isStarred: PropTypes.bool.isRequired,
+  isLoading: PropTypes.bool.isRequired,
   onSave: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   fetchFaveStar: PropTypes.func.isRequired,
@@ -62,7 +81,6 @@ class Header extends React.PureComponent {
     this.state = {
       didNotifyMaxUndoHistoryToast: false,
       emphasizeUndo: false,
-      hightlightRedo: false,
     };
 
     this.handleChangeText = this.handleChangeText.bind(this);
@@ -95,7 +113,10 @@ class Header extends React.PureComponent {
   }
 
   forceRefresh() {
-    return this.props.fetchCharts(Object.values(this.props.charts), true);
+    if (!this.props.isLoading) {
+      return this.props.fetchCharts(Object.values(this.props.charts), true);
+    }
+    return false;
   }
 
   handleChangeText(nextText) {
@@ -186,6 +207,7 @@ class Header extends React.PureComponent {
       showBuilderPane,
       dashboardInfo,
       hasUnsavedChanges,
+      isLoading,
     } = this.props;
 
     const userCanEdit = dashboardInfo.dash_edit_perm;
@@ -244,28 +266,26 @@ class Header extends React.PureComponent {
                 </Button>
               )}
 
-              {editMode &&
-                hasUnsavedChanges && (
-                  <Button
-                    bsSize="small"
-                    bsStyle={popButton ? 'primary' : undefined}
-                    onClick={this.overwriteDashboard}
-                  >
-                    {t('Save changes')}
-                  </Button>
-                )}
+              {editMode && hasUnsavedChanges && (
+                <Button
+                  bsSize="small"
+                  bsStyle={popButton ? 'primary' : undefined}
+                  onClick={this.overwriteDashboard}
+                >
+                  {t('Save changes')}
+                </Button>
+              )}
 
-              {editMode &&
-                !hasUnsavedChanges && (
-                  <Button
-                    bsSize="small"
-                    onClick={this.toggleEditMode}
-                    bsStyle={undefined}
-                    disabled={!userCanEdit}
-                  >
-                    {t('Switch to view mode')}
-                  </Button>
-                )}
+              {editMode && !hasUnsavedChanges && (
+                <Button
+                  bsSize="small"
+                  onClick={this.toggleEditMode}
+                  bsStyle={undefined}
+                  disabled={!userCanEdit}
+                >
+                  {t('Switch to view mode')}
+                </Button>
+              )}
 
               {editMode && (
                 <UndoRedoKeylisteners
@@ -276,17 +296,16 @@ class Header extends React.PureComponent {
             </div>
           )}
 
-          {!editMode &&
-            !hasUnsavedChanges && (
-              <Button
-                bsSize="small"
-                onClick={this.toggleEditMode}
-                bsStyle={popButton ? 'primary' : undefined}
-                disabled={!userCanEdit}
-              >
-                {t('Edit dashboard')}
-              </Button>
-            )}
+          {!editMode && !hasUnsavedChanges && (
+            <Button
+              bsSize="small"
+              onClick={this.toggleEditMode}
+              bsStyle={popButton ? 'primary' : undefined}
+              disabled={!userCanEdit}
+            >
+              {t('Edit dashboard')}
+            </Button>
+          )}
 
           <HeaderActionsDropdown
             addSuccessToast={this.props.addSuccessToast}
@@ -306,6 +325,7 @@ class Header extends React.PureComponent {
             hasUnsavedChanges={hasUnsavedChanges}
             userCanEdit={userCanEdit}
             userCanSave={userCanSaveAs}
+            isLoading={isLoading}
           />
         </div>
       </div>

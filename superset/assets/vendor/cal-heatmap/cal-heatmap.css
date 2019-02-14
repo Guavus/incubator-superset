@@ -1,12 +1,8 @@
+/* [LICENSE TBD] */
 /* Cal-HeatMap CSS */
 
 .cal-heatmap-container {
   display: block;
-}
-
-.cal-heatmap-container .graph
-{
-  font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
 }
 
 .cal-heatmap-container .graph-label

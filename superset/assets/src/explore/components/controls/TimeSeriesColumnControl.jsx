@@ -1,3 +1,21 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -7,6 +25,7 @@ import Select from 'react-select';
 
 import InfoTooltipWithTrigger from '../../../components/InfoTooltipWithTrigger';
 import BoundsControl from './BoundsControl';
+import CheckboxControl from './CheckboxControl';
 
 const propTypes = {
   onChange: PropTypes.func,
@@ -47,8 +66,14 @@ export default class TimeSeriesColumnControl extends React.Component {
   onTextInputChange(attr, event) {
     this.setState({ [attr]: event.target.value }, this.onChange);
   }
+  onCheckboxChange(attr, value) {
+    this.setState({ [attr]: value }, this.onChange);
+  }
   onBoundsChange(bounds) {
     this.setState({ bounds }, this.onChange);
+  }
+  onYAxisBoundsChange(yAxisBounds) {
+    this.setState({ yAxisBounds }, this.onChange);
   }
   setType() {
   }
@@ -163,6 +188,28 @@ export default class TimeSeriesColumnControl extends React.Component {
               clearable={false}
               onChange={this.onSelectChange.bind(this, 'comparisonType')}
               options={comparisonTypeOptions}
+            />,
+          )}
+          {this.state.colType === 'spark' && this.formRow(
+            'Show Y-axis',
+            (
+              'Show Y-axis on the sparkline. Will display the manually set min/max if set or min/max values in the data otherwise.'
+            ),
+            'show-y-axis-bounds',
+            <CheckboxControl
+              value={this.state.showYAxis}
+              onChange={this.onCheckboxChange.bind(this, 'showYAxis')}
+            />,
+          )}
+          {this.state.colType === 'spark' && this.formRow(
+            'Y-axis bounds',
+            (
+              'Manually set min/max values for the y-axis.'
+            ),
+            'y-axis-bounds',
+            <BoundsControl
+              value={this.state.yAxisBounds}
+              onChange={this.onYAxisBoundsChange.bind(this)}
             />,
           )}
           {this.state.colType !== 'spark' && this.formRow(

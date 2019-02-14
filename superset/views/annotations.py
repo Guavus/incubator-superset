@@ -1,10 +1,20 @@
-# -*- coding: utf-8 -*-
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
 # pylint: disable=C,R,W
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_babel import gettext as __
 from flask_babel import lazy_gettext as _
@@ -24,7 +34,9 @@ class AnnotationModelView(SupersetModelView, DeleteMixin):  # noqa
 
     list_columns = ['layer', 'short_descr', 'start_dttm', 'end_dttm']
     edit_columns = [
-        'layer', 'short_descr', 'long_descr', 'start_dttm', 'end_dttm']
+        'layer', 'short_descr', 'long_descr', 'start_dttm', 'end_dttm',
+        'json_metadata']
+
     add_columns = edit_columns
 
     label_columns = {
@@ -33,6 +45,12 @@ class AnnotationModelView(SupersetModelView, DeleteMixin):  # noqa
         'start_dttm': _('Start Dttm'),
         'end_dttm': _('End Dttm'),
         'long_descr': _('Long Descr'),
+        'json_metadata': _('JSON Metadata'),
+    }
+
+    description_columns = {
+        'json_metadata': 'This JSON represents any additional metadata this \
+         annotation needs to add more context.',
     }
 
     def pre_add(self, obj):

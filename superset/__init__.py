@@ -1,11 +1,21 @@
-# -*- coding: utf-8 -*-
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
 # pylint: disable=C,R,W
 """Package's main module!"""
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-
 import json
 import logging
 from logging.handlers import TimedRotatingFileHandler
@@ -18,10 +28,15 @@ from flask_compress import Compress
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.contrib.fixers import ProxyFix
+import wtforms_json
 
-from superset import config, utils
+from superset import config
 from superset.connectors.connector_registry import ConnectorRegistry
 from superset.security import SupersetSecurityManager
+from superset.utils.core import (
+    get_update_perms_flag, pessimistic_connection_handling, setup_cache)
+
+wtforms_json.init()
 
 APP_DIR = os.path.dirname(__file__)
 CONFIG_MODULE = os.environ.get('SUPERSET_CONFIG', 'superset.config')
@@ -69,12 +84,21 @@ def get_css_manifest_files(filename):
     return entry_files.get('css', [])
 
 
+def get_unloaded_chunks(files, loaded_chunks):
+    filtered_files = [f for f in files if f not in loaded_chunks]
+    for f in filtered_files:
+        loaded_chunks.add(f)
+    return filtered_files
+
+
 parse_manifest_json()
 
 
 @app.context_processor
 def get_manifest():
     return dict(
+        loaded_chunks=set(),
+        get_unloaded_chunks=get_unloaded_chunks,
         js_manifest=get_js_manifest_files,
         css_manifest=get_css_manifest_files,
     )
@@ -94,11 +118,11 @@ if conf.get('SILENCE_FAB'):
     logging.getLogger('flask_appbuilder').setLevel(logging.ERROR)
 
 if app.debug:
-    app.logger.setLevel(logging.DEBUG)
+    app.logger.setLevel(logging.DEBUG)  # pylint: disable=no-member
 else:
     # In production mode, add log handler to sys.stderr.
-    app.logger.addHandler(logging.StreamHandler())
-    app.logger.setLevel(logging.INFO)
+    app.logger.addHandler(logging.StreamHandler())  # pylint: disable=no-member
+    app.logger.setLevel(logging.INFO)  # pylint: disable=no-member
 logging.getLogger('pyhive.presto').setLevel(logging.INFO)
 
 db = SQLA(app)
@@ -109,17 +133,17 @@ if conf.get('WTF_CSRF_ENABLED'):
     for ex in csrf_exempt_list:
         csrf.exempt(ex)
 
-utils.pessimistic_connection_handling(db.engine)
+pessimistic_connection_handling(db.engine)
 
-cache = utils.setup_cache(app, conf.get('CACHE_CONFIG'))
-tables_cache = utils.setup_cache(app, conf.get('TABLE_NAMES_CACHE_CONFIG'))
+cache = setup_cache(app, conf.get('CACHE_CONFIG'))
+tables_cache = setup_cache(app, conf.get('TABLE_NAMES_CACHE_CONFIG'))
 # For example:
 # DATAFRAME_CACHE_CONFIG = {
 #    'CACHE_TYPE': 'contrib.connectors.pandas.cache.dataframe',
 #    'CACHE_DEFAULT_TIMEOUT': 60 * 60 * 24,
 #    'CACHE_DIR': '/tmp/pandasdatasource_cache',
 #    'CACHE_THRESHOLD': 200}
-dataframe_cache = utils.setup_cache(app, conf.get('DATAFRAME_CACHE_CONFIG'))
+dataframe_cache = setup_cache(app, conf.get('DATAFRAME_CACHE_CONFIG'))
 
 migrate = Migrate(app, db, directory=APP_DIR + '/migrations')
 
@@ -187,12 +211,24 @@ appbuilder = AppBuilder(
     base_template='superset/base.html',
     indexview=MyIndexView,
     security_manager_class=custom_sm,
-    update_perms=utils.get_update_perms_flag(),
+    update_perms=get_update_perms_flag(),
 )
 
 security_manager = appbuilder.sm
 
 results_backend = app.config.get('RESULTS_BACKEND')
+
+# Merge user defined feature flags with default feature flags
+feature_flags = app.config.get('DEFAULT_FEATURE_FLAGS')
+feature_flags.update(app.config.get('FEATURE_FLAGS') or {})
+
+
+def is_feature_enabled(feature):
+    """
+    Utility function for checking whether a feature is turned on
+    """
+    return feature_flags.get(feature)
+
 
 # Registering sources
 module_datasource_map = app.config.get('DEFAULT_MODULE_DS_MAP')

@@ -24,6 +24,8 @@ from superset.views.base import (
     ListWidgetWithCheckboxes, SupersetModelView, validate_json)
 from . import models
 
+from superset.utils.core import markdown, validate_json, error_msg_from_exception
+
 appbuilder.add_separator('Sources')
 
 
@@ -31,11 +33,16 @@ class ElasticColumnInlineView(CompactCRUDMixin, SupersetModelView):  # noqa
     datamodel = SQLAInterface(models.ElasticColumn)
     edit_columns = [
         'column_name', 'description', 'json', 'datasource',
-        'groupby', 'filterable', 'count_distinct', 'sum', 'min', 'max']
+        'groupby', 'filterable', 
+        # 'count_distinct', 'sum', 'min', 
+        # 'max'
+        ]
     add_columns = edit_columns
     list_columns = [
-        'column_name', 'type', 'groupby', 'filterable', 'count_distinct',
-        'sum', 'min', 'max']
+        'column_name', 'type', 'groupby', 'filterable', 
+        # 'count_distinct',
+        # 'sum', 'min', 'max'
+        ]
     can_delete = False
     page_size = 500
     label_columns = {
@@ -44,16 +51,16 @@ class ElasticColumnInlineView(CompactCRUDMixin, SupersetModelView):  # noqa
         'datasource': _('Datasource'),
         'groupby': _('Groupable'),
         'filterable': _('Filterable'),
-        'count_distinct': _('Count Distinct'),
-        'sum': _('Sum'),
-        'min': _('Min'),
-        'max': _('Max'),
+        # 'count_distinct': _('Count Distinct'),
+        # 'sum': _('Sum'),
+        # 'min': _('Min'),
+        # 'max': _('Max'),
     }
     description_columns = {
         'filterable': _(
             'Whether this column is exposed in the `Filters` section '
             'of the explore view.'),
-        'json': utils.markdown(
+        'json': markdown(
             'this field can be used to specify  '
             'a `dimensionSpec` as documented [here]'
             '(http://elastic.io/docs/latest/querying/dimensionspecs.html). '
@@ -65,7 +72,7 @@ class ElasticColumnInlineView(CompactCRUDMixin, SupersetModelView):  # noqa
 
     def post_update(self, col):
         col.generate_metrics()
-        utils.validate_json(col.json)
+        validate_json(col.json)
 
     def post_add(self, col):
         self.post_update(col)
@@ -86,7 +93,7 @@ class ElasticMetricInlineView(CompactCRUDMixin, SupersetModelView):  # noqa
         'json': [validate_json],
     }
     description_columns = {
-        'metric_type': utils.markdown(
+        'metric_type': markdown(
             'use `postagg` as the metric type if you are defining a '
             '[Elastic Post Aggregation]'
             '(http://elastic.io/docs/latest/querying/post-aggregations.html)',
@@ -269,7 +276,7 @@ class Elastic(BaseSupersetView):
             except Exception as e:
                 flash(
                     'Error while processing cluster \'{}\'\n{}'.format(
-                        cluster_name, utils.error_msg_from_exception(e)),
+                        cluster_name, error_msg_from_exception(e)),
                     'danger')
                 logging.exception(e)
                 return redirect('/elasticclustermodelview/list/')

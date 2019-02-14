@@ -1,3 +1,21 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 import { MULTI_OPERATORS } from './constants';
 
 export const EXPRESSION_TYPES = {
@@ -31,7 +49,7 @@ function translateToSql(adhocMetric, { useSimple } = {}) {
     const isMulti = MULTI_OPERATORS.indexOf(adhocMetric.operator) >= 0;
     const subject = adhocMetric.subject;
     const operator = OPERATORS_TO_SQL[adhocMetric.operator];
-    const comparator = isMulti ? adhocMetric.comparator.join("','") : adhocMetric.comparator;
+    const comparator = Array.isArray(adhocMetric.comparator) ? adhocMetric.comparator.join("','") : adhocMetric.comparator;
     return `${subject} ${operator} ${isMulti ? '(\'' : ''}${comparator}${isMulti ? '\')' : ''}`;
   } else if (adhocMetric.expressionType === EXPRESSION_TYPES.SQL) {
     return adhocMetric.sqlExpression;
