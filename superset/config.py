@@ -301,8 +301,8 @@ LOG_LEVEL = 'DEBUG'
 # ---------------------------------------------------
 # LOG_LEVEL = DEBUG, INFO, WARNING, ERROR, CRITICAL
 
-ENABLE_TIME_ROTATE = False
-TIME_ROTATE_LOG_LEVEL = 'DEBUG'
+ENABLE_TIME_ROTATE = True
+TIME_ROTATE_LOG_LEVEL = 'INFO'
 FILENAME = os.path.join(DATA_DIR, 'superset.log')
 ROLLOVER = 'midnight'
 INTERVAL = 1
