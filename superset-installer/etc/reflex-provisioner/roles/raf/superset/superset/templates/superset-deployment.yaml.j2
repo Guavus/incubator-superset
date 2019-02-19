@@ -86,6 +86,9 @@ spec:
           value: "{{ SUPERSET_AUTH_LDAP_APPEND_DOMAIN }}"
         - name: AUTH_LDAP_USERNAME_FORMAT
           value: "{{ SUPERSET_AUTH_LDAP_USERNAME_FORMAT }}"  
+        - name: AUTH_ADMIN_USER_LIST
+          value: "{{ SUPERSET_ADMIN_USER_LIST }}"  
+          
         image: {{ superset_docker_image_name }}:{{ superset_image_tag }}
         name: superset
         ports:
