@@ -1,0 +1,152 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link href="https://frontend.army/copy.css" rel="stylesheet" />
+  <base href="/">
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <!-- only for JSX-->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+
+
+</head>
+<body>
+  <div id="root" ></div>
+
+
+<script type="text/babel">
+
+
+
+const MultiRepo = (props) => {
+  const children = [];
+  for ( let i=0; i < props.repos.length; i++) {
+    const repo = props.repos[i];
+    // i is not good choice as it can change
+    children.push(<RepoSuccess name={repo.name} stars={repo.stars} key={repo.name}/>);
+  }
+  return children;
+}
+
+
+const RepoSuccess =  (props) => {
+  return (
+    <div className="repo">
+      <span className="name">{props.name}</span>
+      <span className="stars">{props.stars}</span>
+  </div>
+  )
+}
+
+
+class Form extends React.Component {
+ constructor(props) {
+   // cannot access state without super call
+   super(props);
+   this.state = {disabled: true}
+ }
+submit = (event)  => {
+  event.preventDefault();
+  const form = event.target;
+  const username = form.username.value;
+  this.props.submit(username);
+  console.log(username);
+}
+  render() {
+    const c = new React.Component();
+    return (
+    <form onSubmit={this.submit}> 
+        <input name="username" type='text' placeholder="Enter Usernmae"   onChange={this.changeHandler2}/> 
+        <button type="submit" disabled={this.state.disabled}>Submit</button>
+    </form>
+  )
+  }
+
+//        <input name="username" type='text' placeholder="Enter Usernmae"   onChange={this.changeHandler.bind(this)}/> 
+
+  changeHandler(event) {
+    const  username = event.target.value;
+    // Wont work as state is imutabl;e
+    this.state.disabled = ! (username.length > 0);
+  }
+  changeHandler2 = (event) => {
+    const  username = event.target.value;
+    // Wont work as state is imutabl;e
+    const value =  (!username.length > 0);
+    this.setState({disabled: value});
+  }
+}
+
+// convert App into a  class Componet
+// Add a submit to App
+// pass submit as a prop to form
+// call this.props.submit with username
+// fetch data from app submit
+//6. update state in app
+
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {data: undefined }
+  }
+  submit = (username) => {
+    console.log("App submit called");
+    axios.get("https://github-user.now.sh/?username="+username).then(
+      response => {
+        console.log(response.data)
+        //this.state.data = response.data
+        this.setState({data: response.data})
+      }
+    )
+  }
+  // life cycle hook
+  componentDidMount = () => {
+    this.submit('arpit-agarwal');
+  }
+  render() {
+    return (
+      <div>
+        <Form submit={this.submit} />
+        
+        { this.state.data &&
+          <div className='user'>
+            <img className="avatar" src= {this.state.data.avatar} />
+            <div className="name">{this.state.data.name} </div>
+            <MultiRepo repos={this.state.data.repos}/>
+          </div>
+        }
+ 
+    </div>
+  )
+  }
+}
+
+// STATIC DATA form
+// function return JSX
+// function invocation. switching context to JS
+// function with params - error
+// function with props - success
+// Array without key error
+// Array with key 
+
+//prettiy to use bracket
+// without curly braces it is text
+
+// function paramter need to known
+// Looks more like html , REact lokk foir caplized node name. HTML node if captlized will cause error
+
+//React.craetELMENt is not take function
+// BAbel will convert react node to function first and inside code will be changed to React.create Element
+
+// key for vitual dom rendering posible
+const root = document.getElementById('root');
+//ReactDOM.render(App,root); // this will not work as this is component whiuch has to be converted as function pointer
+ReactDOM.render(<App /> ,root);
+
+</script>
+
+</body>
+</html>

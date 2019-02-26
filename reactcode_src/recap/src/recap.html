@@ -1,0 +1,86 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link href="https://frontend.army/copy.css" rel="stylesheet" />
+  <base href="/">
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <!-- only for JSX-->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<style> 
+.user {
+  color: #0e1a2d
+}
+.repo .check {
+  float: left;
+  margin-right: 5px;
+}
+.repo .check::after {
+  content: ' \2713';
+  color: blue;
+}
+.jsx {
+  cursor: pointer;
+}
+
+body {
+  background: #0e1a2d;
+  color: #ffffff
+}
+</style>
+<body>
+  <div id="root" ></div>
+
+
+<script type="text/babel">
+
+const clickHandler = (event) => {
+  console.log(event);
+  // proxied by React so see proxy in console
+  var e = document.getElementById("explain");
+  var r =` <div>
+      <p>React embraces the fact that rendering logic is inherently coupled with other UI logic: how events are handled, how the state changes over time, and how the data is prepared for display.</p>
+      <p>Instead of artificially separating <em>technologies</em> by putting markup and logic in separate files, React <a href="https://en.wikipedia.org/wiki/Separation_of_concerns">separates <em>concerns</em></a> with loosely coupled units called “components” that contain both. We will come back to components in a <a href="/docs/components-and-props.html">further section</a>, but if you’re not yet comfortable putting markup in JS, <a href="https://www.youtube.com/watch?v=x7cQ3mrcKaY">this talk</a> might convince you otherwise.</p>
+      <p>React <a href="/docs/react-without-jsx.html">doesn’t require</a> using JSX, but most people find it helpful as a visual aid when working with UI inside the JavaScript code. It also allows React to show more useful error and warning messages.</p>
+        </div>`
+  e.innerHTML = r;
+  
+}
+
+const App = (
+<div>
+  <div className='user'>
+    <div className="name">Recap </div>
+    <div className="repo">
+      <span className="check"></span>
+      <span className="name">React</span>
+    </div>
+    <div className="repo">
+      <span className="check"></span>
+      <span className="name">Dom manipulation</span>
+    </div>
+    <div className="repo">
+      <span className="check"></span>
+      <span className="name">Virtual DOM</span>
+    </div>
+    <div className="repo">
+      <span className="check"></span>
+      <span className="name">JSX</span>
+    </div>
+  </div>
+  <div onClick={clickHandler} className="jsx"><h2>Why JSX </h2></div>
+  <div id="explain"></div>
+  <div><a href="https://reactjs.org/docs/rendering-elements.html#updating-the-rendered-element">Virtual dom in Action</a></div>
+ </div>
+)
+
+const root = document.getElementById('root');
+ReactDOM.render(App,root);
+
+</script>
+
+</body>
+</html>
