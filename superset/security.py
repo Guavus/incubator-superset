@@ -206,7 +206,6 @@ class SupersetSecurityManager(SecurityManager):
         #add check of user inactive  and make logout
         if not current_user.is_active:
             logout_user()
-            return False
 
         if not current_user.is_authenticated:
             login_path = url_for(
