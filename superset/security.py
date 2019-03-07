@@ -22,7 +22,7 @@ import logging
 from flask import g, request, session, url_for
 from flask_appbuilder.security.sqla import models as ab_models
 from flask_appbuilder.security.sqla.manager import SecurityManager
-from flask_login import current_user,logout_user
+from flask_login import current_user, logout_user
 from sqlalchemy import or_
 
 from superset import sql_parse
