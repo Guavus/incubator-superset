@@ -103,8 +103,8 @@ setup(
         'retry>=0.9.2',
         'selenium>=3.14.0',
         'simplejson>=3.15.0',
-        'sqlalchemy',
-        'sqlalchemy-utils',
+        'sqlalchemy==1.2.2',
+        'sqlalchemy-utils==0.32.21',
         'sqlparse',
         'unicodecsv',
         'unidecode>=0.04.21',
@@ -123,6 +123,7 @@ setup(
         'tableschema',
         'thrift-sasl>=0.2.1',
         'thrift>=0.9.3',
+        'pycrypto==2.6.1',
     ],
     extras_require={
         'cors': ['flask-cors>=2.0.0'],

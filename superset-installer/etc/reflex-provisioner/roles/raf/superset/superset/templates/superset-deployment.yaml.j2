@@ -92,6 +92,8 @@ spec:
           value: "{{ RVF_APP_NAME }}"
         - name: IS_HELP
           value: "{{ SUPERSET_IS_HELP }}"  
+        - name: SESSION_LIFETIME_SECONDS 
+          value: "{{ SUPERSET_SESSION_LIFETIME_SECONDS }}" 
         image: {{ superset_docker_image_name }}:{{ superset_image_tag }}
         name: superset
         ports:
