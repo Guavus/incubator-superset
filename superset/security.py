@@ -144,6 +144,10 @@ class SupersetSecurityManager(SecurityManager):
                     # new role append
                     self.update_user(user)
                     # update user with newly added role
+        if not user:
+          logging.info('{0}:{1} [AUTHENTICATION] Login attempt failed for user: {2}'.format(request.remote_addr, request.user_agent, username))
+        else:
+          logging.info('{0}:{1} [AUTHENTICATION] Login Succeeded for user: {2}'.format(request.remote_addr, request.user_agent, username))
 
         return user
 
@@ -216,7 +220,7 @@ class SupersetSecurityManager(SecurityManager):
         if not current_user.is_authenticated:
             login_path = url_for(
                 self.appbuilder.sm.auth_view.__class__.__name__ + '.login')
-            if not ('_id' in session) and ('csrf_token' in session):
+            if not ('_id' in session) and ('csrf_token' in session) and request.path != login_path:
                 logging.info('{0}:{1} Session expired. {2} can not be accessed'.format(request.remote_addr, request.user_agent, request.url))
             if not ('target_url' in session) and request.path != login_path:
                 session['target_url'] = request.url
@@ -397,7 +401,7 @@ class SupersetSecurityManager(SecurityManager):
 
     def update_user_auth_stat(self, user, success=True):
         super(SupersetSecurityManager, self).update_user_auth_stat(user, success)
-        if user.fail_login_count > 0:
+        if user.fail_login_count > 0 and success != True:
            logging.info('{0} [AUTHENTICATION] Unsuccessful login attempt count: {1} for user: {2}'.format(request.remote_addr, user.fail_login_count, user.username))
 
 
