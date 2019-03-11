@@ -109,7 +109,7 @@ spec:
          - name: krb5-config-path
            mountPath: /etc/{{ superset_krb5_conf_name }}
       - name: nginx
-        image: 10.141.51.157:5102/tls-sidecar
+        image: {{ nginx_docker_image_name }}:{{ nginx_image_tag }}
         volumeMounts:
           - name: secret-tls-volume
             readOnly: true
