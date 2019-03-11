@@ -22,7 +22,7 @@
 {% if not locale %}
     {% set locale = 'en' %}
 {% endif %}
-{% set IS_HELP = appbuilder.app.config.get('IS_HELP') %}
+{% set HELP_ENABLED = appbuilder.app.config.get('HELP_ENABLED') %}
 
 <!-- {% if not current_user.is_anonymous %}
     <li class="dropdown">
@@ -89,7 +89,7 @@
     <i class="fa fa-fw fa-sign-in"></i>{{_("Login")}}</a></li>
 {% endif %}
 
-{% if IS_HELP %}
+{% if HELP_ENABLED %}
 <li> 
   <a href="/static/assets/help/index.html" target="_blank">
   <img title="Help" src="/static/assets/images/help_Up.svg" />

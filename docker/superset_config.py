@@ -27,7 +27,7 @@ def get_env_variable(var_name, default=None):
             raise EnvironmentError(error_msg)
 
 # Help configuration
-IS_HELP = boolify(get_env_variable('IS_HELP'))           
+HELP_ENABLED = boolify(get_env_variable('HELP_ENABLED'))           
 
 #stale session timeout
 SESSION_LIFETIME_SECONDS = eval(get_env_variable('SESSION_LIFETIME_SECONDS'))
