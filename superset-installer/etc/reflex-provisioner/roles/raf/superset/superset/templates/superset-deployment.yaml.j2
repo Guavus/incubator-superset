@@ -90,6 +90,8 @@ spec:
           value: "{{ SUPERSET_ADMIN_USER_LIST }}"  
         - name: APP_NAME
           value: "{{ RVF_APP_NAME }}"
+        - name: IS_HELP
+          value: "{{ SUPERSET_IS_HELP }}"  
         image: {{ superset_docker_image_name }}:{{ superset_image_tag }}
         name: superset
         ports:

@@ -25,6 +25,9 @@ def get_env_variable(var_name, default=None):
                         .format(var_name)
             raise EnvironmentError(error_msg)
 
+ # Help configuration
+ IS_HELP = boolify(get_env_variable('IS_HELP'))           
+
 # LDAP configuration
 AUTH_TYPE = eval(get_env_variable('AUTH_TYPE'))
 
