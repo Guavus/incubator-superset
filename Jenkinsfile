@@ -2,7 +2,8 @@
 @Library('jenkins_lib')_
 
 pipeline {
-  agent { node { label 'jenkins-slave-nebula-02' } }
+  agent {label 'slave'}
+
 
     environment {
     // Define global environment variables in this
