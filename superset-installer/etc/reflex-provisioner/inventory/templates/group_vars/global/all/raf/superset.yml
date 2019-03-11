@@ -66,6 +66,8 @@ superset_postgres_db_password: "{{ superset_sql_conn_creds['admin']['postgres'][
 
 superset_host_port: "8888"
 superset_docker_restart_policy: "Always"
+superset_service_port: "32443"
+superset_nginx_port: "32443"
 
 #Path on hosts
 superset_host_base_dir: "/opt/guavus/superset"

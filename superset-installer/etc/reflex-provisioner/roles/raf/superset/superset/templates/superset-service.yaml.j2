@@ -8,11 +8,11 @@ metadata:
   namespace: {{ superset_kube_namespace }}
 spec:
   ports:
-  - name: "Nginx Port 32443"
+  - name: "Superset service"
     protocol: TCP
-    port: 32443
-    targetPort: 32443
-    nodePort: 32443
+    port: {{ superset_service_port }}
+    targetPort: {{ superset_nginx_port }}
+    nodePort: {{ superset_service_port }}
   selector:
     service: superset
   type: NodePort  

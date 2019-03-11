@@ -3,7 +3,7 @@ data:
 
   default.conf: |-
     server {
-       listen 32443 ssl;
+       listen {{ superset_nginx_port }} ssl;
        client_max_body_size 32m;
        client_body_buffer_size 128k;
        ssl on;
