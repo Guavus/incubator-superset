@@ -201,9 +201,9 @@ class SupersetSecurityManager(SecurityManager):
         """
         user = super(SupersetSecurityManager, self).auth_user_db(username, self.decryptMessage(password))
         if not user:
-          logging.info('{0} [AUTHENTICATION] Login attempt failed for user: {1}'.format(request.remote_addr, username))
+          logging.info('{0}:{1} [AUTHENTICATION] Login attempt failed for user: {2}'.format(request.remote_addr, request.user_agent, username))
         else:
-          logging.info('{0} [AUTHENTICATION] Login Succeeded for user: {1}'.format(request.remote_addr, username))
+          logging.info('{0}:{1} [AUTHENTICATION] Login Succeeded for user: {2}'.format(request.remote_addr, request.user_agent, username))
 
         return user
 
@@ -217,7 +217,7 @@ class SupersetSecurityManager(SecurityManager):
             login_path = url_for(
                 self.appbuilder.sm.auth_view.__class__.__name__ + '.login')
             if not ('_id' in session) and ('csrf_token' in session):
-                logging.info('{0} Session expired. {1} can not be accessed'.format(request.remote_addr, request.url))
+                logging.info('{0}:{1} Session expired. {2} can not be accessed'.format(request.remote_addr, request.user_agent, request.url))
             if not ('target_url' in session) and request.path != login_path:
                 session['target_url'] = request.url
         return super(SupersetSecurityManager, self).has_access(permission_name, view_name)
