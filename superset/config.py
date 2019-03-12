@@ -172,6 +172,7 @@ BABEL_DEFAULT_LOCALE = 'en'
 # Your application default translation path
 BABEL_DEFAULT_FOLDER = 'superset/translations'
 # The allowed translation for you app
+HELP_ENABLED = False
 LANGUAGES = {
     'en': {'flag': 'us', 'name': 'English'},
     'it': {'flag': 'it', 'name': 'Italian'},
@@ -301,7 +302,7 @@ LOG_LEVEL = 'INFO'
 # ---------------------------------------------------
 # LOG_LEVEL = DEBUG, INFO, WARNING, ERROR, CRITICAL
 
-ENABLE_TIME_ROTATE = True
+ENABLE_TIME_ROTATE = False
 TIME_ROTATE_LOG_LEVEL = 'INFO'
 FILENAME = os.path.join(DATA_DIR, 'superset.log')
 ROLLOVER = 'midnight'
