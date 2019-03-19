@@ -19,7 +19,7 @@
 
 var CryptoJS = require("crypto-js");
 
-export function encryptStr(_m) {
+export function encryptText(_m) {
   var _k = CryptoJS.enc.Utf8.parse('qw34sd78fh67asb1');
   var _i = CryptoJS.lib.WordArray.random(16);
   var _e = CryptoJS.AES.encrypt(_m, _k, {
