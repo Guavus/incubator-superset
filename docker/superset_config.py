@@ -25,6 +25,9 @@ def get_env_variable(var_name, default=None):
                         .format(var_name)
             raise EnvironmentError(error_msg)
 
+# Change application name
+APP_NAME = get_env_variable('APP_NAME')
+
 # LDAP configuration
 AUTH_TYPE = eval(get_env_variable('AUTH_TYPE'))
 
