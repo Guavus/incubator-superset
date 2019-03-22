@@ -153,8 +153,7 @@ const metrics = {
   label: t('Metrics'),
   validators: [v.nonEmpty],
   default: (c) => {
-    const metric = mainMetric(c.savedMetrics);
-    return metric ? [metric] : null;
+    return  null;
   },
   mapStateToProps: (state) => {
     const datasource = state.datasource;
