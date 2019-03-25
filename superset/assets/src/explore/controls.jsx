@@ -169,7 +169,9 @@ const metric = {
   ...metrics,
   multi: false,
   label: t('Metric'),
-  default: props => mainMetric(props.savedMetrics),
+  default: props => {
+    return null;
+  },
 };
 
 const sandboxUrl = (
