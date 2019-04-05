@@ -86,6 +86,7 @@ setup(
         'flask-wtf',
         'geopy',
         'gunicorn',  # deprecated
+        'gunicorn[gevent]',
         'humanize',
         'idna',
         'isodate',
