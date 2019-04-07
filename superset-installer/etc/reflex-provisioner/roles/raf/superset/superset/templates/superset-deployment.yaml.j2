@@ -44,10 +44,8 @@ spec:
           value: "6379"
         - name: SUPERSET_ENV
           value: local
-{% if superset_kerberos_enabled == 'true' %}           
         - name: IS_KERBEROS_ENABLED
           value: "{{ superset_kerberos_enabled }}"
-{% endif %}          
         - name: AUTH_TYPE
           value: "{{ SUPERSET_AUTH_TYPE }}"
 {% if SUPERSET_AUTH_TYPE == 'AUTH_LDAP' %}   
