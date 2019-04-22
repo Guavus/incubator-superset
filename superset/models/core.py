@@ -562,11 +562,11 @@ class Dashboard(Model, AuditMixinNullable, ImportMixin):
 
         # override the dashboard
         existing_dashboard = None
-        for dash in session.query(Dashboard).all():
-            if ('remote_id' in dash.params_dict and
-                    dash.params_dict['remote_id'] ==
-                    dashboard_to_import.id):
-                existing_dashboard = dash
+        # for dash in session.query(Dashboard).all():
+        #     if ('remote_id' in dash.params_dict and
+        #             dash.params_dict['remote_id'] ==
+        #             dashboard_to_import.id):
+        #         existing_dashboard = dash
 
         dashboard_to_import.id = None
         if dashboard_to_import.position_json is not None:
