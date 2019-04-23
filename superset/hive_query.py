@@ -24,7 +24,7 @@ from datetime import datetime
 #gran valaue map,supported grain by hive db engine
 GRAIN_VALUE_MAP = {
     'PT1S' : 1,
-    'PT1M' : 60,
+    'PT1M' : 900, # set for trial to support 15 min grain query
     'PT1H' : 3600,
     'P1D'  : 86400,
     'P1W'  : 604800,   # 7 days
