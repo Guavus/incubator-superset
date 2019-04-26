@@ -124,7 +124,8 @@ def default_hive_query_generator(sql, query_obj, database, datasource_name):
                 "month":"month",
                 "day":"day",
                 "hour":"hour",
-                "minute":"minute"
+                "minute":"minute",
+                "bin_interval":900
          }
     }
 
