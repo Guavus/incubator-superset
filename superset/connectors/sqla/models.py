@@ -835,11 +835,7 @@ class SqlaTable(Model, BaseDatasource):
         status = utils.QueryStatus.SUCCESS
         error_message = None
         df = None
-        
         logging.info('[PERFORMANCE CHECK] SQL Query formation time {0} '.format(datetime.now() - qry_start_dttm))
-        
-        
-
         db_engine_spec = self.database.db_engine_spec
         try:
             df = self.database.get_df(sql, self.schema)
