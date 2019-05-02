@@ -43,14 +43,55 @@ export default function(bootstrapData) {
 
   const dashboard = { ...bootstrapData.dashboard_data };
   let filters = {};
-  try {
-    // allow request parameter overwrite dashboard metadata
-    filters = JSON.parse(
-      getParam('preselect_filters') || dashboard.metadata.default_filters,
-    );
-  } catch (e) {
-    //
+
+  const getFiltersFromFilterConfig = (filter_configs) => {
+    const filters = {};
+    filter_configs.forEach( filter => {
+      const defaultValue = filter.hasOwnProperty("defaultValue")?filter["defaultValue"]:"";
+      var valArr = defaultValue!==""?defaultValue.split(";"):[]; 
+      if(valArr.length > 0){
+        filters[filter["column"]] = valArr;
+      }
+    })
+    return filters;
   }
+
+  // update filter with filter_box Viz default values
+  dashboard.slices.forEach(slice => {
+     let defultFilters = {};
+
+      // As per the current support only filter_box can publish global default filters
+      if(slice.form_data.viz_type == "filter_box"){
+
+        const publish_columns = slice.form_data.hasOwnProperty("publish_columns")?slice.form_data.publish_columns:[];
+        const filterConfigFilters = getFiltersFromFilterConfig(slice.form_data.filter_configs);
+        
+        publish_columns.forEach( col => {
+          if(Object.keys(filterConfigFilters).length > 0 && filterConfigFilters[col] != undefined && Object.keys(filterConfigFilters[col]).length > 0){
+            defultFilters[col] = filterConfigFilters[col];    
+          }
+        })
+
+        // check date filter is applicable for filter
+        if(slice.form_data.date_filter){
+          defultFilters["__time_range"] = slice.form_data.time_range;
+        }
+
+        // Update final filter box filters for dashboard state
+        if(Object.keys(defultFilters).length){
+          filters[slice.form_data.slice_id] = defultFilters;
+        }
+      }
+  })
+
+  // try {
+  //   // allow request parameter overwrite dashboard metadata
+  //   filters = JSON.parse(
+  //     getParam('preselect_filters') || dashboard.metadata.default_filters,
+  //   );
+  // } catch (e) {
+  //   //
+  // }
 
   // Priming the color palette with user's label-color mapping provided in
   // the dashboard's JSON metadata

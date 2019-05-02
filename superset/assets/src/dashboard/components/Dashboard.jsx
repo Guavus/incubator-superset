@@ -218,7 +218,7 @@ class Dashboard extends React.PureComponent {
         const updatedFormData = getFormDataWithExtraFilters({
           chart,
           dashboardMetadata: this.props.dashboardInfo.metadata,
-          filters: this.getExtraFilters(chart),
+          filters: this.props.dashboardState.filters,
           sliceId: chart.id,
         });
 
