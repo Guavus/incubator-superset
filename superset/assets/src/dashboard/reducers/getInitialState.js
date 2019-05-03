@@ -56,6 +56,10 @@ export default function(bootstrapData) {
     return filters;
   }
 
+  const isPublishColumnExistsInFilters = (filterConfigFilters , col) => {
+    return (Object.keys(filterConfigFilters).length > 0 && filterConfigFilters[col] != undefined && Object.keys(filterConfigFilters[col]).length > 0) ;
+  }
+
   // update filter with filter_box Viz default values
   dashboard.slices.forEach (slice => {
      let defaultFilters = {};
@@ -67,8 +71,8 @@ export default function(bootstrapData) {
         const filterConfigFilters = getFiltersFromFilterConfig(slice.form_data.filter_configs);
         
         publish_columns.forEach ( col => {
-          if (Object.keys(filterConfigFilters).length > 0 && filterConfigFilters[col] != undefined && Object.keys(filterConfigFilters[col]).length > 0) {
-            defaultFilters[col] = filterConfigFilters[col];    
+          if (isPublishColumnExistsInFilters(filterConfigFilters , col)) {
+            defaultFilters[col] = filterConfigFilters[col];  
           }
         })
 
@@ -83,6 +87,7 @@ export default function(bootstrapData) {
         }
       }
   })
+
 
   // try {
   //   // allow request parameter overwrite dashboard metadata
