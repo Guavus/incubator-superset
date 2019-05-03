@@ -24,13 +24,13 @@ const cachedDashboardMetadataByChart = {};
 const cachedFiltersByChart = {};
 const cachedFormdataByChart = {};
 
-const getExtraFilters = (chart,globalFilters) => {
+const getExtraFilters = (chart, globalFilters) => {
   const slicesInState = getLinkedSliceWithFilters(chart.formData,globalFilters)
   const filters = getFiltersFromSlices(slicesInState,globalFilters)
   return filters;
 }
 
-const getFiltersFromSlices = (slices,globalFilters) => {
+const getFiltersFromSlices = (slices, globalFilters) => {
   const filters = {};
   slices.forEach( slice => {
     filters[slice] = globalFilters[slice];
@@ -38,7 +38,7 @@ const getFiltersFromSlices = (slices,globalFilters) => {
   return filters;
 }
 
-const getLinkedSliceWithFilters = (formData,globalFilters) => {
+const getLinkedSliceWithFilters = (formData, globalFilters) => {
   let slicesInState = [];
   const propExist = formData.hasOwnProperty("linked_slice");
   if(propExist) {
