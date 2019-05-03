@@ -61,7 +61,7 @@ export const sqlaTimeSeries = {
   expanded: true,
   controlSetRows: [
     ['granularity_sqla', 'time_grain_sqla'],
-    ['time_range'],
+    ['time_range','query_with_partitions'],
   ],
 };
 
