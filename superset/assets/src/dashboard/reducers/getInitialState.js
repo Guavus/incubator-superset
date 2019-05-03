@@ -48,7 +48,7 @@ export default function(bootstrapData) {
     const filters = {};
     filter_configs.forEach ( filter => {
       const defaultValue = filter.hasOwnProperty("defaultValue") ? filter["defaultValue"] : "";
-      var values = defaultValue !=="" ? defaultValue.split(";") : []; 
+      var values = defaultValue !== "" ? defaultValue.split(";") : []; 
       if (values.length > 0) {
         filters[filter["column"]] = values;
       }
@@ -58,7 +58,7 @@ export default function(bootstrapData) {
 
   // update filter with filter_box Viz default values
   dashboard.slices.forEach (slice => {
-     let defultFilters = {};
+     let defaultFilters = {};
 
       // As per the current support only filter_box can publish global default filters
       if (slice.form_data.viz_type == "filter_box") {
@@ -68,18 +68,18 @@ export default function(bootstrapData) {
         
         publish_columns.forEach ( col => {
           if (Object.keys(filterConfigFilters).length > 0 && filterConfigFilters[col] != undefined && Object.keys(filterConfigFilters[col]).length > 0) {
-            defultFilters[col] = filterConfigFilters[col];    
+            defaultFilters[col] = filterConfigFilters[col];    
           }
         })
 
         // check date filter is applicable for filter
         if (slice.form_data.date_filter) {
-          defultFilters["__time_range"] = slice.form_data.time_range;
+          defaultFilters["__time_range"] = slice.form_data.time_range;
         }
 
         // Update final filter box filters for dashboard state
-        if (Object.keys(defultFilters).length) {
-          filters[slice.form_data.slice_id] = defultFilters;
+        if (Object.keys(defaultFilters).length) {
+          filters[slice.form_data.slice_id] = defaultFilters;
         }
       }
   })
