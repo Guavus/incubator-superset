@@ -36,41 +36,26 @@ export default function transformProps(chartProps) {
   } = formData;
   const { verboseMap } = datasource;
 
-  const { filtersFields } = [];
+  var { filtersFields } = [];
   if (filterConfigs) {
-    const filtersFields = filterConfigs.map(flt => ({
+    filtersFields = filterConfigs.map(flt => ({
       ...flt,
       key: flt.column,
       label: flt.label || verboseMap[flt.column] || flt.column,
     }));
+  }
 
-    return {
-      datasource: rawDatasource,
-      filtersFields,
-      filtersChoices: payload.data,
-      instantFiltering,
-      onChange: onAddFilter,
-      origSelectedValues: filters || {},
-      showDateFilter: dateFilter,
-      showDruidTimeGrain: showDruidTimeGranularity,
-      showDruidTimeOrigin,
-      showSqlaTimeColumn,
-      showSqlaTimeGrain: showSqlaTimeGranularity,
-    };
-  }
-  else {
-    return {
-      datasource: rawDatasource,
-      filtersFields,
-      filtersChoices: payload.data,
-      instantFiltering,
-      onChange: onAddFilter,
-      origSelectedValues: filters || {},
-      showDateFilter: dateFilter,
-      showDruidTimeGrain: showDruidTimeGranularity,
-      showDruidTimeOrigin,
-      showSqlaTimeColumn,
-      showSqlaTimeGrain: showSqlaTimeGranularity,
-    };
-  }
+  return {
+    datasource: rawDatasource,
+    filtersFields,
+    filtersChoices: payload.data,
+    instantFiltering,
+    onChange: onAddFilter,
+    origSelectedValues: filters || {},
+    showDateFilter: dateFilter,
+    showDruidTimeGrain: showDruidTimeGranularity,
+    showDruidTimeOrigin,
+    showSqlaTimeColumn,
+    showSqlaTimeGrain: showSqlaTimeGranularity,
+  };
 }
