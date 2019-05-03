@@ -241,8 +241,8 @@ export const controls = {
     default: true,
     renderTrigger: false,
     description: t('Use this flag to convert time range based '+
-    'WHERE Clause Query to Hive Time based partition Query.'+
-    'For this Hive Partitions must be configured at Datasource.'),
+    'WHERE clause query to hive time based partition query. '+
+    'For this, hive partitions must be configured at datasource.'),
     mapStateToProps: state => ({
       hidden: (state.datasource.database.backend == "hive") ? false : true,
       default: (state.datasource.database.backend == "hive") ? true : false,
