@@ -63,11 +63,12 @@ const propTypes = {
     PropTypes.string,
     PropTypes.object,
   ]),
+  enableCellClick: PropTypes.bool
 };
 
 const formatValue = getNumberFormatter(NumberFormats.INTEGER);
 const formatPercent = getNumberFormatter(NumberFormats.PERCENT_3_POINT);
-function NOOP() {}
+function NOOP() { }
 
 function TableVis(element, props) {
   const {
@@ -87,6 +88,8 @@ function TableVis(element, props) {
     tableFilter,
     tableTimestampFormat,
     timeseriesLimitMetric,
+    publishColumns,
+    enableCellClick = false,
   } = props;
 
   const $container = $(element);
@@ -121,8 +124,8 @@ function TableVis(element, props) {
   div.html('');
   const table = div.append('table')
     .classed(
-      'dataframe dataframe table table-striped ' +
-      'table-condensed table-hover dataTable no-footer', true)
+    'dataframe dataframe table table-striped ' +
+    'table-condensed table-hover dataTable no-footer', true)
     .attr('width', '100%');
 
   table.append('thead').append('tr')
@@ -138,13 +141,17 @@ function TableVis(element, props) {
     .enter()
     .append('tr')
     .on('click', function (d) {
+      if (!enableCellClick) {
         const tr = d3.select(this);
         if (tr.classed('selected-row')) {
           d3.select(this).classed('selected-row', false);
+          manageFilters('remove',d)
         } else {
-          d3.selectAll('.selected-row').classed('selected-row', false);
+          d3.selectAll(".selected-row").classed('selected-row', false);
           d3.select(this).classed('selected-row', true);
+          manageFilters('add',d)
         }
+      }
     })
     .selectAll('td')
     .data(row => columns.map(({ key, format }) => {
@@ -216,22 +223,33 @@ function TableVis(element, props) {
       filters &&
       filters[d.col] &&
       filters[d.col].indexOf(d.val) >= 0,
-    )
+  )
     .on('click', function (d) {
-      if (!d.isMetric && tableFilter) {
+      if (enableCellClick && tableFilter && !d.isMetric) {
         const td = d3.select(this);
         if (td.classed('filtered')) {
-          onAddFilter (d.col, [],false);
+          onRemoveFilter(d.col, [d.val]);
           d3.select(this).classed('filtered', false);
         } else {
-          d3.selectAll('.filtered').classed('filtered', false);
           d3.select(this).classed('filtered', true);
-          onAddFilter(d.col, [d.val],false);
+          onAddFilter(d.col, [d.val]);
         }
       }
     })
     .style('cursor', d => (!d.isMetric) ? 'pointer' : '')
     .html(d => d.html ? d.html : d.val);
+  
+  const manageFilters = (function (type,data){
+    if(tableFilter){
+      publishColumns.forEach((fltr) => {
+        if(type == 'remove'){
+          onAddFilter(fltr, [], false);
+        }else {
+          onAddFilter(fltr, [data[fltr]], false);
+        }
+      });
+    }
+  })
 
   const paging = pageLength && pageLength > 0;
 
