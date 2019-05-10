@@ -137,6 +137,15 @@ function TableVis(element, props) {
     .data(data)
     .enter()
     .append('tr')
+    .on('click', function (d) {
+        const tr = d3.select(this);
+        if (tr.classed('selected-row')) {
+          d3.select(this).classed('selected-row', false);
+        } else {
+          d3.selectAll('.selected-row').classed('selected-row', false);
+          d3.select(this).classed('selected-row', true);
+        }
+    })
     .selectAll('td')
     .data(row => columns.map(({ key, format }) => {
       const val = row[key];
@@ -212,11 +221,12 @@ function TableVis(element, props) {
       if (!d.isMetric && tableFilter) {
         const td = d3.select(this);
         if (td.classed('filtered')) {
-          onRemoveFilter(d.col, [d.val]);
+          onAddFilter (d.col, [],false);
           d3.select(this).classed('filtered', false);
         } else {
+          d3.selectAll('.filtered').classed('filtered', false);
           d3.select(this).classed('filtered', true);
-          onAddFilter(d.col, [d.val]);
+          onAddFilter(d.col, [d.val],false);
         }
       }
     })
