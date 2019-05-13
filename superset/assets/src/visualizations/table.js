@@ -95,7 +95,7 @@ function tableVis(slice, payload) {
       const val = row[c];
       let html;
       const isMetric = metrics.indexOf(c) >= 0;
-      if (c === '__timestamp' || c === '_timestamp') {
+      if (c === '__timestamp') {
         html = tsFormatter(val);
       }
       if (typeof (val) === 'string') {
