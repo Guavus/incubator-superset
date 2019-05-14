@@ -68,6 +68,7 @@ const propTypes = {
   bigNumber: PropTypes.number.isRequired,
   bigNumberPercentage: PropTypes.number.isRequired,
   formatBigNumber: PropTypes.func,
+  formatPercentage: PropTypes.func,
   subheader: PropTypes.string,
   showTrendLine: PropTypes.bool,
   startYAxisAtZero: PropTypes.bool,
@@ -78,6 +79,7 @@ const propTypes = {
 const defaultProps = {
   className: '',
   formatBigNumber: identity,
+  formatPercentage: identity,
   subheader: '',
   showTrendLine: false,
   startYAxisAtZero: true,
@@ -110,7 +112,7 @@ class BigNumberVis extends React.PureComponent {
   }
 
   renderHeader(maxHeight, isTrendLineVisible = false) {
-    const { bigNumber, bigNumberPercentage, formatBigNumber, width } = this.props;
+    const { bigNumber, bigNumberPercentage, formatBigNumber, formatPercentage, width } = this.props;
     // Using text variable to show absolute number
     const text = formatBigNumber(bigNumber);
 
@@ -121,7 +123,7 @@ class BigNumberVis extends React.PureComponent {
     const fontSize = computeMaxFontSize({
       text,
       maxWidth: Math.floor(width),
-      maxHeight,
+      maxHeight: maxHeight,
       className: 'header_line',
       container,
     });
@@ -129,8 +131,16 @@ class BigNumberVis extends React.PureComponent {
     document.body.removeChild(container);
 
     // Using percentage_text variable to show percentage number
-    if (bigNumberPercentage) {
-      const percentage_text = bigNumberPercentage;
+    if (bigNumberPercentage != undefined && bigNumberPercentage >= 0) {
+      const fontSize = computeMaxFontSize({
+        text,
+        maxWidth: Math.floor(width/2),
+        maxHeight: maxHeight/2,
+        className: 'header_line',
+        container,
+      });
+
+      const percentage_text = formatPercentage(bigNumberPercentage);
 
       return (
         <div

@@ -35,6 +35,7 @@ export default function transformProps(chartProps) {
     subheader = '',
     vizType,
     yAxisFormat,
+    percentageFormat,
   } = formData;
   const { data } = payload;
 
@@ -73,13 +74,9 @@ export default function transformProps(chartProps) {
       : null;
   } else {
     bigNumber = data[0][metricName];
-
-    if(percentageMetricName && data[0][percentageMetricName] >= 0) {
-      bigNumberPercentage = data[0][percentageMetricName] + '%';
-      // Uncomment the following code if we want to show the percent value with precisions.
-
-      //const formatPercentChange = getNumberFormatter(NumberFormats.PERCENT)
-      // formattedBigNumberPercentage = `${formatPercentChange(bigNumberPercentage)} %`;
+    
+    if(percentageMetricName && data[0].hasOwnProperty(percentageMetricName)) {
+      bigNumberPercentage = data[0][percentageMetricName];
     }
     
     trendLineData = null;
@@ -93,6 +90,7 @@ export default function transformProps(chartProps) {
   }
 
   const formatValue = getNumberFormatter(yAxisFormat);
+  const percentageFormatValue = getNumberFormatter(percentageFormat);
 
   return {
     width,
@@ -101,6 +99,7 @@ export default function transformProps(chartProps) {
     bigNumberPercentage,
     className,
     formatBigNumber: formatValue,
+    formatPercentage: percentageFormatValue,
     mainColor,
     renderTooltip: renderTooltipFactory(formatValue),
     showTrendLine: supportAndShowTrendLine,
