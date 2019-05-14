@@ -66,6 +66,7 @@ const propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   bigNumber: PropTypes.number.isRequired,
+  bigNumberPercentage: PropTypes.number.isRequired,
   formatBigNumber: PropTypes.func,
   subheader: PropTypes.string,
   showTrendLine: PropTypes.bool,
@@ -108,12 +109,15 @@ class BigNumberVis extends React.PureComponent {
     return container;
   }
 
-  renderHeader(maxHeight) {
-    const { bigNumber, formatBigNumber, width } = this.props;
+  renderHeader(maxHeight, isTrendLineVisible = false) {
+    const { bigNumber, bigNumberPercentage, formatBigNumber, width } = this.props;
+    // Using text variable to show absolute number
     const text = formatBigNumber(bigNumber);
 
     const container = this.createTemporaryContainer();
     document.body.appendChild(container);
+
+    // Keeping font size for both absolute and percentage numbers will be same.
     const fontSize = computeMaxFontSize({
       text,
       maxWidth: Math.floor(width),
@@ -121,22 +125,44 @@ class BigNumberVis extends React.PureComponent {
       className: 'header_line',
       container,
     });
+
     document.body.removeChild(container);
 
-    return (
-      <div
-        className="header_line"
-        style={{
-          fontSize,
-          height: maxHeight,
-        }}
-      >
-        <span>{text}</span>
-      </div>
-    );
+    // Using percentage_text variable to show percentage number
+    if (bigNumberPercentage) {
+      const percentage_text = bigNumberPercentage;
+
+      return (
+        <div
+          className="header_line bn_layout"
+          style={{
+            fontSize,
+            height: maxHeight,
+          }}
+        >
+          <div>{text}</div>
+          <div>{percentage_text}</div>
+        </div>
+      );
+    }
+    else {
+      return (
+        <div
+          className="header_line"
+          style={{
+            fontSize,
+            height: maxHeight,
+          }}
+        >
+          <div>{text}</div>
+        </div>
+      );
+    }
   }
 
   renderSubheader(maxHeight) {
+    // Relative to addition of one more field as percentage, 
+    // not adding another sub header.
     const { subheader, width } = this.props;
     let fontSize = 0;
     if (subheader) {
@@ -223,7 +249,7 @@ class BigNumberVis extends React.PureComponent {
             className="text_container"
             style={{ height: allTextHeight }}
           >
-            {this.renderHeader(Math.ceil(PROPORTION.HEADER_WITH_TRENDLINE * height))}
+            {this.renderHeader(Math.ceil(PROPORTION.HEADER_WITH_TRENDLINE * height), showTrendLine)}
             {this.renderSubheader(Math.ceil(PROPORTION.SUBHEADER_WITH_TRENDLINE * height))}
           </div>
           {this.renderTrendline(chartHeight)}

@@ -42,6 +42,11 @@
   font-weight: 600;
 }
 
+.big_number .bn_layout {
+  display: flex;
+  justify-content: space-between;
+}
+
 .big_number .header_line span {
   position: absolute;
   bottom: 0;

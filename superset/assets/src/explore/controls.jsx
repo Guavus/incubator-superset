@@ -147,6 +147,25 @@ const groupByControl = {
   commaChoosesOption: false,
 };
 
+const percentageMetric = {
+  type: 'MetricsControl',
+  multi: false,
+  label: t('Percentage Metric'),
+  validators: [],
+  mapStateToProps: (state) => {
+    const datasource = state.datasource;
+    return {
+      columns: datasource ? datasource.columns : [],
+      savedMetrics: datasource ? datasource.metrics : [],
+      datasourceType: datasource && datasource.type,
+    };
+  },
+  description: t('Metric for percentage values to be displayed'),
+  default: props => {
+    return null;
+  },
+};
+
 const metrics = {
   type: 'MetricsControl',
   multi: true,
@@ -165,6 +184,7 @@ const metrics = {
   },
   description: t('One or many metrics to display'),
 };
+
 const metric = {
   ...metrics,
   multi: false,
@@ -223,6 +243,8 @@ export const controls = {
   metrics,
 
   metric,
+
+  percentageMetric,
 
   datasource: {
     type: 'DatasourceControl',

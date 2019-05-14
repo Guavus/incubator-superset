@@ -25,6 +25,7 @@ export default {
       expanded: true,
       controlSetRows: [
         ['metric'],
+        ['percentageMetric'],
         ['adhoc_filters'],
       ],
     },
