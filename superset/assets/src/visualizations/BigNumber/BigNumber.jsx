@@ -131,7 +131,7 @@ class BigNumberVis extends React.PureComponent {
     document.body.removeChild(container);
 
     // Using percentage_text variable to show percentage number
-    if (bigNumberPercentage != undefined && bigNumberPercentage >= 0) {
+    if (bigNumberPercentage != undefined) {
       const fontSize = computeMaxFontSize({
         text,
         maxWidth: Math.floor(width/2),
