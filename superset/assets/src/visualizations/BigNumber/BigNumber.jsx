@@ -111,7 +111,7 @@ class BigNumberVis extends React.PureComponent {
     return container;
   }
 
-  renderHeader(maxHeight, isTrendLineVisible = false) {
+  renderHeader(maxHeight) {
     const { bigNumber, bigNumberPercentage, formatBigNumber, formatPercentage, width } = this.props;
     // Using text variable to show absolute number
     const text = formatBigNumber(bigNumber);
@@ -259,7 +259,7 @@ class BigNumberVis extends React.PureComponent {
             className="text_container"
             style={{ height: allTextHeight }}
           >
-            {this.renderHeader(Math.ceil(PROPORTION.HEADER_WITH_TRENDLINE * height), showTrendLine)}
+            {this.renderHeader(Math.ceil(PROPORTION.HEADER_WITH_TRENDLINE * height))}
             {this.renderSubheader(Math.ceil(PROPORTION.SUBHEADER_WITH_TRENDLINE * height))}
           </div>
           {this.renderTrendline(chartHeight)}

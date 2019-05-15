@@ -45,6 +45,7 @@
 .big_number .bn_layout {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .big_number .header_line span {
