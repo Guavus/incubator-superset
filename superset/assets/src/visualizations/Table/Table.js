@@ -68,8 +68,8 @@ const propTypes = {
 
 const formatValue = getNumberFormatter(NumberFormats.INTEGER);
 const formatPercent = getNumberFormatter(NumberFormats.PERCENT_3_POINT);
-const remove = 'remove';
-const add = 'add';
+const REMOVE = 'remove';
+const ADD = 'add';
 function NOOP() { }
 
 function TableVis(element, props) {
@@ -147,11 +147,11 @@ function TableVis(element, props) {
         const tr = d3.select(this);
         if (tr.classed('selected-row')) {
           d3.select(this).classed('selected-row', false);
-          publishSelections(remove,d)
+          publishSelections(REMOVE,d)
         } else {
           d3.selectAll(".selected-row").classed('selected-row', false);
           d3.select(this).classed('selected-row', true);
-          publishSelections(add,d)
+          publishSelections(ADD,d)
         }
       }
     })
@@ -243,11 +243,11 @@ function TableVis(element, props) {
   
   const publishSelections = (function (type,data){
     if(tableFilter){
-      publishColumns.forEach((filter) => {
-        if(type == remove){
-          onAddFilter(filter, [], false);
+      publishColumns.forEach((column) => {
+        if(type == REMOVE){
+          onAddFilter(column, [], false);
         }else {
-          onAddFilter(filter, [data[filter]], false);
+          onAddFilter(column, [data[column]], false);
         }
       });
     }
