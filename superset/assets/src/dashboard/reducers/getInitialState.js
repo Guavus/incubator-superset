@@ -43,6 +43,7 @@ export default function(bootstrapData) {
 
   const dashboard = { ...bootstrapData.dashboard_data };
   let filters = {};
+  let publishSubscriberMap = {}
 
   const getFiltersFromFilterConfig = (filter_configs) => {
     const filters = {};
@@ -60,6 +61,12 @@ export default function(bootstrapData) {
     return (Object.keys(filterConfigFilters).length > 0 && filterConfigFilters[col] != undefined && Object.keys(filterConfigFilters[col]).length > 0) ;
   }
 
+  // read pubsub info from dashboard metadata and store in state
+  try {
+    publishSubscriberMap = JSON.parse(dashboard.metadata.pub_sub_info);
+  } catch (e) {
+    console.log('NO publishSubscriberMap exit in dashboard metadata')
+  }
   // update filter with filter_box Viz default values
   dashboard.slices.forEach (slice => {
      let defaultFilters = {};
@@ -236,6 +243,7 @@ export default function(bootstrapData) {
       showBuilderPane: dashboard.dash_edit_perm && editMode,
       hasUnsavedChanges: false,
       maxUndoHistoryExceeded: false,
+      publishSubscriberMap: publishSubscriberMap,
     },
     dashboardLayout,
     messageToasts: [],
