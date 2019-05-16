@@ -140,15 +140,15 @@ export function onReconcile() {
   return { type: ON_RECONCILE };
 }
 
-export const ON_SUCCESS_RECONCILE = 'ON_SUCCESS_RECONCILE';
-export function onSuccessReconcile(publishSubscriberMap) {
-  return { type: ON_SUCCESS_RECONCILE, publishSubscriberMap };
+export const ON_FINISH_RECONCILE = 'ON_FINISH_RECONCILE';
+export function onFinishReconcile(publishSubscriberMap) {
+  return { type: ON_FINISH_RECONCILE ,publishSubscriberMap};
 }
 
-export function reconcileSuccess(data, id) {
+export function reconcileSuccess(data,id){
   return dispatch => {
-    dispatch(onSuccessReconcile(data.pub_sub_info))
-    dispatch(saveDashboardRequest(data, id, SAVE_TYPE_OVERWRITE, 'This dashboard was reconcile successfully.'));
+    dispatch(onFinishReconcile(data.pub_sub_info))
+    dispatch(saveDashboardRequest(data,id,SAVE_TYPE_OVERWRITE,'This dashboard was reconcile successfully.'));
   };
 }
 
@@ -160,7 +160,7 @@ export function saveDashboardRequestSuccess() {
   };
 }
 
-export function saveDashboardRequest(data, id, saveType, sucessMessage = 'This dashboard was saved successfully.') {
+export function saveDashboardRequest(data, id, saveType, sucessMessage = 'This dashboard was saved successfully.' ) {
   const path = saveType === SAVE_TYPE_OVERWRITE ? 'save_dash' : 'copy_dash';
 
   return dispatch =>

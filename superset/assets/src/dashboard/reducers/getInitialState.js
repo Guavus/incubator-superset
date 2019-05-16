@@ -68,13 +68,9 @@ export default function (bootstrapData) {
   } catch (e) {
     console.log('NO publishSubscriberMap exit in dashboard metadata')
   }
-
-  const getSliceData = (sliceId, slices) => {
-    let slice_data = _.find(slices, function (slice) {
-      return (slice.slice_id == sliceId);
-    })
-    return slice_data;
-  }
+  // update filter with filter_box Viz default values
+  dashboard.slices.forEach (slice => {
+     let defaultFilters = {};
 
   const getDefaultFilters = (publishSliceData, publish_id) => {
     let defaultFilters = {};
@@ -264,7 +260,6 @@ export default function (bootstrapData) {
       hasUnsavedChanges: false,
       maxUndoHistoryExceeded: false,
       publishSubscriberMap: publishSubscriberMap,
-      doReconcile: false,
     },
     dashboardLayout,
     messageToasts: [],
