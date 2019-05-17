@@ -43,7 +43,7 @@ import OmniContianer from '../../components/OmniContainer';
 
 import '../stylesheets/index.less';
 
-import  getPublishSubscriberMap  from '../util/dashboardInteractor';
+import  getPublishSubscriberMap  from '../util/getPublishSubscriberMap';
 import { DASHBOARD_HEADER_ID } from '../util/constants';
 const propTypes = {
   actions: PropTypes.shape({

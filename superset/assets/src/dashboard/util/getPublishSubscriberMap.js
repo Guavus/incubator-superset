@@ -19,19 +19,19 @@
 import * as _ from 'lodash';
 const APPLY_FILTER = 'APPLY_FILTER';
 
-function createPublishDataFor(slice, slices) {
+function createPublishData(chart, charts) {
     return {
-        id: slice.id,
-        publish_columns: slice.formData.publish_columns,
-        subcribers: getSubsribersFor(slice.id, slices),
-        viz_type: slice.formData.viz_type
+        id: chart.id,
+        publish_columns: chart.formData.publish_columns,
+        subcribers: getSubsribersFor(chart.id, charts),
+        viz_type: chart.formData.viz_type
     }
 
 }
 
-function getSubsribersFor(publisherId, slices) {
+function getSubsribersFor(publisherId, charts) {
     var subs = [];
-    slices.forEach(element => {
+    charts.forEach(element => {
         if (isSubscriber(element) && isPublisherExistInLinkedSlices(element, publisherId)) {
             subs.push(element.id);
         }
@@ -39,18 +39,18 @@ function getSubsribersFor(publisherId, slices) {
     return subs;
 }
 
-function isPublisher(slice) {
-    return (slice.formData.publish_columns && slice.formData.publish_columns.length > 0)
+function isPublisher(chart) {
+    return (chart.formData.publish_columns && chart.formData.publish_columns.length > 0)
 }
 
-function getPublisherMap(slices) {
-    var pubs;
-    slices.forEach(element => {
+function getPublishers(charts) {
+    var pubs = undefined;
+    charts.forEach(element => {
         if (isPublisher(element)) {
-            if (!pubs) {
+            if (pubs == undefined) {
                 pubs = {};
             }
-            pubs[element.id] = createPublishDataFor(element, slices);
+            pubs[element.id] = createPublishData(element, charts);
         }
     });
     return pubs;
@@ -68,9 +68,9 @@ function createFilterDataFromPublishColumns(obj) {
 }
 
 function isPublisherExistInLinkedSlices(slice, publisherId) {
-    var item = _.find(slice.formData.linked_slice, function (item) {
-        return ((Number.isInteger(item) && item == publisherId) ||
-            (item instanceof Object && item.publisher_id == publisherId))
+    var item = _.find(slice.formData.linked_slice ,function(item) {
+        return  ((Number.isInteger(item) && item == publisherId ) ||
+        (item instanceof Object && item.publisher_id == publisherId))
     })
     return (item != undefined)
 }
@@ -90,37 +90,37 @@ function getLinkedSlices(slices, publishers) {
     return ls;
 }
 
-function createSubscriberDataFor(slice, publishers) {
+function createSubscriberData(chart, publishers) {
     return {
-        id: slice.id,
-        viz_type: slice.formData.viz_type,
-        actions: slice.formData.hasOwnProperty('actions') ? slice.formData.actions : [APPLY_FILTER],
-        linked_slices: getLinkedSlices(slice.formData.linked_slice, publishers),
-        extras: slice.formData.hasOwnProperty('extras') ? slice.formData.extras : undefined
+        id: chart.id,
+        viz_type: chart.formData.viz_type,
+        actions: chart.formData.hasOwnProperty('actions') ? chart.formData.actions : [APPLY_FILTER],
+        linked_slices: getLinkedSlices(chart.formData.linked_slice, publishers),
+        extras: undefined
     }
 
 }
 
-function isSubscriber(slice) {
-    return (slice.formData.linked_slice && slice.formData.linked_slice.length > 0)
+function isSubscriber(chart) {
+    return (chart.formData.linked_slice && chart.formData.linked_slice.length > 0)
 }
 
-function getSubscriberMap(slices, publishers) {
-    var subs;
-    slices.forEach(element => {
+function getSubscribers(charts, publishers) {
+    var subs = undefined;
+    charts.forEach(element => {
         if (isSubscriber(element)) {
-            if (!subs) {
+            if (subs == undefined) {
                 subs = {};
             }
-            subs[element.id] = createSubscriberDataFor(element, publishers)
+            subs[element.id] = createSubscriberData(element, publishers)
         }
     });
     return subs;
 }
 
-export default function getPublishSubscriberMap(slices) {
-    var publishers = getPublisherMap(slices);
-    var subscribers = getSubscriberMap(slices, publishers);
+export default function getPublishSubscriberMap(charts) {
+    var publishers = getPublishers(charts);
+    var subscribers = getSubscribers(charts, publishers);
     return {
         publishers: publishers,
         subscribers: subscribers
