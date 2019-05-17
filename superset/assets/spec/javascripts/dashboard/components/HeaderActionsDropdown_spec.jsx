@@ -67,7 +67,7 @@ describe('HeaderActionsDropdown', () => {
       expect(wrapper.find(SaveModal)).toHaveLength(0);
     });
 
-    it('should render two MenuItem', () => {
+    it('should render 2 MenuItem', () => {
       const wrapper = setup(overrideProps);
       expect(wrapper.find(MenuItem)).toHaveLength(2);
     });
