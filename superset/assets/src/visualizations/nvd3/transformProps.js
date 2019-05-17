@@ -33,6 +33,7 @@ export default function transformProps(chartProps) {
 
   const {
     annotationLayers,
+    subscriberLayers,
     barStacked,
     bottomMargin,
     colorPicker,
@@ -89,6 +90,7 @@ export default function transformProps(chartProps) {
     data,
     annotationData,
     annotationLayers,
+    subscriberLayers,
     areaStackedStyle: stackedStyle,
     baseColor: colorPicker,
     bottomMargin,

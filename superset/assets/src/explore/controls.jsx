@@ -2068,6 +2068,15 @@ export const controls = {
     tabOverride: 'data',
   },
 
+  subscriber_layers : {
+    type: 'SubscriberLayerControl',
+    label: '',
+    default: [],
+    description: 'Subscriber Layers',
+    renderTrigger: true,
+    tabOverride: 'data',
+  },
+
   adhoc_filters: {
     type: 'AdhocFilterControl',
     label: t('Filters'),

@@ -82,6 +82,14 @@ export const annotations = {
   ],
 };
 
+export const subscribers = {
+  label: t('Subscribers'),
+  expanded: true,
+  controlSetRows: [
+    ['subscriber_layers'],
+  ],
+};
+
 export const NVD3TimeSeries = [
   {
     label: t('Query'),

@@ -17,7 +17,7 @@
  * under the License.
  */
 import { t } from '@superset-ui/translation';
-import { NVD3TimeSeries, annotations } from './sections';
+import { NVD3TimeSeries, annotations, subscribers } from './sections';
 import { D3_TIME_FORMAT_OPTIONS } from '../controls';
 
 export default {
@@ -54,6 +54,7 @@ export default {
     },
     NVD3TimeSeries[1],
     annotations,
+    subscribers
   ],
   controlOverrides: {
     x_axis_format: {
