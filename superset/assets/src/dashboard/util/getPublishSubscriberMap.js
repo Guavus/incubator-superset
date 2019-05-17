@@ -96,7 +96,7 @@ function createSubscriberData(chart, publishers) {
         viz_type: chart.formData.viz_type,
         actions: chart.formData.hasOwnProperty('actions') ? chart.formData.actions : [APPLY_FILTER],
         linked_slices: getLinkedSlices(chart.formData.linked_slice, publishers),
-        extras: undefined
+        extras: chart.formData.hasOwnProperty('extras') ? chart.formData.extras : undefined
     }
 
 }
