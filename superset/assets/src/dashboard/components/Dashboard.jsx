@@ -228,10 +228,11 @@ class Dashboard extends React.PureComponent {
 
   refreshExcept(filterKey) {
     const immune = this.props.dashboardInfo.metadata.filter_immune_slices || [];
+    const publishers = this.props.dashboardState.publishSubscriberMap && this.props.dashboardState.publishSubscriberMap.publishers;
 
     this.getAllCharts().forEach(chart => {
       // filterKey is a string, immune array contains numbers
-      if (String(chart.id) !== filterKey && immune.indexOf(chart.id) === -1 && this.isFilterkeyExistInLinkedSlices(chart, filterKey)) {
+      if (String(chart.id) !== filterKey && immune.indexOf(chart.id) === -1 && this.isFilterkeyExistInLinkedSlices(publishers, chart.id, filterKey)) {
         const updatedFormData = getFormDataWithExtraFilters({
           chart,
           dashboardMetadata: this.props.dashboardInfo.metadata,
@@ -250,16 +251,15 @@ class Dashboard extends React.PureComponent {
     });
   }
 
-  isFilterkeyExistInLinkedSlices(chart, filterKey) {
-    const propExist = chart.formData.hasOwnProperty("linked_slice");
+  isFilterkeyExistInLinkedSlices(publishers, sliceId, filterKey) {
     let keyExists = false;
-    if (propExist) {
-      const linked_slices = chart.formData.linked_slice;
-      const key = parseInt(filterKey);
+    if (publishers[filterKey]) {
+      const linked_slices = publishers[filterKey].subcribers;
+      const key = parseInt(sliceId);
       if (linked_slices instanceof Array) {
-        keyExists = linked_slices.indexOf(key) != -1
+        keyExists = linked_slices.indexOf(sliceId) != -1
       } else {
-        keyExists = linked_slices === key
+        keyExists = linked_slices === sliceId
       }
     }
     return keyExists
