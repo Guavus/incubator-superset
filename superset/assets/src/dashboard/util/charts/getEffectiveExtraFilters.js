@@ -47,7 +47,7 @@ export default function getEffectiveExtraFilters({
   filters,
   sliceId,
   filterKeys,
-  linkedSlicesExistInFilters = [],
+  linkedSlicesExistInFilters,
 }) {
   const immuneSlices = dashboardMetadata.filter_immune_slices || [];
   
