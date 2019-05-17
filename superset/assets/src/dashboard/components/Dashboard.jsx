@@ -237,6 +237,7 @@ class Dashboard extends React.PureComponent {
           dashboardMetadata: this.props.dashboardInfo.metadata,
           filters: this.props.dashboardState.filters,
           sliceId: chart.id,
+          publishSubscriberMap: this.props.dashboardState.publishSubscriberMap,
         });
 
         this.props.actions.runQuery(

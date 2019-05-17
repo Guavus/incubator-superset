@@ -57,7 +57,7 @@ export default function(bootstrapData) {
     return filters;
   }
 
-  const isPublishColumnExistsInFilters = (filterConfigFilters , col) => {
+  const isPublishColumnExistsInFilters = (filterConfigFilters, col) => {
     return (Object.keys(filterConfigFilters).length > 0 && filterConfigFilters[col] != undefined && Object.keys(filterConfigFilters[col]).length > 0) ;
   }
 
@@ -67,34 +67,52 @@ export default function(bootstrapData) {
   } catch (e) {
     console.log('NO publishSubscriberMap exit in dashboard metadata')
   }
-  // update filter with filter_box Viz default values
-  dashboard.slices.forEach (slice => {
-     let defaultFilters = {};
 
-      // As per the current support only filter_box can publish global default filters
-      if (slice.form_data.viz_type == "filter_box") {
+  const getSliceData = (sliceId, slices) => {
+    let slice_data;
+    slices.forEach (slice => {
+      if(slice.slice_id == sliceId){
+        slice_data = slice;
+      }
+    })
+    return slice_data;
+  }
 
-        const publish_columns = slice.form_data.hasOwnProperty("publish_columns") ? slice.form_data.publish_columns : [];
-        const filterConfigFilters = getFiltersFromFilterConfig(slice.form_data.filter_configs);
-        
-        publish_columns.forEach ( col => {
-          if (isPublishColumnExistsInFilters(filterConfigFilters , col)) {
-            defaultFilters[col] = filterConfigFilters[col];  
+  try {
+    let publishers = publishSubscriberMap.hasOwnProperty("publishers")? publishSubscriberMap["publishers"]:{};
+    for (var publish_id in publishers) {
+      if (publishers.hasOwnProperty(publish_id)) {
+     
+        let defaultFilters = {};
+  
+        // As per the current support only filter_box can publish global default filters
+        if (publishers[publish_id].viz_type == "filter_box") {
+  
+          let slice = getSliceData(publish_id, dashboard.slices);
+          const publish_columns = publishers[publish_id].hasOwnProperty("publish_columns") ? publishers[publish_id].publish_columns : [];
+          const filterConfigFilters = getFiltersFromFilterConfig(slice.form_data.filter_configs);
+          
+          publish_columns.forEach( col => {
+            if (isPublishColumnExistsInFilters(filterConfigFilters , col)) {
+              defaultFilters[col] = filterConfigFilters[col];  
+            }
+          })
+  
+          // check date filter is applicable for filter
+          if (slice.form_data.date_filter) {
+            defaultFilters["__time_range"] = slice.form_data.time_range;
+          } 
+
+          // Update final filter box filters for dashboard state
+          if (Object.keys(defaultFilters).length) {
+            filters[publish_id] = defaultFilters;
           }
-        })
-
-        // check date filter is applicable for filter
-        if (slice.form_data.date_filter) {
-          defaultFilters["__time_range"] = slice.form_data.time_range;
-        }
-
-        // Update final filter box filters for dashboard state
-        if (Object.keys(defaultFilters).length) {
-          filters[slice.form_data.slice_id] = defaultFilters;
         }
       }
-  })
-
+    }
+  } catch (e) {
+    console.log('No publishers exit in dashboard metadata')
+  }
 
   // try {
   //   // allow request parameter overwrite dashboard metadata
@@ -250,3 +268,4 @@ export default function(bootstrapData) {
     impressionId: shortid.generate(),
   };
 }
+

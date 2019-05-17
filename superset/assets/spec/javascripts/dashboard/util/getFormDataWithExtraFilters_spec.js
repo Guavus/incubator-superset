@@ -44,6 +44,10 @@ describe('getFormDataWithExtraFilters', () => {
       },
     },
     sliceId: chartId,
+    publishSubscriberMap: {
+      publishers: undefined,
+      subscribers: undefined
+    },
   };
 
   it('should include filters from the passed filters', () => {
