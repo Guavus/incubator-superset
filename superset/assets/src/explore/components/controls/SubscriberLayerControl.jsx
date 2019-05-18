@@ -28,11 +28,8 @@ import InfoTooltipWithTrigger from '../../../components/InfoTooltipWithTrigger';
 import SubscriberLayer from './SubscriberLayer';
 
 const propTypes = {
-  colorScheme: PropTypes.string.isRequired,
-  subscriberError: PropTypes.object,
   subscriberQuery: PropTypes.object,
   vizType: PropTypes.string,
-
   validationErrors: PropTypes.array,
   name: PropTypes.string.isRequired,
   actions: PropTypes.object,
@@ -44,7 +41,6 @@ const propTypes = {
 const defaultProps = {
   vizType: '',
   value: [],
-  subscriberError: {},
   subscriberQuery: {},
   onChange: () => {},
 };
@@ -57,13 +53,7 @@ class SubscriberLayerControl extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { name, subscriberError, validationErrors, value } = nextProps;
-    if (Object.keys(subscriberError).length && !validationErrors.length) {
-      this.props.actions.setControlValue(name, value, Object.keys(subscriberError));
-    }
-    if (!Object.keys(subscriberError).length && validationErrors.length) {
-      this.props.actions.setControlValue(name, value, []);
-    }
+    const { name, validationErrors, value } = nextProps;
   }
 
   addSubscriberLayer(subscriberLayer) {
@@ -108,21 +98,13 @@ class SubscriberLayerControl extends React.PureComponent {
   }
 
   renderInfo(anno) {
-    const { subscriberError, subscriberQuery } = this.props;
+    const { subscriberQuery } = this.props;
     if (subscriberQuery[anno.name]) {
       return (
         <i className="fa fa-refresh" style={{ color: 'orange' }} aria-hidden />
       );
     }
-    if (subscriberError[anno.name]) {
-      return (
-        <InfoTooltipWithTrigger
-          label="validation-errors"
-          bsStyle="danger"
-          tooltip={subscriberError[anno.name]}
-        />
-      );
-    }
+
     if (!anno.show) {
       return <span style={{ color: 'red' }}> Hidden </span>;
     }
@@ -137,8 +119,7 @@ class SubscriberLayerControl extends React.PureComponent {
         rootClose
         ref={`overlay-${i}`}
         placement="right"
-        overlay={this.renderPopover(`overlay-${i}`, anno,
-          this.props.subscriberError[anno.name])}
+        overlay={this.renderPopover(`overlay-${i}`, anno, '')}
       >
         <ListGroupItem>
           <span>{anno.name}</span>
@@ -179,10 +160,8 @@ function mapStateToProps({ charts, explore }) {
   const chart = charts[chartKey] || charts[0] || {};
 
   return {
-    colorScheme: (explore.controls || {}).color_scheme.value,
-    subscriberError: chart.subscriberError,
-    subscriberQuery: chart.subscriberQuery,
     vizType: explore.controls.viz_type.value,
+    subscriberQuery: chart.subscriberQuery,
   };
 }
 

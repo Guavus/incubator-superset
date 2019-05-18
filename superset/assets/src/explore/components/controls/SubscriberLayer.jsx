@@ -64,7 +64,6 @@ const propTypes = {
   intervalEndColumn: PropTypes.string,
   vizType: PropTypes.string,
   error: PropTypes.string,
-  colorScheme: PropTypes.string,
   addSubscriberLayer: PropTypes.func,
   removeSubscriberLayer: PropTypes.func,
   close: PropTypes.func,
@@ -82,7 +81,6 @@ const defaultProps = {
   showMarkers: false,
   hideLine: false,
   overrides: {},
-  colorScheme: 'd3Category10',
   show: true,
   titleColumn: '',
   descriptionColumns: [],
@@ -510,112 +508,6 @@ export default class SubscriberLayer extends React.PureComponent {
     return '';
   }
 
-  renderDisplayConfiguration() {
-    const { color, opacity, style, width, markerWidth, showMarkers, hideLine, annotationType } = this.state;
-    const colorScheme = getCategoricalSchemeRegistry()
-      .get(this.props.colorScheme)
-      .colors
-      .concat();
-    if (
-      color &&
-      color !== AUTOMATIC_COLOR &&
-      !colorScheme.find(x => x.toLowerCase() === color.toLowerCase())
-    ) {
-      colorScheme.push(color);
-    }
-    return (
-      <PopoverSection
-        isSelected
-        onSelect={() => {}}
-        title={t('Display configuration')}
-        info={t('Configure your how you overlay is displayed here.')}
-      >
-        <SelectControl
-          name="annotation-layer-stroke"
-          label={t('Style')}
-          // see '../../../visualizations/nvd3_vis.css'
-          options={[
-            { value: 'solid', label: 'Solid' },
-            { value: 'dashed', label: 'Dashed' },
-            { value: 'longDashed', label: 'Long Dashed' },
-            { value: 'dotted', label: 'Dotted' },
-          ]}
-          value={style}
-          onChange={v => this.setState({ style: v })}
-        />
-        <SelectControl
-          name="annotation-layer-opacity"
-          label={t('Opacity')}
-          // see '../../../visualizations/nvd3_vis.css'
-          options={[
-            { value: '', label: 'Solid' },
-            { value: 'opacityLow', label: '0.2' },
-            { value: 'opacityMedium', label: '0.5' },
-            { value: 'opacityHigh', label: '0.8' },
-          ]}
-          value={opacity}
-          onChange={v => this.setState({ opacity: v })}
-        />
-        <div>
-          <ControlHeader label={t('Color')} />
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <CompactPicker
-              color={color}
-              colors={colorScheme}
-              onChangeComplete={v => this.setState({ color: v.hex })}
-            />
-            <Button
-              style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}
-              bsStyle={color === AUTOMATIC_COLOR ? 'success' : 'default'}
-              bsSize="xsmall"
-              onClick={() => this.setState({ color: AUTOMATIC_COLOR })}
-            >
-              Automatic Color
-            </Button>
-          </div>
-        </div>
-        <TextControl
-          name="annotation-layer-stroke-width"
-          label={t('Line Width')}
-          isInt
-          value={width}
-          onChange={v => this.setState({ width: v })}
-        />
-        {annotationType === ANNOTATION_TYPES.TIME_SERIES &&
-        <CheckboxControl
-          hovered
-          name="annotation-layer-show-markers"
-          label="Show Markers"
-          description={'Shows or hides markers for the time series'}
-          value={showMarkers}
-          onChange={v => this.setState({ showMarkers: v })}
-        />
-        }
-        {annotationType === ANNOTATION_TYPES.TIME_SERIES && showMarkers &&
-        <TextControl
-          hovered
-          name="annotation-layer-marker-width"
-          label={t('Marker Size')}
-          description={'Set the size of marker'}
-          isInt
-          value={markerWidth}
-          onChange={v => this.setState({ markerWidth: v })}
-        />
-        }
-        {annotationType === ANNOTATION_TYPES.TIME_SERIES &&
-        <CheckboxControl
-          hovered
-          name="annotation-layer-hide-line"
-          label="Hide Line"
-          description={'Hides the Line for the time series'}
-          value={hideLine}
-          onChange={v => this.setState({ hideLine: v })}
-        />
-        }
-      </PopoverSection>
-    );
-  }
-
   render() {
     const { isNew, name, annotationType, sourceType, show } = this.state;
     const isValid = this.isValidForm();
@@ -675,7 +567,6 @@ export default class SubscriberLayer extends React.PureComponent {
             </PopoverSection>
           </div>
           {this.renderSliceConfiguration()}
-          {this.renderDisplayConfiguration()}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button bsSize="sm" onClick={this.deleteSubscriber}>
