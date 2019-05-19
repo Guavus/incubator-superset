@@ -233,14 +233,12 @@ export function runQuery(formData, force = false, timeout = 60, key) {
       });
 
     const annotationLayers = formData.annotation_layers || [];
-    const subscriberLayers = formData.subscriber_layers || [];
 
     return Promise.all([
       queryPromise,
       dispatch(triggerQuery(false, key)),
       dispatch(updateQueryFormData(payload, key)),
       ...annotationLayers.map(x => dispatch(runAnnotationQuery(x, timeout, formData, key))),
-      ...subscriberLayers.map(x => dispatch(runAnnotationQuery(x, timeout, formData, key))),
     ]);
   };
 }

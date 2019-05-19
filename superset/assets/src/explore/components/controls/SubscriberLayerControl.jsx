@@ -53,7 +53,7 @@ class SubscriberLayerControl extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { name, validationErrors, value } = nextProps;
+    const { name, validationErrors, value, options } = nextProps;
   }
 
   addSubscriberLayer(subscriberLayer) {
@@ -87,8 +87,8 @@ class SubscriberLayerControl extends React.PureComponent {
         <SubscriberLayer
           {...subscriber}
           error={error}
-          colorScheme={this.props.colorScheme}
           vizType={this.props.vizType}
+          sliceOptions={this.props.options}
           addSubscriberLayer={this.addSubscriberLayer}
           removeSubscriberLayer={this.removeSubscriberLayer}
           close={() => this.refs[parent].hide()}

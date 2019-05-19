@@ -45,6 +45,7 @@ const propTypes = {
   timeColumn: PropTypes.string,
   intervalEndColumn: PropTypes.string,
   vizType: PropTypes.string,
+  sliceOptions: PropTypes.arrayOf(PropTypes.object),
   error: PropTypes.string,
   addSubscriberLayer: PropTypes.func,
   removeSubscriberLayer: PropTypes.func,
@@ -86,16 +87,10 @@ export default class SubscriberLayer extends React.PureComponent {
       titleColumn,
       descriptionColumns,
       timeColumn,
+      sliceOptions,
       intervalEndColumn,
       subscriptionList,
     } = props;
-
-    const overridesKeys = Object.keys(overrides);
-    if (overridesKeys.includes('since') || overridesKeys.includes('until')) {
-      overrides.time_range = null;
-      delete overrides.since;
-      delete overrides.until;
-    }
 
     this.state = {
       // base
@@ -141,7 +136,6 @@ export default class SubscriberLayer extends React.PureComponent {
 
   componentDidMount() {
     const { columnType, operatorType, isLoadingOptions, sliceType } = this.state;
-
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -154,7 +148,7 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   getPublishedSlices() {
-
+    return this.props.sliceOptions;
   }
 
   getPublisedColumns() {
