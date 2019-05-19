@@ -18,43 +18,25 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CompactPicker } from 'react-color';
 import { Button } from 'react-bootstrap';
-import mathjs from 'mathjs';
 import { t } from '@superset-ui/translation';
 import { SupersetClient } from '@superset-ui/connection';
-import { getCategoricalSchemeRegistry } from '@superset-ui/color';
 import { getChartMetadataRegistry } from '@superset-ui/chart';
 
 import SelectControl from './SelectControl';
-import TextControl from './TextControl';
-import CheckboxControl from './CheckboxControl';
+import TextAreaControl from './TextAreaControl';
 
-import ANNOTATION_TYPES, {
-  ANNOTATION_SOURCE_TYPES,
-  ANNOTATION_TYPES_METADATA,
-  DEFAULT_ANNOTATION_TYPE,
-  requiresQuery,
-  ANNOTATION_SOURCE_TYPES_METADATA,
-} from '../../../modules/AnnotationTypes';
 
 import PopoverSection from '../../../components/PopoverSection';
-import ControlHeader from '../ControlHeader';
-import { nonEmpty } from '../../validators';
-
-const AUTOMATIC_COLOR = '';
+import TextControl from './TextControl';
 
 const propTypes = {
   name: PropTypes.string,
-  annotationType: PropTypes.string,
-  sourceType: PropTypes.string,
-  color: PropTypes.string,
-  opacity: PropTypes.string,
-  style: PropTypes.string,
+  operatorType: PropTypes.string,
+  columnType: PropTypes.string,
+  sliceType: PropTypes.string,
   width: PropTypes.number,
-  markerWidth: PropTypes.number,
-  showMarkers: PropTypes.bool,
-  hideLine: PropTypes.bool,
+  subscriptionList: PropTypes.arrayOf(PropTypes.object),
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   overrides: PropTypes.object,
   show: PropTypes.bool,
@@ -67,29 +49,26 @@ const propTypes = {
   addSubscriberLayer: PropTypes.func,
   removeSubscriberLayer: PropTypes.func,
   close: PropTypes.func,
+  maxNumSubscriptions: PropTypes.number,
 };
 
 const defaultProps = {
   name: '',
-  annotationType: DEFAULT_ANNOTATION_TYPE,
-  sourceType: '',
-  color: AUTOMATIC_COLOR,
-  opacity: '',
-  style: 'solid',
-  width: 1,
-  markerWidth: 1,
-  showMarkers: false,
-  hideLine: false,
+  operatorType: '',
+  columnType: '',
+  sliceType: '',
   overrides: {},
+  subscriptionList: [],
   show: true,
   titleColumn: '',
   descriptionColumns: [],
+  maxNumSubscriptions: 5,
   timeColumn: '',
   intervalEndColumn: '',
 
-  addSubscriberLayer: () => {},
-  removeSubscriberLayer: () => {},
-  close: () => {},
+  addSubscriberLayer: () => { },
+  removeSubscriberLayer: () => { },
+  close: () => { },
 };
 
 export default class SubscriberLayer extends React.PureComponent {
@@ -97,22 +76,18 @@ export default class SubscriberLayer extends React.PureComponent {
     super(props);
     const {
       name,
-      annotationType,
-      sourceType,
-      color,
-      opacity,
-      style,
-      width,
-      markerWidth,
-      showMarkers,
-      hideLine,
       value,
+      operatorType,
+      columnType,
+      sliceType,
       overrides,
       show,
+      maxNumSubscriptions,
       titleColumn,
       descriptionColumns,
       timeColumn,
       intervalEndColumn,
+      subscriptionList,
     } = props;
 
     const overridesKeys = Object.keys(overrides);
@@ -126,112 +101,91 @@ export default class SubscriberLayer extends React.PureComponent {
       // base
       name,
       oldName: !this.props.name ? null : name,
-      annotationType,
-      sourceType,
+      columnType,
+      operatorType,
+      columnType,
+      maxNumSubscriptions,
+      sliceType,
       value,
       overrides,
       show,
+      subscriptionList,
       // slice
       titleColumn,
       descriptionColumns,
       timeColumn,
       intervalEndColumn,
-      // display
-      color: color || AUTOMATIC_COLOR,
-      opacity,
-      style,
-      width,
-      markerWidth,
-      showMarkers,
-      hideLine,
       // refData
       isNew: !this.props.name,
       isLoadingOptions: true,
       valueOptions: [],
       validationErrors: {},
     };
+
+    this.state.subscriptionList = [{}];
+
+    this.handleSliceType = this.handleSliceType.bind(this);
     this.submitSubscription = this.submitSubscription.bind(this);
     this.deleteSubscriber = this.deleteSubscriber.bind(this);
     this.applySubscription = this.applySubscription.bind(this);
     this.fetchOptions = this.fetchOptions.bind(this);
-    this.handleAnnotationType = this.handleAnnotationType.bind(this);
-    this.handleAnnotationSourceType = this.handleAnnotationSourceType.bind(this);
+    this.handleColumnType = this.handleColumnType.bind(this);
+    this.handleOperatorType = this.handleOperatorType.bind(this);
     this.handleValue = this.handleValue.bind(this);
     this.isValidForm = this.isValidForm.bind(this);
+    this.addSubscription = this.addSubscription.bind(this);
+    this.getSupportedOperators = this.getSupportedOperators.bind(this);
+    this.getPublisedColumns = this.getPublisedColumns.bind(this);
+    this.getPublishedSlices = this.getPublishedSlices.bind(this);
   }
 
   componentDidMount() {
-    const { annotationType, sourceType, isLoadingOptions } = this.state;
-    this.fetchOptions(annotationType, sourceType, isLoadingOptions);
+    const { columnType, operatorType, isLoadingOptions, sliceType } = this.state;
+
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.sourceType !== this.state.sourceType) {
-      this.fetchOptions(this.state.annotationType, this.state.sourceType, true);
-    }
+
   }
 
-  getSupportedSourceTypes(annotationType) {
+  getSupportedOperators() {
     // Get vis types that can be source.
-    const sources = getChartMetadataRegistry().entries()
-      .filter(({ value: chartMetadata }) => chartMetadata.canBeAnnotationType(annotationType))
-      .map(({ key, value: chartMetadata }) => ({
-        value: key,
-        label: chartMetadata.name,
-      }));
-    // Prepend native source if applicable
-    if (ANNOTATION_TYPES_METADATA[annotationType].supportNativeSource) {
-      sources.unshift(ANNOTATION_SOURCE_TYPES_METADATA.NATIVE);
-    }
-    return sources;
+
   }
 
-  isValidFormula(value, annotationType) {
-    if (annotationType === ANNOTATION_TYPES.FORMULA) {
-      try {
-        mathjs
-          .parse(value)
-          .compile()
-          .eval({ x: 0 });
-      } catch (err) {
-        return true;
-      }
-    }
-    return false;
+  getPublishedSlices() {
+
+  }
+
+  getPublisedColumns() {
+
   }
 
   isValidForm() {
-    const { name, annotationType, sourceType, value, timeColumn, intervalEndColumn } = this.state;
-    const errors = [nonEmpty(name), nonEmpty(annotationType), nonEmpty(value)];
-    if (sourceType !== ANNOTATION_SOURCE_TYPES.NATIVE) {
-      if (annotationType === ANNOTATION_TYPES.EVENT) {
-        errors.push(nonEmpty(timeColumn));
-      }
-      if (annotationType === ANNOTATION_TYPES.INTERVAL) {
-        errors.push(nonEmpty(timeColumn));
-        errors.push(nonEmpty(intervalEndColumn));
-      }
-    }
-    errors.push(this.isValidFormula(value, annotationType));
-    return !errors.filter(x => x).length;
+
   }
 
-  handleAnnotationType(annotationType) {
+  handleSliceType(slice) {
     this.setState({
-      annotationType,
-      sourceType: null,
-      validationErrors: {},
-      value: null,
+      slice,
     });
   }
 
-  handleAnnotationSourceType(sourceType) {
+  handleColumnType(column) {
     this.setState({
-      sourceType,
-      isLoadingOptions: true,
-      validationErrors: {},
-      value: null,
+      column,
     });
+  }
+
+  handleOperatorType(operator) {
+    this.setState({
+      operator,
+    });
+  }
+
+  addSubscription() {
+    const newData = {name: 's', age: '21', company:'xyz', url: "https://avatars.githubusercontent.com/u/k8297"}
+    this.setState(prevState => ({subscriptionList: [...prevState.subscriptionList, newData]}))
   }
 
   handleValue(value) {
@@ -245,22 +199,22 @@ export default class SubscriberLayer extends React.PureComponent {
     });
   }
 
-  fetchOptions(annotationType, sourceType, isLoadingOptions) {
+  fetchOptions(annotationType, operatorType, isLoadingOptions) {
     if (isLoadingOptions === true) {
-      if (sourceType === ANNOTATION_SOURCE_TYPES.NATIVE) {
+      if (operatorType === ANNOTATION_SOURCE_TYPES.NATIVE) {
         SupersetClient.get({ endpoint: '/annotationlayermodelview/api/read?' }).then(({ json }) => {
           const layers = json
             ? json.result.map(layer => ({
-                value: layer.id,
-                label: layer.name,
-              }))
+              value: layer.id,
+              label: layer.name,
+            }))
             : [];
           this.setState({
             isLoadingOptions: false,
             valueOptions: layers,
           });
         });
-      } else if (requiresQuery(sourceType)) {
+      } else if (requiresQuery(operatorType)) {
         SupersetClient.get({ endpoint: '/superset/user_slices' }).then(({ json }) => {
           const registry = getChartMetadataRegistry();
           this.setState({
@@ -312,211 +266,57 @@ export default class SubscriberLayer extends React.PureComponent {
     this.props.close();
   }
 
-  renderValueConfiguration() {
-    const { annotationType, sourceType, value, valueOptions, isLoadingOptions } = this.state;
-    let label = '';
-    let description = '';
-    if (requiresQuery(sourceType)) {
-      if (sourceType === ANNOTATION_SOURCE_TYPES.NATIVE) {
-        label = 'Annotation Layer';
-        description = 'Select the Annotation Layer you would like to use.';
-      } else {
-        label = label = t('Chart');
-        description = `Use a pre defined Superset Chart as a source for annotations and overlays.
-        your chart must be one of these visualization types:
-        [${this.getSupportedSourceTypes(annotationType)
-          .map(x => x.label)
-          .join(', ')}]`;
-      }
-    } else if (annotationType === ANNOTATION_TYPES.FORMULA) {
-      label = 'Formula';
-      description = `Expects a formula with depending time parameter 'x'
-        in milliseconds since epoch. mathjs is used to evaluate the formulas.
-        Example: '2x+5'`;
-    }
-    if (requiresQuery(sourceType)) {
-      return (
+  renderSingleSubscription() {
+    const { columnType, operatorType, sliceType } = this.state;
+
+    const operators = this.getSupportedOperators();
+    const columns = this.getPublisedColumns(columns);
+
+    const publishedSlices = this.getPublishedSlices();
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
         <SelectControl
-          name="annotation-layer-value"
-          showHeader
           hovered
-          description={description}
-          label={label}
-          placeholder=""
-          options={valueOptions}
-          isLoading={isLoadingOptions}
-          value={value}
-          onChange={this.handleValue}
-          validationErrors={!value ? ['Mandatory'] : []}
+          description={t('Choose the Chart to subscribe')}
+          label={t('Select Chart')}
+          name="publised-layer-name"
+          options={publishedSlices}
+          value={sliceType}
+          onChange={this.handleSliceType}
         />
-      );
-    }
-    if (annotationType === ANNOTATION_TYPES.FORMULA) {
-      return (
-        <TextControl
-          name="annotation-layer-value"
+        <SelectControl
           hovered
-          showHeader
-          description={description}
-          label={label}
-          placeholder=""
-          value={value}
-          onChange={this.handleValue}
-          validationErrors={this.isValidFormula(value, annotationType) ? ['Bad formula.'] : []}
+          description="Choose the column"
+          label="Column Source"
+          name="annotation-source-type"
+          options={columns}
+          value={columnType}
+          onChange={this.handleColumnType}
         />
-      );
-    }
-    return '';
+
+    <SelectControl
+          hovered
+          description="Choose the Operator"
+          label="Operator Source"
+          name="operator-source-type"
+          options={operators}
+          value={operatorType}
+          onChange={this.handleOperatorType}
+        />
+
+    </div>
+    );
   }
 
-  renderSliceConfiguration() {
-    const {
-      annotationType,
-      sourceType,
-      value,
-      valueOptions,
-      overrides,
-      titleColumn,
-      timeColumn,
-      intervalEndColumn,
-      descriptionColumns,
-    } = this.state;
-    const slice = (valueOptions.find(x => x.value === value) || {}).slice;
-    if (sourceType !== ANNOTATION_SOURCE_TYPES.NATIVE && slice) {
-      const columns = (slice.data.groupby || [])
-        .concat(slice.data.all_columns || [])
-        .map(x => ({ value: x, label: x }));
-      const timeColumnOptions = slice.data.include_time
-        ? [{ value: '__timestamp', label: '__timestamp' }].concat(columns)
-        : columns;
-      return (
-        <div style={{ marginRight: '2rem' }}>
-          <PopoverSection
-            isSelected
-            onSelect={() => {}}
-            title="Annotation Slice Configuration"
-            info={`This section allows you to configure how to use the slice
-               to generate annotations.`}
-          >
-            {(annotationType === ANNOTATION_TYPES.EVENT ||
-              annotationType === ANNOTATION_TYPES.INTERVAL) && (
-              <SelectControl
-                hovered
-                name="annotation-layer-time-column"
-                label={
-                  annotationType === ANNOTATION_TYPES.INTERVAL
-                    ? 'Interval Start column'
-                    : 'Event Time Column'
-                }
-                description={'This column must contain date/time information.'}
-                validationErrors={!timeColumn ? ['Mandatory'] : []}
-                clearable={false}
-                options={timeColumnOptions}
-                value={timeColumn}
-                onChange={v => this.setState({ timeColumn: v })}
-              />
-            )}
-            {annotationType === ANNOTATION_TYPES.INTERVAL && (
-              <SelectControl
-                hovered
-                name="annotation-layer-intervalEnd"
-                label="Interval End column"
-                description={'This column must contain date/time information.'}
-                validationErrors={!intervalEndColumn ? ['Mandatory'] : []}
-                options={columns}
-                value={intervalEndColumn}
-                onChange={v => this.setState({ intervalEndColumn: v })}
-              />
-            )}
-            <SelectControl
-              hovered
-              name="annotation-layer-title"
-              label="Title Column"
-              description={'Pick a title for you annotation.'}
-              options={[{ value: '', label: 'None' }].concat(columns)}
-              value={titleColumn}
-              onChange={v => this.setState({ titleColumn: v })}
-            />
-            {annotationType !== ANNOTATION_TYPES.TIME_SERIES && (
-              <SelectControl
-                hovered
-                name="annotation-layer-title"
-                label="Description Columns"
-                description={`Pick one or more columns that should be shown in the
-                  annotation. If you don't select a column all of them will be shown.`}
-                multi
-                options={columns}
-                value={descriptionColumns}
-                onChange={v => this.setState({ descriptionColumns: v })}
-              />
-            )}
-            <div style={{ marginTop: '1rem' }}>
-              <CheckboxControl
-                hovered
-                name="annotation-override-time_range"
-                label="Override time range"
-                description={`This controls whether the "time_range" field from the current
-                  view should be passed down to the chart containing the annotation data.`}
-                value={!!Object.keys(overrides).find(x => x === 'time_range')}
-                onChange={(v) => {
-                  delete overrides.time_range;
-                  if (v) {
-                    this.setState({ overrides: { ...overrides, time_range: null } });
-                  } else {
-                    this.setState({ overrides: { ...overrides } });
-                  }
-                }}
-              />
-              <CheckboxControl
-                hovered
-                name="annotation-override-timegrain"
-                label="Override time grain"
-                description={`This controls whether the time grain field from the current
-                  view should be passed down to the chart containing the annotation data.`}
-                value={!!Object.keys(overrides).find(x => x === 'time_grain_sqla')}
-                onChange={(v) => {
-                  delete overrides.time_grain_sqla;
-                  delete overrides.granularity;
-                  if (v) {
-                    this.setState({
-                      overrides: {
-                        ...overrides,
-                        time_grain_sqla: null,
-                        granularity: null,
-                      },
-                    });
-                  } else {
-                    this.setState({ overrides: { ...overrides } });
-                  }
-                }}
-              />
-              <TextControl
-                hovered
-                name="annotation-layer-timeshift"
-                label="Time Shift"
-                description={`Time delta in natural language
-                  (example:  24 hours, 7 days, 56 weeks, 365 days)`}
-                placeholder=""
-                value={overrides.time_shift}
-                onChange={v => this.setState({ overrides: { ...overrides, time_shift: v } })}
-              />
-            </div>
-          </PopoverSection>
-        </div>
-      );
-    }
-    return '';
-  }
 
   render() {
-    const { isNew, name, annotationType, sourceType, show } = this.state;
+    const { isNew, columnType, operatorType, sliceType, maxNumSubscriptions } = this.state;
     const isValid = this.isValidForm();
 
-    const metadata = getChartMetadataRegistry().get(this.props.vizType);
-    const supportedAnnotationTypes = metadata
-      ? metadata.supportedAnnotationTypes.map(type => ANNOTATION_TYPES_METADATA[type])
-      : [];
-    const supportedSourceTypes = this.getSupportedSourceTypes(annotationType);
+    // const newState = this.state.slices ? this.state.slices.filter( slice => this.state.slice ? slice.id != this.state.slice.slice_id : true).map( slice =>  ({label: slice.title, value: slice.id})) : {};
+
+
 
     return (
       <div>
@@ -525,57 +325,40 @@ export default class SubscriberLayer extends React.PureComponent {
           <div style={{ marginRight: '2rem' }}>
             <PopoverSection
               isSelected
-              onSelect={() => {}}
-              title={t('Layer Configuration')}
-              info={t('Configure the basics of your Annotation Layer.')}
+              onSelect={() => { }}
+              title={t('Subscription Configuration')}
+              info={t('Configure Subscription')}
             >
+
+
+                 {this.state.subscriptionList.map(subscription => {
+                  console.log('came here');
+                  // this.renderSingleSubscription()
+                  return (
+                  this.renderSingleSubscription()
+                )
+                })
+              }
+
+
+              <Button bsSize="sm" onClick={this.addSubscription}>
+                {'+'}
+              </Button>
               <TextControl
-                name="annotation-layer-name"
-                label={t('Name')}
-                placeholder=""
-                value={name}
-                onChange={v => this.setState({ name: v })}
-                validationErrors={!name ? [t('Mandatory')] : []}
+                name="annotation-layer-marker-width"
+                label={t('Extra')}
+                description={'Set Extra parameters (If any)'}
               />
-              <CheckboxControl
-                name="annotation-layer-hide"
-                label={t('Hide Layer')}
-                value={!show}
-                onChange={v => this.setState({ show: !v })}
-              />
-              <SelectControl
-                hovered
-                description={t('Choose the Annotation Layer Type')}
-                label={t('Annotation Layer Type')}
-                name="annotation-layer-type"
-                options={supportedAnnotationTypes}
-                value={annotationType}
-                onChange={this.handleAnnotationType}
-              />
-              {!!supportedSourceTypes.length && (
-                <SelectControl
-                  hovered
-                  description="Choose the source of your annotations"
-                  label="Annotation Source"
-                  name="annotation-source-type"
-                  options={supportedSourceTypes}
-                  value={sourceType}
-                  onChange={this.handleAnnotationSourceType}
-                />
-              )}
-              {this.renderValueConfiguration()}
+
             </PopoverSection>
           </div>
-          {this.renderSliceConfiguration()}
+
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button bsSize="sm" onClick={this.deleteSubscriber}>
             {!isNew ? t('Remove') : t('Cancel')}
           </Button>
           <div>
-            <Button bsSize="sm" disabled={!isValid} onClick={this.applySubscription}>
-              {t('Apply')}
-            </Button>
 
             <Button bsSize="sm" disabled={!isValid} onClick={this.submitSubscription}>
               {t('OK')}
