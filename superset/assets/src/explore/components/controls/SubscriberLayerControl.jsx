@@ -22,7 +22,6 @@ import { OverlayTrigger, Popover, ListGroup, ListGroupItem } from 'react-bootstr
 import { connect } from 'react-redux';
 import { t } from '@superset-ui/translation';
 import { getChartKey } from '../../exploreUtils';
-import { runSubscriptionQuery } from '../../../chart/chartAction';
 
 import SubscriberLayer from './SubscriberLayer';
 
@@ -34,7 +33,6 @@ const propTypes = {
   actions: PropTypes.object,
   value: PropTypes.arrayOf(PropTypes.object),
   onChange: PropTypes.func,
-  refreshSubscriberData: PropTypes.func,
 };
 
 const defaultProps = {
@@ -158,10 +156,4 @@ function mapStateToProps({ charts, explore }) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    refreshSubscriberData: subscriberLayer => dispatch(runSubscriptionQuery(subscriberLayer)),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(SubscriberLayerControl);
+export default connect(mapStateToProps)(SubscriberLayerControl);

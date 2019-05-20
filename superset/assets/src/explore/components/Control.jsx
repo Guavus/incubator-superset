@@ -67,7 +67,7 @@ export default class Control extends React.PureComponent {
     this.onChange = this.onChange.bind(this);
   }
   componentDidMount() {
-      if(this.props.name == "linked_slice" || this.props.name == 'subscriber_layers')
+      if(this.props.name == 'subscriber_layers')
           this.props.actions.fetchSlices();
     this.validateAndSetValue(this.props.value, []);
   }

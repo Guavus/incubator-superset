@@ -2118,22 +2118,6 @@ export const controls = {
     hidden: true,
     description: t('The id of the active chart'),
   },
-  linked_slice: {
-    "type": "SelectControl",
-    "label": "Subscribe Slices",
-    "multi": true,
-    "validators": [
-    ],
-    "description": "Select slices to subscribe",
-    "renderTrigger": false,
-    mapStateToProps: (state, control) => {
-      const newState = {};
-      if (state.slices) {
-        newState.options = state.slices.filter( slice => state.slice ? slice.id != state.slice.slice_id : true).map( slice =>  ({label: slice.title, value: slice.id}))
-      }
-      return newState;
-    }
-  },
   cache_timeout: {
     type: 'HiddenControl',
     label: t('Cache Timeout (seconds)'),
