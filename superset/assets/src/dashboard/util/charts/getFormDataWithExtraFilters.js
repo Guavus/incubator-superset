@@ -105,7 +105,6 @@ export default function getFormDataWithExtraFilters({
       dashboardMetadata,
       filters,
       sliceId,
-      filterKeys,
       linkedSlicesExistInFilters,
     }),
   };
