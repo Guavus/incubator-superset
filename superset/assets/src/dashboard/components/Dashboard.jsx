@@ -43,7 +43,7 @@ import OmniContianer from '../../components/OmniContainer';
 
 import '../stylesheets/index.less';
 
-import  getPublishSubscriberMap  from '../util/getPublishSubscriberMap';
+import getPublishSubscriberMap from '../util/getPublishSubscriberMap';
 import { DASHBOARD_HEADER_ID } from '../util/constants';
 const propTypes = {
   actions: PropTypes.shape({
@@ -175,19 +175,19 @@ class Dashboard extends React.PureComponent {
   componentDidUpdate(prevProps) {
     const { refresh, filters, hasUnsavedChanges, doReconcile } = this.props.dashboardState;
     //reconcile dashboard
-    if(doReconcile){
+    if (doReconcile) {
       const publishSubscriberMap = getPublishSubscriberMap(this.getAllCharts());
       const savePayload = {
         positions: this.props.layout,
         css: this.props.dashboardState.css,
         expanded_slices: this.props.dashboardState.expandedSlices,
-        dashboard_title:this.props.layout[DASHBOARD_HEADER_ID].meta.text,
+        dashboard_title: this.props.layout[DASHBOARD_HEADER_ID].meta.text,
         default_filters: JSON.stringify(this.props.dashboardState.filters),
         duplicate_slices: false,
         pub_sub_info: publishSubscriberMap,
       };
       const dashID = this.props.dashboardInfo.id;
-      this.props.actions.reconcileSuccess(savePayload,dashID);
+      this.props.actions.reconcileSuccess(savePayload, dashID);
     }
     if (refresh) {
       // refresh charts if a filter was removed, added, or changed
