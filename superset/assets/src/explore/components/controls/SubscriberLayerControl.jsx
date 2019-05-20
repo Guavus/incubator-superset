@@ -22,7 +22,7 @@ import { OverlayTrigger, Popover, ListGroup, ListGroupItem } from 'react-bootstr
 import { connect } from 'react-redux';
 import { t } from '@superset-ui/translation';
 import { getChartKey } from '../../exploreUtils';
-import { runAnnotationQuery } from '../../../chart/chartAction';
+import { runSubscriptionQuery } from '../../../chart/chartAction';
 import InfoTooltipWithTrigger from '../../../components/InfoTooltipWithTrigger';
 
 import SubscriberLayer from './SubscriberLayer';

@@ -29,6 +29,7 @@ import TextAreaControl from './TextAreaControl';
 
 import PopoverSection from '../../../components/PopoverSection';
 import TextControl from './TextControl';
+import { nonEmpty } from '../../validators';
 
 const propTypes = {
   name: PropTypes.string,
@@ -41,7 +42,7 @@ const propTypes = {
   overrides: PropTypes.object,
   show: PropTypes.bool,
   titleColumn: PropTypes.string,
-  descriptionColumns: PropTypes.arrayOf(PropTypes.string),
+  subscribe_columns: PropTypes.arrayOf(PropTypes.object),
   timeColumn: PropTypes.string,
   intervalEndColumn: PropTypes.string,
   vizType: PropTypes.string,
@@ -51,6 +52,9 @@ const propTypes = {
   removeSubscriberLayer: PropTypes.func,
   close: PropTypes.func,
   maxNumSubscriptions: PropTypes.number,
+  extraValue: PropTypes.string,
+  allowSubscription: PropTypes.bool,
+  allowColumnSelection: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -62,10 +66,13 @@ const defaultProps = {
   subscriptionList: [],
   show: true,
   titleColumn: '',
-  descriptionColumns: [],
+  subscribe_columns: [],
   maxNumSubscriptions: 5,
   timeColumn: '',
   intervalEndColumn: '',
+  extraValue: '',
+  allowSubscription: false,
+  allowColumnSelection: false,
 
   addSubscriberLayer: () => { },
   removeSubscriberLayer: () => { },
@@ -85,11 +92,14 @@ export default class SubscriberLayer extends React.PureComponent {
       show,
       maxNumSubscriptions,
       titleColumn,
-      descriptionColumns,
+      subscribe_columns,
       timeColumn,
       sliceOptions,
       intervalEndColumn,
       subscriptionList,
+      extraValue,
+      allowSubscription,
+      allowColumnSelection,
     } = props;
 
     this.state = {
@@ -105,9 +115,12 @@ export default class SubscriberLayer extends React.PureComponent {
       overrides,
       show,
       subscriptionList,
+      extraValue,
+      allowSubscription,
+      allowColumnSelection,
       // slice
       titleColumn,
-      descriptionColumns,
+      subscribe_columns,
       timeColumn,
       intervalEndColumn,
       // refData
@@ -117,16 +130,14 @@ export default class SubscriberLayer extends React.PureComponent {
       validationErrors: {},
     };
 
-    this.state.subscriptionList = [{}];
+    this.state.subscriptionList = [{ key: 0, columnType: '', operatorType: '', index: 0 }];
 
     this.handleSliceType = this.handleSliceType.bind(this);
     this.submitSubscription = this.submitSubscription.bind(this);
     this.deleteSubscriber = this.deleteSubscriber.bind(this);
     this.applySubscription = this.applySubscription.bind(this);
-    this.fetchOptions = this.fetchOptions.bind(this);
     this.handleColumnType = this.handleColumnType.bind(this);
     this.handleOperatorType = this.handleOperatorType.bind(this);
-    this.handleValue = this.handleValue.bind(this);
     this.isValidForm = this.isValidForm.bind(this);
     this.addSubscription = this.addSubscription.bind(this);
     this.getSupportedOperators = this.getSupportedOperators.bind(this);
@@ -135,7 +146,7 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   componentDidMount() {
-    const { columnType, operatorType, isLoadingOptions, sliceType } = this.state;
+
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -143,7 +154,7 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   getSupportedOperators() {
-    // Get vis types that can be source.
+    return [{ label: '=', value: '=' }];
 
   }
 
@@ -152,82 +163,59 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   getPublisedColumns() {
-
+  return [];
   }
 
   isValidForm() {
+    const { sliceType } = this.state;
+    const errors = [nonEmpty(sliceType)];
+    //  errors.push(!this.subscribe_columns.length)
 
+    return !errors.filter(x => x).length;
   }
 
-  handleSliceType(slice) {
+  handleSliceType(sliceType) {
     this.setState({
-      slice,
+      sliceType,
+      allowColumnSelection: true,
     });
   }
 
-  handleColumnType(column) {
+  handleColumnType(columnType, index) {
+    const subscriptionList = this.state.subscriptionList;
+    subscriptionList[index]['columnType'] = columnType;
+
+    let subscribe_columns = this.state.subscribe_columns;
+    subscribe_columns = subscribe_columns.length <= index ? [{}] : subscribe_columns;
+    subscribe_columns[index]['col'] = columnType;
+
     this.setState({
-      column,
+      columnType,
+      subscriptionList,
+      subscribe_columns,
     });
   }
 
-  handleOperatorType(operator) {
+  handleOperatorType(operatorType, index) {
+    let subscriptionList = this.state.subscriptionList;
+    subscriptionList[index]['operatorType'] = operatorType;
+
+    let subscribe_columns = this.state.subscribe_columns;
+    subscribe_columns = subscribe_columns.length <= index ? [{}] : subscribe_columns;
+    subscribe_columns[index]['op'] = operatorType;
+
     this.setState({
-      operator,
+      operatorType,
+      subscriptionList,
+      subscribe_columns,
     });
   }
 
   addSubscription() {
-    const newData = {name: 's', age: '21', company:'xyz', url: "https://avatars.githubusercontent.com/u/k8297"}
-    this.setState(prevState => ({subscriptionList: [...prevState.subscriptionList, newData]}))
-  }
-
-  handleValue(value) {
-    this.setState({
-      value,
-      descriptionColumns: null,
-      intervalEndColumn: null,
-      timeColumn: null,
-      titleColumn: null,
-      overrides: { time_range: null },
-    });
-  }
-
-  fetchOptions(annotationType, operatorType, isLoadingOptions) {
-    if (isLoadingOptions === true) {
-      if (operatorType === ANNOTATION_SOURCE_TYPES.NATIVE) {
-        SupersetClient.get({ endpoint: '/annotationlayermodelview/api/read?' }).then(({ json }) => {
-          const layers = json
-            ? json.result.map(layer => ({
-              value: layer.id,
-              label: layer.name,
-            }))
-            : [];
-          this.setState({
-            isLoadingOptions: false,
-            valueOptions: layers,
-          });
-        });
-      } else if (requiresQuery(operatorType)) {
-        SupersetClient.get({ endpoint: '/superset/user_slices' }).then(({ json }) => {
-          const registry = getChartMetadataRegistry();
-          this.setState({
-            isLoadingOptions: false,
-            valueOptions: json
-              .filter((x) => {
-                const metadata = registry.get(x.viz_type);
-                return metadata && metadata.canBeAnnotationType(annotationType);
-              })
-              .map(x => ({ value: x.id, label: x.title, slice: x })),
-          });
-        });
-      } else {
-        this.setState({
-          isLoadingOptions: false,
-          valueOptions: [],
-        });
-      }
-    }
+    const subscriptionList = this.state.subscriptionList;
+    const data = subscriptionList[subscriptionList.length - 1];
+    const newData = { key: data.key + 1, columnType: '', operatorType: '', index: data.index + 1 }
+    this.setState(prevState => ({ subscriptionList: [...prevState.subscriptionList, newData] }))
   }
 
   deleteSubscriber() {
@@ -238,19 +226,30 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   applySubscription() {
-    if (this.state.name.length) {
-      const annotation = {};
-      Object.keys(this.state).forEach((k) => {
-        if (this.state[k] !== null) {
-          annotation[k] = this.state[k];
+    if (this.state.sliceType) {
+      const subscription = {};
+
+      subscription['actions'] = [
+        "changeFilter"
+      ];
+
+      subscription['linked_slice'] = [
+        {
+          publisher_id: this.state.sliceType,
+          subscribe_columns: this.state.subscribe_columns,
         }
-      });
-      delete annotation.isNew;
-      delete annotation.valueOptions;
-      delete annotation.isLoadingOptions;
-      delete annotation.validationErrors;
-      annotation.color = annotation.color === AUTOMATIC_COLOR ? null : annotation.color;
-      this.props.addSubscriberLayer(annotation);
+      ];
+
+      subscription['extras'] = this.state.extraValue;
+
+
+      // Object.keys(this.state).forEach((k) => {
+      //   if (this.state[k] !== null) {
+      //     subscription[k] = this.state[k];
+      //   }
+      // });
+
+      this.props.addSubscriberLayer(subscription);
       this.setState({ isNew: false, oldName: this.state.name });
     }
   }
@@ -260,57 +259,60 @@ export default class SubscriberLayer extends React.PureComponent {
     this.props.close();
   }
 
-  renderSingleSubscription() {
-    const { columnType, operatorType, sliceType } = this.state;
+  renderSingleSubscription(subscriptionData) {
+    const { columnType, operatorType, index } = subscriptionData;
+    const { allowColumnSelection,  } = this.state;
 
     const operators = this.getSupportedOperators();
-    const columns = this.getPublisedColumns(columns);
+    const columns = this.getPublisedColumns();
 
-    const publishedSlices = this.getPublishedSlices();
+    this.setState({
+      allowSubscription: this.state.subscriptionList.length < columns.length * operators.length,
+    });
+
 
     return (
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <SelectControl
+
+               <TextControl
+                name="extra-subscription-layer"
+                label={t('Column')}
+                description={'Set column (If any)'}
+                value={columnType}
+                onChange={v => this.setState({ columnType: v })}
+              />
+        {/* <SelectControl
           hovered
-          description={t('Choose the Chart to subscribe')}
-          label={t('Select Chart')}
-          name="publised-layer-name"
-          options={publishedSlices}
-          value={sliceType}
-          onChange={this.handleSliceType}
-        />
-        <SelectControl
-          hovered
+          disabled={!allowColumnSelection}
           description="Choose the column"
           label="Column Source"
           name="annotation-source-type"
           options={columns}
           value={columnType}
-          onChange={this.handleColumnType}
-        />
+          onChange={(e) => this.handleColumnType(e, index)}
+        /> */}
 
-    <SelectControl
+        <SelectControl
           hovered
           description="Choose the Operator"
+          disabled={!allowColumnSelection}
           label="Operator Source"
           name="operator-source-type"
           options={operators}
           value={operatorType}
-          onChange={this.handleOperatorType}
+          onChange={(e) => this.handleOperatorType(e, index)}
         />
 
-    </div>
+      </div>
     );
   }
 
 
   render() {
-    const { isNew, columnType, operatorType, sliceType, maxNumSubscriptions } = this.state;
+    const { isNew, columnType, operatorType, sliceType, maxNumSubscriptions, extraValue, allowSubscription } = this.state;
     const isValid = this.isValidForm();
 
-    // const newState = this.state.slices ? this.state.slices.filter( slice => this.state.slice ? slice.id != this.state.slice.slice_id : true).map( slice =>  ({label: slice.title, value: slice.id})) : {};
-
-
+    const publishedSlices = this.getPublishedSlices();
 
     return (
       <div>
@@ -323,25 +325,34 @@ export default class SubscriberLayer extends React.PureComponent {
               title={t('Subscription Configuration')}
               info={t('Configure Subscription')}
             >
+              <SelectControl
+                hovered
+                description={t('Choose the Chart to subscribe')}
+                label={t('Select Chart')}
+                name="publised-layer-name"
+                options={publishedSlices}
+                value={sliceType}
+                onChange={this.handleSliceType}
+              />
 
+              {this.state.subscriptionList.map(subscription => {
 
-                 {this.state.subscriptionList.map(subscription => {
-                  console.log('came here');
-                  // this.renderSingleSubscription()
-                  return (
-                  this.renderSingleSubscription()
+                return (
+                  this.renderSingleSubscription(subscription)
                 )
-                })
+              })
               }
 
 
-              <Button bsSize="sm" onClick={this.addSubscription}>
+              <Button bsSize="sm" disabled={!allowSubscription} onClick={this.addSubscription}>
                 {'+'}
               </Button>
               <TextControl
-                name="annotation-layer-marker-width"
+                name="extra-subscription-layer"
                 label={t('Extra')}
                 description={'Set Extra parameters (If any)'}
+                value={extraValue}
+                onChange={v => this.setState({ extraValue: v })}
               />
 
             </PopoverSection>

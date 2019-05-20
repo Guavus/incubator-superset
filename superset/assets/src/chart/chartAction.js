@@ -83,6 +83,9 @@ export function annotationQueryFailed(annotation, queryResponse, key) {
   return { type: ANNOTATION_QUERY_FAILED, annotation, queryResponse, key };
 }
 
+export function runSubscriptionQuery(annotation, timeout = 60, formData = null, key) {
+}
+
 export function runAnnotationQuery(annotation, timeout = 60, formData = null, key) {
   return function (dispatch, getState) {
     const sliceKey = key || Object.keys(getState().charts)[0];
