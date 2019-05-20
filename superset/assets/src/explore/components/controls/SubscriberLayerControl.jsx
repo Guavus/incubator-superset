@@ -59,6 +59,7 @@ class SubscriberLayerControl extends React.PureComponent {
   addSubscriberLayer(subscriberLayer) {
     const subscriber = subscriberLayer;
     let subscribers = this.props.value.slice();
+    subscriber['publish_columns'] = this.props.formData.publish_columns;;
     const i = subscribers.findIndex(x => x.name === (subscriber.oldName || subscriber.name));
     delete subscriber.oldName;
     if (i > -1) {

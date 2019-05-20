@@ -279,7 +279,7 @@ export default class SubscriberLayer extends React.PureComponent {
                 label={t('Column')}
                 description={'Set column (If any)'}
                 value={columnType}
-                onChange={v => this.setState({ columnType: v })}
+                onChange={(e) => this.handleColumnType(e, index)}
               />
         {/* <SelectControl
           hovered
@@ -344,7 +344,7 @@ export default class SubscriberLayer extends React.PureComponent {
               }
 
 
-              <Button bsSize="sm" disabled={!allowSubscription} onClick={this.addSubscription}>
+              <Button bsSize="sm" onClick={this.addSubscription}>
                 {'+'}
               </Button>
               <TextControl
