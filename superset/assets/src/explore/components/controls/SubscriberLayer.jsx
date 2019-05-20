@@ -154,8 +154,19 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   getSupportedOperators() {
-    return [{ label: '=', value: '=' }];
-
+    return [
+      {label: 'equals', value: '='},
+      {label: 'not equal to', value: '!='},
+      {label: 'not equal to', value: '!='},
+      {label: '>', value: '>'},
+      {label: '<', value: '<'},
+      {label: '>=', value: '>='},
+      {label: '<=', value: '<='},
+      {label: 'in', value: 'in'},
+      {label: 'not in', value: 'not in'},
+      {label: 'like', value: 'like'},
+      {label: 'IS NOT NULL', value: 'IS NOT NULL'},
+      {label: 'IS NULL', value: 'IS NULL'}];
   }
 
   getPublishedSlices() {
@@ -284,22 +295,12 @@ export default class SubscriberLayer extends React.PureComponent {
                 value={columnType}
                 onChange={(e) => this.handleColumnType(e, index)}
               />
-        {/* <SelectControl
-          hovered
-          disabled={!allowColumnSelection}
-          description="Choose the column"
-          label="Column Source"
-          name="annotation-source-type"
-          options={columns}
-          value={columnType}
-          onChange={(e) => this.handleColumnType(e, index)}
-        /> */}
 
         <SelectControl
           hovered
           description="Choose the Operator"
           disabled={!allowColumnSelection}
-          label="Operator Source"
+          label="Select Operator"
           name="operator-source-type"
           options={operators}
           value={operatorType}
@@ -358,13 +359,13 @@ export default class SubscriberLayer extends React.PureComponent {
               <Button bsSize="sm" disabled={!allowSubscription} onClick={this.addSubscription}>
                 {'+'}
               </Button>
-              <TextControl
+              {/* <TextControl
                 name="extra-subscription-layer"
                 label={t('Extra')}
                 description={'Set Extra parameters (If any)'}
                 value={extraValue}
                 onChange={v => this.setState({ extraValue: v })}
-              />
+              /> */}
 
             </PopoverSection>
           </div>

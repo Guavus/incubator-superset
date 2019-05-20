@@ -82,7 +82,7 @@ class SubscriberLayerControl extends React.PureComponent {
     return (
       <Popover
         style={{ maxWidth: 'none' }}
-        title={subscriber ? t('Edit Subscriber Layer') : t('Add Subscriber Layer')}
+        title={subscriber ? t('Edit Subscribers') : t('Add Subscribers')}
         id={`subscriber-pop-${id}`}
       >
         <SubscriberLayer
@@ -142,7 +142,7 @@ class SubscriberLayerControl extends React.PureComponent {
             overlay={this.renderPopover('overlay-new')}
           >
             <ListGroupItem>
-              <i className="fa fa-plus" /> &nbsp; {t('Add Subscriber Layer')}
+              <i className="fa fa-plus" /> &nbsp; {t('Add Subscribers')}
             </ListGroupItem>
           </OverlayTrigger>
         </ListGroup>
