@@ -17,36 +17,47 @@
  * under the License.
  */
 
+import * as _ from 'lodash';
+
+export const filterKeys = [
+  '__time_range',
+  '__time_col',
+  '__time_grain',
+  '__time_origin',
+  '__granularity',
+];
+
 const getOperatorOfColumn = (linkedSlicesExistInFilters, filteringSliceId, col) => {
   let op = 'in';
-  let subscribe_columns;
 
-  linkedSlicesExistInFilters.forEach( slice => { 
+  let subscribe_slice = _.find(linkedSlicesExistInFilters, function(slice){
     const sliceId = Object.keys(slice) && Object.keys(slice)[0];
-    if (sliceId == filteringSliceId) {
-      subscribe_columns = slice[sliceId]
-    }
-  })
-  subscribe_columns.forEach (item => {
-    if (item.col == col) {
-      op = item.op;
-    }
+    return (sliceId == filteringSliceId) 
   });
+   
+  let subscribe_columns = subscribe_slice ? subscribe_slice[filteringSliceId]: [];
+
+  let columnInfo = _.find(subscribe_columns, function(item) {
+      return (item.col == col);
+  });
+
+  op = columnInfo ? columnInfo.op : op;
+
   return op;
 }
 
-const getFilter = (col,op,val) => {
+const getFilter = (col, op, val) => {
   return {
     col: col,
     op: op,
     val: val,
   }
 }  
-export default function getEffectiveExtraFilters({
+
+export function getEffectiveExtraFilters({
   dashboardMetadata,
   filters,
   sliceId,
-  filterKeys,
   linkedSlicesExistInFilters,
 }) {
   const immuneSlices = dashboardMetadata.filter_immune_slices || [];
@@ -100,4 +111,10 @@ export default function getEffectiveExtraFilters({
   });
 
   return effectiveFilters;
+}
+
+
+export default {
+  filterKeys,
+  getEffectiveExtraFilters,
 }

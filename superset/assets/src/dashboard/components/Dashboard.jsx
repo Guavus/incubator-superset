@@ -258,8 +258,6 @@ class Dashboard extends React.PureComponent {
       const key = parseInt(sliceId);
       if (linked_slices instanceof Array) {
         keyExists = linked_slices.indexOf(sliceId) != -1
-      } else {
-        keyExists = linked_slices === sliceId
       }
     }
     return keyExists

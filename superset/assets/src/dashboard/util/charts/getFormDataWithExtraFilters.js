@@ -16,20 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import getEffectiveExtraFilters from './getEffectiveExtraFilters';
+import { getEffectiveExtraFilters, filterKeys } from './getEffectiveExtraFilters';
 
 // We cache formData objects so that our connected container components don't always trigger
 // render cascades. we cannot leverage the reselect library because our cache size is >1
 const cachedDashboardMetadataByChart = {};
 const cachedFiltersByChart = {};
 const cachedFormdataByChart = {};
-const filterKeys = [
-  '__time_range',
-  '__time_col',
-  '__time_grain',
-  '__time_origin',
-  '__granularity',
-];
+
 const getExtraFilters = (subscriberMap, globalFilters, slicesInState) => {
     if (subscriberMap && subscriberMap.actions.indexOf("APPLY_FILTER") > -1) {
       const filters = getFiltersFromSlices(slicesInState,globalFilters)
@@ -78,7 +72,7 @@ const getLinkedSlicesExistInFilters = (subscriberMap, globalFilters) => {
   return linkedSlicesExistInFilters;
 }
 
-const getSliceSubscriberMap = (publishSubscriberMap, sliceId) => {
+const getSubscriberSliceMap = (publishSubscriberMap, sliceId) => {
   return publishSubscriberMap && publishSubscriberMap.hasOwnProperty("subscribers") && publishSubscriberMap.subscribers && publishSubscriberMap.subscribers[sliceId] ? publishSubscriberMap.subscribers[sliceId]: undefined;
 }
 
@@ -90,11 +84,11 @@ export default function getFormDataWithExtraFilters({
   publishSubscriberMap = undefined,
 }) {
 
-  const sliceSubscriberMap = getSliceSubscriberMap(publishSubscriberMap, sliceId);
+  const subscriberSliceMap = getSubscriberSliceMap(publishSubscriberMap, sliceId);
   
   // update filter based on subscriber map
-  const linkedSlicesExistInFilters = getLinkedSlicesExistInFilters(sliceSubscriberMap, filters)
-  filters = getExtraFilters(sliceSubscriberMap, filters, linkedSlicesExistInFilters);
+  const linkedSlicesExistInFilters = getLinkedSlicesExistInFilters(subscriberSliceMap, filters)
+  filters = getExtraFilters(subscriberSliceMap, filters, linkedSlicesExistInFilters);
 
   // if dashboard metadata + filters have not changed, use cache if possible
   if (

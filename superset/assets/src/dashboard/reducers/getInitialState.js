@@ -17,6 +17,7 @@
  * under the License.
  */
 /* eslint-disable camelcase */
+import * as _ from 'lodash';
 import shortid from 'shortid';
 import { CategoricalColorNamespace } from '@superset-ui/color';
 
@@ -69,45 +70,46 @@ export default function(bootstrapData) {
   }
 
   const getSliceData = (sliceId, slices) => {
-    let slice_data;
-    slices.forEach (slice => {
-      if(slice.slice_id == sliceId){
-        slice_data = slice;
-      }
-    })
+    let slice_data = _.find(slices, function (slice) {
+                return (slice.slice_id == sliceId);
+              })
     return slice_data;
+  }
+ 
+  const getDefaultFilters = (publishSliceData, publish_id) => {
+    let defaultFilters = {};
+
+    // As per the current support only filter_box can publish global default filters
+    if (publishSliceData.viz_type == "filter_box") {
+
+      let slice = getSliceData(publish_id, dashboard.slices);
+      if(slice) {
+        const publish_columns = publishSliceData.hasOwnProperty("publish_columns") ? publishSliceData.publish_columns : [];
+        const filterConfigFilters = getFiltersFromFilterConfig(slice.form_data.filter_configs);
+        
+        publish_columns.forEach( col => {
+          if (isPublishColumnExistsInFilters(filterConfigFilters , col)) {
+            defaultFilters[col] = filterConfigFilters[col];  
+          }
+        })
+
+        // check date filter is applicable for filter
+        if (slice.form_data.date_filter) {
+          defaultFilters["__time_range"] = slice.form_data.time_range;
+        }
+      }
+    }  
+
+    return defaultFilters;
   }
 
   try {
     let publishers = publishSubscriberMap.hasOwnProperty("publishers")? publishSubscriberMap["publishers"]:{};
     for (var publish_id in publishers) {
-      if (publishers.hasOwnProperty(publish_id)) {
-     
-        let defaultFilters = {};
-  
-        // As per the current support only filter_box can publish global default filters
-        if (publishers[publish_id].viz_type == "filter_box") {
-  
-          let slice = getSliceData(publish_id, dashboard.slices);
-          const publish_columns = publishers[publish_id].hasOwnProperty("publish_columns") ? publishers[publish_id].publish_columns : [];
-          const filterConfigFilters = getFiltersFromFilterConfig(slice.form_data.filter_configs);
-          
-          publish_columns.forEach( col => {
-            if (isPublishColumnExistsInFilters(filterConfigFilters , col)) {
-              defaultFilters[col] = filterConfigFilters[col];  
-            }
-          })
-  
-          // check date filter is applicable for filter
-          if (slice.form_data.date_filter) {
-            defaultFilters["__time_range"] = slice.form_data.time_range;
-          } 
-
-          // Update final filter box filters for dashboard state
-          if (Object.keys(defaultFilters).length) {
-            filters[publish_id] = defaultFilters;
-          }
-        }
+      let defaultFilters =  getDefaultFilters(publishers[publish_id], publish_id);
+      // Update final filter box filters for dashboard state
+      if (Object.keys(defaultFilters).length) {
+        filters[publish_id] = defaultFilters;
       }
     }
   } catch (e) {
