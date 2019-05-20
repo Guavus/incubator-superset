@@ -2078,7 +2078,7 @@ export const controls = {
     mapStateToProps: (state) => {
       const newState = {};
       if (state.slices) {
-        newState.options = state.slices.filter( slice => state.slice ? slice.id != state.slice.slice_id : true).map( slice =>  ({label: slice.title, value: slice.id}))
+        newState.options = state.slices.filter( slice => state.slice ? slice.id != state.slice.slice_id : true).map( slice =>  ({label: slice.title, value: slice.id, columns: slice.column_names}))
       }
       return newState;
     },
