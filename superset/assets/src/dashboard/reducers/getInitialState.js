@@ -244,6 +244,7 @@ export default function(bootstrapData) {
       hasUnsavedChanges: false,
       maxUndoHistoryExceeded: false,
       publishSubscriberMap: publishSubscriberMap,
+      doReconcile: false,
     },
     dashboardLayout,
     messageToasts: [],
