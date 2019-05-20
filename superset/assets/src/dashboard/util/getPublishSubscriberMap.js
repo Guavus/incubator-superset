@@ -119,10 +119,26 @@ function getSubscriberMap(slices, publishers) {
 }
 
 export default function getPublishSubscriberMap(slices) {
+    slices.forEach(slice => {
+        let linkedSlices = getLinkedSlicesFromSubscriberLayer(slice.formData.subscriber_layers);
+        slice.formData.linked_slice = linkedSlices ? linkedSlices : [];
+        slice.formData.actions = ['APPLY_FILTER'];
+    });
     var publishers = getPublisherMap(slices);
     var subscribers = getSubscriberMap(slices, publishers);
     return {
         publishers: publishers,
         subscribers: subscribers
     };
+}
+
+function getLinkedSlicesFromSubscriberLayer(subscriberLayer) {
+    let linkedSlices = [];
+    subscriberLayer.forEach(element => {
+        element.linked_slice.forEach(item => {
+            linkedSlices.push(item);
+        });
+    });
+
+    return linkedSlices;
 }

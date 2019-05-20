@@ -216,7 +216,7 @@ export default class SubscriberLayer extends React.PureComponent {
       });
 
       subscription['actions'] = [
-        "changeFilter"
+        "APPLY_FILTER"
       ];
 
       subscription['linked_slice'] = [
