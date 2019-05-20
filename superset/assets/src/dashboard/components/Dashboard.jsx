@@ -253,7 +253,7 @@ class Dashboard extends React.PureComponent {
 
   isFilterkeyExistInLinkedSlices(publishers, sliceId, filterKey) {
     let keyExists = false;
-    if (publishers[filterKey]) {
+    if (publishers && publishers[filterKey]) {
       const linked_slices = publishers[filterKey].subcribers;
       const key = parseInt(sliceId);
       if (linked_slices instanceof Array) {
