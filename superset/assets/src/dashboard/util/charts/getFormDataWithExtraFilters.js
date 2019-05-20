@@ -25,20 +25,20 @@ const cachedFiltersByChart = {};
 const cachedFormdataByChart = {};
 
 const getExtraFilters = (subscriberMap, globalFilters, slicesInState) => {
-    if (subscriberMap && subscriberMap.actions.indexOf("APPLY_FILTER") > -1) {
-      const filters = getFiltersFromSlices(slicesInState,globalFilters)
-      return filters;
-    }
-    return {};
+  if (subscriberMap && subscriberMap.actions.indexOf("APPLY_FILTER") > -1) {
+    const filters = getFiltersFromSlices(slicesInState, globalFilters)
+    return filters;
+  }
+  return {};
 }
-  
+
 const getFiltersFromSlices = (slices, globalFilters) => {
   const filters = {};
-  slices.forEach( slice => {
+  slices.forEach(slice => {
     const sliceId = Object.keys(slice) && Object.keys(slice)[0];
     const subscribe_columns = slice[sliceId]
     filters[sliceId] = {}
-    subscribe_columns.forEach( item => {
+    subscribe_columns.forEach(item => {
       if (globalFilters[sliceId].hasOwnProperty(item.col)) {
         filters[sliceId][item.col] = globalFilters[sliceId][item.col];
       }
@@ -49,7 +49,7 @@ const getFiltersFromSlices = (slices, globalFilters) => {
         filters[sliceId][element] = globalFilters[sliceId][element];
       }
     });
-    
+
   })
   return filters;
 }
@@ -61,19 +61,19 @@ const getLinkedSlicesExistInFilters = (subscriberMap, globalFilters) => {
     if (propExist) {
       const linked_slices = subscriberMap.linked_slices;
       for (var sliceId in linked_slices) {
-          if (globalFilters.hasOwnProperty(sliceId)) {
-            let slice = {};
-            slice[sliceId] = linked_slices[sliceId];
-            linkedSlicesExistInFilters.push(slice);  
-          }
+        if (globalFilters.hasOwnProperty(sliceId)) {
+          let slice = {};
+          slice[sliceId] = linked_slices[sliceId];
+          linkedSlicesExistInFilters.push(slice);
+        }
       }
     }
-  }  
+  }
   return linkedSlicesExistInFilters;
 }
 
 const getSubscriberSliceMap = (publishSubscriberMap, sliceId) => {
-  return publishSubscriberMap && publishSubscriberMap.hasOwnProperty("subscribers") && publishSubscriberMap.subscribers && publishSubscriberMap.subscribers[sliceId] ? publishSubscriberMap.subscribers[sliceId]: undefined;
+  return publishSubscriberMap && publishSubscriberMap.hasOwnProperty("subscribers") && publishSubscriberMap.subscribers && publishSubscriberMap.subscribers[sliceId] ? publishSubscriberMap.subscribers[sliceId] : undefined;
 }
 
 export default function getFormDataWithExtraFilters({
@@ -85,7 +85,7 @@ export default function getFormDataWithExtraFilters({
 }) {
 
   const subscriberSliceMap = getSubscriberSliceMap(publishSubscriberMap, sliceId);
-  
+
   // update filter based on subscriber map
   const linkedSlicesExistInFilters = getLinkedSlicesExistInFilters(subscriberSliceMap, filters)
   filters = getExtraFilters(subscriberSliceMap, filters, linkedSlicesExistInFilters);

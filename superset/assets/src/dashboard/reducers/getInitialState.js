@@ -39,7 +39,7 @@ import {
   ROW_TYPE,
 } from '../util/componentTypes';
 
-export default function(bootstrapData) {
+export default function (bootstrapData) {
   const { user_id, datasources, common, editMode } = bootstrapData;
 
   const dashboard = { ...bootstrapData.dashboard_data };
@@ -48,9 +48,9 @@ export default function(bootstrapData) {
 
   const getFiltersFromFilterConfig = (filter_configs) => {
     const filters = {};
-    filter_configs.forEach ( filter => {
+    filter_configs.forEach(filter => {
       const defaultValue = filter.hasOwnProperty("defaultValue") ? filter["defaultValue"] : "";
-      var values = defaultValue !== "" ? defaultValue.split(";") : []; 
+      var values = defaultValue !== "" ? defaultValue.split(";") : [];
       if (values.length > 0) {
         filters[filter["column"]] = values;
       }
@@ -59,7 +59,7 @@ export default function(bootstrapData) {
   }
 
   const isPublishColumnExistsInFilters = (filterConfigFilters, col) => {
-    return (Object.keys(filterConfigFilters).length > 0 && filterConfigFilters[col] != undefined && Object.keys(filterConfigFilters[col]).length > 0) ;
+    return (Object.keys(filterConfigFilters).length > 0 && filterConfigFilters[col] != undefined && Object.keys(filterConfigFilters[col]).length > 0);
   }
 
   // read pubsub info from dashboard metadata and store in state
@@ -71,11 +71,11 @@ export default function(bootstrapData) {
 
   const getSliceData = (sliceId, slices) => {
     let slice_data = _.find(slices, function (slice) {
-                return (slice.slice_id == sliceId);
-              })
+      return (slice.slice_id == sliceId);
+    })
     return slice_data;
   }
- 
+
   const getDefaultFilters = (publishSliceData, publish_id) => {
     let defaultFilters = {};
 
@@ -83,13 +83,13 @@ export default function(bootstrapData) {
     if (publishSliceData.viz_type == "filter_box") {
 
       let slice = getSliceData(publish_id, dashboard.slices);
-      if(slice) {
+      if (slice) {
         const publish_columns = publishSliceData.hasOwnProperty("publish_columns") ? publishSliceData.publish_columns : [];
         const filterConfigFilters = getFiltersFromFilterConfig(slice.form_data.filter_configs);
-        
-        publish_columns.forEach( col => {
-          if (isPublishColumnExistsInFilters(filterConfigFilters , col)) {
-            defaultFilters[col] = filterConfigFilters[col];  
+
+        publish_columns.forEach(col => {
+          if (isPublishColumnExistsInFilters(filterConfigFilters, col)) {
+            defaultFilters[col] = filterConfigFilters[col];
           }
         })
 
@@ -98,15 +98,15 @@ export default function(bootstrapData) {
           defaultFilters["__time_range"] = slice.form_data.time_range;
         }
       }
-    }  
+    }
 
     return defaultFilters;
   }
 
   try {
-    let publishers = publishSubscriberMap.hasOwnProperty("publishers")? publishSubscriberMap["publishers"]:{};
+    let publishers = publishSubscriberMap.hasOwnProperty("publishers") ? publishSubscriberMap["publishers"] : {};
     for (var publish_id in publishers) {
-      let defaultFilters =  getDefaultFilters(publishers[publish_id], publish_id);
+      let defaultFilters = getDefaultFilters(publishers[publish_id], publish_id);
       // Update final filter box filters for dashboard state
       if (Object.keys(defaultFilters).length) {
         filters[publish_id] = defaultFilters;

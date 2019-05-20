@@ -30,15 +30,15 @@ export const filterKeys = [
 const getOperatorOfColumn = (linkedSlicesExistInFilters, filteringSliceId, col) => {
   let op = 'in';
 
-  let subscribe_slice = _.find(linkedSlicesExistInFilters, function(slice){
+  let subscribe_slice = _.find(linkedSlicesExistInFilters, function (slice) {
     const sliceId = Object.keys(slice) && Object.keys(slice)[0];
-    return (sliceId == filteringSliceId) 
+    return (sliceId == filteringSliceId)
   });
-   
-  let subscribe_columns = subscribe_slice ? subscribe_slice[filteringSliceId]: [];
 
-  let columnInfo = _.find(subscribe_columns, function(item) {
-      return (item.col == col);
+  let subscribe_columns = subscribe_slice ? subscribe_slice[filteringSliceId] : [];
+
+  let columnInfo = _.find(subscribe_columns, function (item) {
+    return (item.col == col);
   });
 
   op = columnInfo ? columnInfo.op : op;
@@ -52,7 +52,7 @@ const getFilter = (col, op, val) => {
     op: op,
     val: val,
   }
-}  
+}
 
 export function getEffectiveExtraFilters({
   dashboardMetadata,
@@ -61,7 +61,7 @@ export function getEffectiveExtraFilters({
   linkedSlicesExistInFilters,
 }) {
   const immuneSlices = dashboardMetadata.filter_immune_slices || [];
-  
+
   if (sliceId && immuneSlices.includes(sliceId)) {
     // The slice is immune to dashboard filters
     return [];
@@ -88,7 +88,7 @@ export function getEffectiveExtraFilters({
       if (!immuneToFields.includes(field)) {
         if (filterKeys.indexOf(field) == -1) {
           let op = getOperatorOfColumn(linkedSlicesExistInFilters, filteringSliceId, field);
-          if (Array.isArray(filtersFromSlice[field])){
+          if (Array.isArray(filtersFromSlice[field])) {
             if (op == 'in' || op == 'not in') {
               effectiveFilters.push(getFilter(field, op, filtersFromSlice[field]));
             } else {
