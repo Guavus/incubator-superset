@@ -226,8 +226,14 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   applySubscription() {
-    if (this.state.sliceType) {
+    if (this.state.name.length && this.state.sliceType) {
       const subscription = {};
+
+       Object.keys(this.state).forEach((k) => {
+        if (this.state[k] !== null) {
+          subscription[k] = this.state[k];
+        }
+      });
 
       subscription['actions'] = [
         "changeFilter"
@@ -243,11 +249,7 @@ export default class SubscriberLayer extends React.PureComponent {
       subscription['extras'] = this.state.extraValue;
 
 
-      // Object.keys(this.state).forEach((k) => {
-      //   if (this.state[k] !== null) {
-      //     subscription[k] = this.state[k];
-      //   }
-      // });
+
 
       this.props.addSubscriberLayer(subscription);
       this.setState({ isNew: false, oldName: this.state.name });
@@ -277,6 +279,7 @@ export default class SubscriberLayer extends React.PureComponent {
                <TextControl
                 name="extra-subscription-layer"
                 label={t('Column')}
+                disabled={!allowColumnSelection}
                 description={'Set column (If any)'}
                 value={columnType}
                 onChange={(e) => this.handleColumnType(e, index)}
@@ -309,7 +312,7 @@ export default class SubscriberLayer extends React.PureComponent {
 
 
   render() {
-    const { isNew, columnType, operatorType, sliceType, maxNumSubscriptions, extraValue, allowSubscription } = this.state;
+    const { isNew, columnType, operatorType, sliceType, maxNumSubscriptions, extraValue, allowSubscription, name } = this.state;
     const isValid = this.isValidForm();
 
     const publishedSlices = this.getPublishedSlices();
@@ -325,6 +328,14 @@ export default class SubscriberLayer extends React.PureComponent {
               title={t('Subscription Configuration')}
               info={t('Configure Subscription')}
             >
+               <TextControl
+                name="annotation-layer-name"
+                label={t('Name')}
+                placeholder=""
+                value={name}
+                onChange={v => this.setState({ name: v })}
+                validationErrors={!name ? [t('Mandatory')] : []}
+              />
               <SelectControl
                 hovered
                 description={t('Choose the Chart to subscribe')}
@@ -344,7 +355,7 @@ export default class SubscriberLayer extends React.PureComponent {
               }
 
 
-              <Button bsSize="sm" onClick={this.addSubscription}>
+              <Button bsSize="sm" disabled={!allowSubscription} onClick={this.addSubscription}>
                 {'+'}
               </Button>
               <TextControl
