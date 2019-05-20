@@ -130,7 +130,7 @@ export default class SubscriberLayer extends React.PureComponent {
       validationErrors: {},
     };
 
-    this.state.subscriptionList = [{ key: 0, columnType: '', operatorType: '', index: 0 }];
+    this.state.subscriptionList =  this.state.isNew ? [{ key: 0, columnType: '', operatorType: '', index: 0 }] : this.state.subscriptionList;
 
     this.handleSliceType = this.handleSliceType.bind(this);
     this.submitSubscription = this.submitSubscription.bind(this);
