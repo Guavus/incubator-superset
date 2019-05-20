@@ -35,7 +35,7 @@ const propTypes = {
   name: PropTypes.string,
   operatorType: PropTypes.string,
   columnType: PropTypes.string,
-  sliceType: PropTypes.string,
+  sliceType: PropTypes.number,
   width: PropTypes.number,
   subscriptionList: PropTypes.arrayOf(PropTypes.object),
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -51,9 +51,8 @@ const propTypes = {
   addSubscriberLayer: PropTypes.func,
   removeSubscriberLayer: PropTypes.func,
   close: PropTypes.func,
-  maxNumSubscriptions: PropTypes.number,
   extraValue: PropTypes.string,
-  allowSubscription: PropTypes.bool,
+  allowMoreColumns: PropTypes.bool,
   allowColumnSelection: PropTypes.bool,
 };
 
@@ -61,17 +60,15 @@ const defaultProps = {
   name: '',
   operatorType: '',
   columnType: '',
-  sliceType: '',
   overrides: {},
   subscriptionList: [],
   show: true,
   titleColumn: '',
   subscribe_columns: [],
-  maxNumSubscriptions: 5,
   timeColumn: '',
   intervalEndColumn: '',
   extraValue: '',
-  allowSubscription: false,
+  allowMoreColumns: false,
   allowColumnSelection: false,
 
   addSubscriberLayer: () => { },
@@ -90,7 +87,6 @@ export default class SubscriberLayer extends React.PureComponent {
       sliceType,
       overrides,
       show,
-      maxNumSubscriptions,
       titleColumn,
       subscribe_columns,
       timeColumn,
@@ -98,7 +94,7 @@ export default class SubscriberLayer extends React.PureComponent {
       intervalEndColumn,
       subscriptionList,
       extraValue,
-      allowSubscription,
+      allowMoreColumns,
       allowColumnSelection,
     } = props;
 
@@ -109,14 +105,13 @@ export default class SubscriberLayer extends React.PureComponent {
       columnType,
       operatorType,
       columnType,
-      maxNumSubscriptions,
       sliceType,
       value,
       overrides,
       show,
       subscriptionList,
       extraValue,
-      allowSubscription,
+      allowMoreColumns,
       allowColumnSelection,
       // slice
       titleColumn,
@@ -130,7 +125,7 @@ export default class SubscriberLayer extends React.PureComponent {
       validationErrors: {},
     };
 
-    this.state.subscriptionList =  this.state.isNew ? [{ key: 0, columnType: '', operatorType: '', index: 0 }] : this.state.subscriptionList;
+    this.state.subscriptionList = this.state.isNew ? [{ columnType: '', operatorType: '', index: 0 }] : this.state.subscriptionList;
 
     this.handleSliceType = this.handleSliceType.bind(this);
     this.submitSubscription = this.submitSubscription.bind(this);
@@ -139,7 +134,7 @@ export default class SubscriberLayer extends React.PureComponent {
     this.handleColumnType = this.handleColumnType.bind(this);
     this.handleOperatorType = this.handleOperatorType.bind(this);
     this.isValidForm = this.isValidForm.bind(this);
-    this.addSubscription = this.addSubscription.bind(this);
+    this.addMoreColumns = this.addMoreColumns.bind(this);
     this.getSupportedOperators = this.getSupportedOperators.bind(this);
     this.getPublisedColumns = this.getPublisedColumns.bind(this);
     this.getPublishedSlices = this.getPublishedSlices.bind(this);
@@ -167,6 +162,7 @@ export default class SubscriberLayer extends React.PureComponent {
       {label: 'like', value: 'like'},
       {label: 'IS NOT NULL', value: 'IS NOT NULL'},
       {label: 'IS NULL', value: 'IS NULL'}];
+
   }
 
   getPublishedSlices() {
@@ -174,13 +170,13 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   getPublisedColumns() {
-  return [];
+    return [];
   }
 
   isValidForm() {
-    const { sliceType } = this.state;
-    const errors = [nonEmpty(sliceType)];
-    //  errors.push(!this.subscribe_columns.length)
+    const { sliceType, name } = this.state;
+    const errors = [nonEmpty(sliceType), nonEmpty(name)];
+    this.state.subscribe_columns ? errors.push(!this.state.subscribe_columns.length) : '';
 
     return !errors.filter(x => x).length;
   }
@@ -197,13 +193,16 @@ export default class SubscriberLayer extends React.PureComponent {
     subscriptionList[index]['columnType'] = columnType;
 
     let subscribe_columns = this.state.subscribe_columns;
-    subscribe_columns = subscribe_columns.length <= index ? [{}] : subscribe_columns;
+    subscribe_columns.length <= index ? subscribe_columns.push({}) : subscribe_columns;
     subscribe_columns[index]['col'] = columnType;
+
+
 
     this.setState({
       columnType,
       subscriptionList,
       subscribe_columns,
+      allowMoreColumns: subscribe_columns[index]['col'] && subscribe_columns[index]['op'] ? true : false,
     });
   }
 
@@ -212,21 +211,28 @@ export default class SubscriberLayer extends React.PureComponent {
     subscriptionList[index]['operatorType'] = operatorType;
 
     let subscribe_columns = this.state.subscribe_columns;
-    subscribe_columns = subscribe_columns.length <= index ? [{}] : subscribe_columns;
+    subscribe_columns.length <= index ? subscribe_columns.push({}) : subscribe_columns;
     subscribe_columns[index]['op'] = operatorType;
 
     this.setState({
       operatorType,
       subscriptionList,
       subscribe_columns,
+      allowMoreColumns: subscribe_columns[index]['col'] && subscribe_columns[index]['op'] ? true : false,
     });
   }
 
-  addSubscription() {
+  addMoreColumns() {
     const subscriptionList = this.state.subscriptionList;
     const data = subscriptionList[subscriptionList.length - 1];
-    const newData = { key: data.key + 1, columnType: '', operatorType: '', index: data.index + 1 }
+    const newData = { columnType: '', operatorType: '', index: data.index + 1 }
     this.setState(prevState => ({ subscriptionList: [...prevState.subscriptionList, newData] }))
+  }
+
+  removeColumn(e, column) {
+
+    this.setState(prevState => ({ subscriptionList: [...prevState.subscriptionList.filter(x => x.index !== column.index)] }))
+
   }
 
   deleteSubscriber() {
@@ -240,7 +246,7 @@ export default class SubscriberLayer extends React.PureComponent {
     if (this.state.name.length && this.state.sliceType) {
       const subscription = {};
 
-       Object.keys(this.state).forEach((k) => {
+      Object.keys(this.state).forEach((k) => {
         if (this.state[k] !== null) {
           subscription[k] = this.state[k];
         }
@@ -259,9 +265,6 @@ export default class SubscriberLayer extends React.PureComponent {
 
       subscription['extras'] = this.state.extraValue;
 
-
-
-
       this.props.addSubscriberLayer(subscription);
       this.setState({ isNew: false, oldName: this.state.name });
     }
@@ -274,27 +277,27 @@ export default class SubscriberLayer extends React.PureComponent {
 
   renderSingleSubscription(subscriptionData) {
     const { columnType, operatorType, index } = subscriptionData;
-    const { allowColumnSelection,  } = this.state;
+    const { allowColumnSelection, } = this.state;
 
     const operators = this.getSupportedOperators();
     const columns = this.getPublisedColumns();
 
-    this.setState({
-      allowSubscription: this.state.subscriptionList.length < columns.length * operators.length,
-    });
+    // this.setState({
+    //   allowMoreColumns: this.state.subscriptionList.length < columns.length * operators.length,
+    // });
 
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div key={index} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '400px' }}>
 
-               <TextControl
-                name="extra-subscription-layer"
-                label={t('Column')}
-                disabled={!allowColumnSelection}
-                description={'Set column (If any)'}
-                value={columnType}
-                onChange={(e) => this.handleColumnType(e, index)}
-              />
+        <TextControl
+          name="extra-subscription-layer"
+          label={t('Column')}
+          disabled={!allowColumnSelection}
+          description={'Set column (If any)'}
+          value={columnType}
+          onChange={(e) => this.handleColumnType(e, index)}
+        />
 
         <SelectControl
           hovered
@@ -307,13 +310,17 @@ export default class SubscriberLayer extends React.PureComponent {
           onChange={(e) => this.handleOperatorType(e, index)}
         />
 
+        <Button bsSize="sm" disabled={index === 0} style={{ height: '30px', marginTop: '25px' }} onClick={(e) => this.removeColumn(e, subscriptionData)}>
+          {'-'}
+        </Button>
+
       </div>
     );
   }
 
 
   render() {
-    const { isNew, columnType, operatorType, sliceType, maxNumSubscriptions, extraValue, allowSubscription, name } = this.state;
+    const { isNew, columnType, operatorType, sliceType, extraValue, allowMoreColumns, name } = this.state;
     const isValid = this.isValidForm();
 
     const publishedSlices = this.getPublishedSlices();
@@ -329,7 +336,7 @@ export default class SubscriberLayer extends React.PureComponent {
               title={t('Subscription Configuration')}
               info={t('Configure Subscription')}
             >
-               <TextControl
+              <TextControl
                 name="annotation-layer-name"
                 label={t('Name')}
                 placeholder=""
@@ -356,16 +363,16 @@ export default class SubscriberLayer extends React.PureComponent {
               }
 
 
-              <Button bsSize="sm" disabled={!allowSubscription} onClick={this.addSubscription}>
+              <Button bsSize="sm" disabled={!allowMoreColumns} onClick={this.addMoreColumns}>
                 {'+'}
               </Button>
-              {/* <TextControl
+              <TextControl
                 name="extra-subscription-layer"
                 label={t('Extra')}
                 description={'Set Extra parameters (If any)'}
                 value={extraValue}
                 onChange={v => this.setState({ extraValue: v })}
-              /> */}
+              />
 
             </PopoverSection>
           </div>
