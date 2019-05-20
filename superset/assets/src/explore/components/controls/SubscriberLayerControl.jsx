@@ -67,7 +67,7 @@ class SubscriberLayerControl extends React.PureComponent {
     } else {
       subscribers = subscribers.concat(subscriber);
     }
-    this.props.refreshSubscriberData(subscriber);
+    // this.props.refreshSubscriberData(subscriber);
     this.props.onChange(subscribers);
   }
 
