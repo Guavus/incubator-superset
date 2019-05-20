@@ -285,7 +285,7 @@ export default class SubscriberLayer extends React.PureComponent {
     return (
       <div>
         {this.props.error && <span style={{ color: 'red' }}>ERROR: {this.props.error}</span>}
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', overflow: 'auto', maxHeight: '275px' }}>
           <div style={{ marginRight: '2rem' }}>
             <PopoverSection
               isSelected
