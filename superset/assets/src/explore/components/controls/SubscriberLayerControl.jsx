@@ -23,7 +23,6 @@ import { connect } from 'react-redux';
 import { t } from '@superset-ui/translation';
 import { getChartKey } from '../../exploreUtils';
 import { runSubscriptionQuery } from '../../../chart/chartAction';
-import InfoTooltipWithTrigger from '../../../components/InfoTooltipWithTrigger';
 
 import SubscriberLayer from './SubscriberLayer';
 
@@ -42,7 +41,7 @@ const defaultProps = {
   vizType: '',
   value: [],
   subscriberQuery: {},
-  onChange: () => {},
+  onChange: () => { },
 };
 
 class SubscriberLayerControl extends React.PureComponent {
@@ -67,7 +66,6 @@ class SubscriberLayerControl extends React.PureComponent {
     } else {
       subscribers = subscribers.concat(subscriber);
     }
-    // this.props.refreshSubscriberData(subscriber);
     this.props.onChange(subscribers);
   }
 
@@ -98,34 +96,30 @@ class SubscriberLayerControl extends React.PureComponent {
     );
   }
 
-  renderInfo(anno) {
+  renderInfo(subs) {
     const { subscriberQuery } = this.props;
-    if (subscriberQuery[anno.name]) {
+    if (subscriberQuery[subs.name]) {
       return (
         <i className="fa fa-refresh" style={{ color: 'orange' }} aria-hidden />
       );
-    }
-
-    if (!anno.show) {
-      return <span style={{ color: 'red' }}> Hidden </span>;
     }
     return '';
   }
 
   render() {
-    const subscribers = this.props.value.map((anno, i) => (
+    const subscribers = this.props.value.map((subs, i) => (
       <OverlayTrigger
         key={i}
         trigger="click"
         rootClose
         ref={`overlay-${i}`}
         placement="right"
-        overlay={this.renderPopover(`overlay-${i}`, anno, '')}
+        overlay={this.renderPopover(`overlay-${i}`, subs, '')}
       >
         <ListGroupItem>
-          <span>{anno.name}</span>
+          <span>{subs.name}</span>
           <span style={{ float: 'right' }}>
-            {this.renderInfo(anno)}
+            {this.renderInfo(subs)}
           </span>
         </ListGroupItem>
       </OverlayTrigger>
@@ -154,8 +148,6 @@ class SubscriberLayerControl extends React.PureComponent {
 SubscriberLayerControl.propTypes = propTypes;
 SubscriberLayerControl.defaultProps = defaultProps;
 
-// Tried to hook this up through stores/control.jsx instead of using redux
-// directly, could not figure out how to get access to the color_scheme
 function mapStateToProps({ charts, explore }) {
   const chartKey = getChartKey(explore);
   const chart = charts[chartKey] || charts[0] || {};

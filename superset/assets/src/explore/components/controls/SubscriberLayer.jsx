@@ -20,13 +20,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import { t } from '@superset-ui/translation';
-import { SupersetClient } from '@superset-ui/connection';
-import { getChartMetadataRegistry } from '@superset-ui/chart';
-
 import SelectControl from './SelectControl';
-import TextAreaControl from './TextAreaControl';
-
-
 import PopoverSection from '../../../components/PopoverSection';
 import TextControl from './TextControl';
 import { nonEmpty } from '../../validators';
@@ -40,11 +34,7 @@ const propTypes = {
   subscriptionList: PropTypes.arrayOf(PropTypes.object),
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   overrides: PropTypes.object,
-  show: PropTypes.bool,
-  titleColumn: PropTypes.string,
   subscribe_columns: PropTypes.arrayOf(PropTypes.object),
-  timeColumn: PropTypes.string,
-  intervalEndColumn: PropTypes.string,
   vizType: PropTypes.string,
   sliceOptions: PropTypes.arrayOf(PropTypes.object),
   error: PropTypes.string,
@@ -61,12 +51,10 @@ const defaultProps = {
   operatorType: '',
   columnType: '',
   overrides: {},
+  sliceType: '',
   subscriptionList: [],
-  show: true,
-  titleColumn: '',
   subscribe_columns: [],
   timeColumn: '',
-  intervalEndColumn: '',
   extraValue: '',
   allowMoreColumns: false,
   allowColumnSelection: false,
@@ -86,12 +74,8 @@ export default class SubscriberLayer extends React.PureComponent {
       columnType,
       sliceType,
       overrides,
-      show,
-      titleColumn,
       subscribe_columns,
-      timeColumn,
       sliceOptions,
-      intervalEndColumn,
       subscriptionList,
       extraValue,
       allowMoreColumns,
@@ -108,20 +92,13 @@ export default class SubscriberLayer extends React.PureComponent {
       sliceType,
       value,
       overrides,
-      show,
       subscriptionList,
       extraValue,
       allowMoreColumns,
       allowColumnSelection,
-      // slice
-      titleColumn,
       subscribe_columns,
-      timeColumn,
-      intervalEndColumn,
-      // refData
       isNew: !this.props.name,
       isLoadingOptions: true,
-      valueOptions: [],
       validationErrors: {},
     };
 
@@ -140,29 +117,19 @@ export default class SubscriberLayer extends React.PureComponent {
     this.getPublishedSlices = this.getPublishedSlices.bind(this);
   }
 
-  componentDidMount() {
-
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-
-  }
-
   getSupportedOperators() {
     return [
-      {label: 'equals', value: '='},
-      {label: 'not equal to', value: '!='},
-      {label: 'not equal to', value: '!='},
-      {label: '>', value: '>'},
-      {label: '<', value: '<'},
-      {label: '>=', value: '>='},
-      {label: '<=', value: '<='},
-      {label: 'in', value: 'in'},
-      {label: 'not in', value: 'not in'},
-      {label: 'like', value: 'like'},
-      {label: 'IS NOT NULL', value: 'IS NOT NULL'},
-      {label: 'IS NULL', value: 'IS NULL'}];
-
+      { label: 'equals', value: '==' },
+      { label: 'not equal to', value: '!=' },
+      { label: '>', value: '>' },
+      { label: '<', value: '<' },
+      { label: '>=', value: '>=' },
+      { label: '<=', value: '<=' },
+      { label: 'in', value: 'in' },
+      { label: 'not in', value: 'not in' },
+      { label: 'like', value: 'like' },
+      { label: 'IS NOT NULL', value: 'IS NOT NULL' },
+      { label: 'IS NULL', value: 'IS NULL' }];
   }
 
   getPublishedSlices() {
@@ -196,8 +163,6 @@ export default class SubscriberLayer extends React.PureComponent {
     subscribe_columns.length <= index ? subscribe_columns.push({}) : subscribe_columns;
     subscribe_columns[index]['col'] = columnType;
 
-
-
     this.setState({
       columnType,
       subscriptionList,
@@ -230,9 +195,7 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   removeColumn(e, column) {
-
     this.setState(prevState => ({ subscriptionList: [...prevState.subscriptionList.filter(x => x.index !== column.index)] }))
-
   }
 
   deleteSubscriber() {
@@ -282,11 +245,6 @@ export default class SubscriberLayer extends React.PureComponent {
     const operators = this.getSupportedOperators();
     const columns = this.getPublisedColumns();
 
-    // this.setState({
-    //   allowMoreColumns: this.state.subscriptionList.length < columns.length * operators.length,
-    // });
-
-
     return (
       <div key={index} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '400px' }}>
 
@@ -310,14 +268,13 @@ export default class SubscriberLayer extends React.PureComponent {
           onChange={(e) => this.handleOperatorType(e, index)}
         />
 
-        <Button bsSize="sm" disabled={index === 0} style={{ height: '30px', marginTop: '25px' }} onClick={(e) => this.removeColumn(e, subscriptionData)}>
+        <Button title="Remove subscription columns and operators" bsSize="sm" disabled={index === 0} style={{ height: '30px', marginTop: '25px' }} onClick={(e) => this.removeColumn(e, subscriptionData)}>
           {'-'}
         </Button>
 
       </div>
     );
   }
-
 
   render() {
     const { isNew, columnType, operatorType, sliceType, extraValue, allowMoreColumns, name } = this.state;
@@ -337,7 +294,7 @@ export default class SubscriberLayer extends React.PureComponent {
               info={t('Configure Subscription')}
             >
               <TextControl
-                name="annotation-layer-name"
+                name="subscriber-layer-name"
                 label={t('Name')}
                 placeholder=""
                 value={name}
@@ -362,17 +319,16 @@ export default class SubscriberLayer extends React.PureComponent {
               })
               }
 
-
-              <Button bsSize="sm" disabled={!allowMoreColumns} onClick={this.addMoreColumns}>
+              <Button title="Add subscription columns and operators" bsSize="sm" disabled={!allowMoreColumns} onClick={this.addMoreColumns}>
                 {'+'}
               </Button>
-              <TextControl
+              {/* <TextControl
                 name="extra-subscription-layer"
                 label={t('Extra')}
                 description={'Set Extra parameters (If any)'}
                 value={extraValue}
                 onChange={v => this.setState({ extraValue: v })}
-              />
+              /> */}
 
             </PopoverSection>
           </div>
@@ -383,7 +339,6 @@ export default class SubscriberLayer extends React.PureComponent {
             {!isNew ? t('Remove') : t('Cancel')}
           </Button>
           <div>
-
             <Button bsSize="sm" disabled={!isValid} onClick={this.submitSubscription}>
               {t('OK')}
             </Button>
