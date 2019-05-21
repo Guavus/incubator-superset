@@ -142,7 +142,7 @@ function updateSlices(slices) {
 function getLinkedSlicesFromSubscriberLayer(subscriberLayer) {
     let linkedSlices;
     if (subscriberLayer) {
-        let linkedSlices = [];
+        linkedSlices = [];
         subscriberLayer.forEach(element => {
             element.linked_slice.forEach(item => {
                 linkedSlices.push(item);
