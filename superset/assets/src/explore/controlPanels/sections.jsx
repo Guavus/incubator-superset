@@ -44,6 +44,7 @@ export const linkedSlices = {
   expanded: true,
   controlSetRows: [
     ['publish_columns'],
+    ['linked_slice'],
   ],
 };
 

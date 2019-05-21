@@ -217,6 +217,9 @@ export default class SubscriberLayer extends React.PureComponent {
     const data = subscriptionList[subscriptionList.length - 1];
     const newData = { columnType: '', operatorType: '', index: data.index + 1 }
     this.setState(prevState => ({ subscriptionList: [...prevState.subscriptionList, newData] }))
+    this.setState({
+      allowMoreColumns: false,
+    })
   }
 
   removeColumn(e, column) {
@@ -270,7 +273,7 @@ export default class SubscriberLayer extends React.PureComponent {
     const operators = this.getSupportedOperators();
 
     return (
-      <div key={index} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '400px' }}>
+      <div key={index} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '400px', marginTop: '10px' }}>
 
         <SelectControl
           hovered
@@ -294,7 +297,7 @@ export default class SubscriberLayer extends React.PureComponent {
           onChange={(e) => this.handleOperatorType(e, index)}
         />
 
-        <Button title="Remove subscription columns and operators" bsSize="sm" disabled={index === 0} style={{ height: '30px', marginTop: '25px' }} onClick={(e) => this.removeColumn(e, subscriptionData)}>
+        <Button title="Remove subscription columns and operators" bsSize="sm" disabled={index === 0} style={{ height: '30px', marginTop: '25px', marginLeft: '10px' }} onClick={(e) => this.removeColumn(e, subscriptionData)}>
           {'-'}
         </Button>
 
@@ -344,7 +347,7 @@ export default class SubscriberLayer extends React.PureComponent {
               })
               }
 
-              <Button title="Add subscription columns and operators" bsSize="sm" disabled={!allowMoreColumns} onClick={this.addMoreColumns}>
+              <Button title="Add subscription columns and operators" bsSize="sm" disabled={!allowMoreColumns} onClick={this.addMoreColumns} style={{marginTop: '10px'}}>
                 {'+'}
               </Button>
               {/* <TextControl
