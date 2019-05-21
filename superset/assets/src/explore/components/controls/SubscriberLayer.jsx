@@ -52,7 +52,6 @@ const defaultProps = {
   operatorType: '',
   columnType: '',
   overrides: {},
-  sliceId: '',
   subscriptionList: [],
   subscribe_columns: [],
   publishedSliceColumns: [],
@@ -166,6 +165,7 @@ export default class SubscriberLayer extends React.PureComponent {
     const { sliceId, name } = this.state;
     const errors = [nonEmpty(sliceId), nonEmpty(name)];
     this.state.subscribe_columns ? errors.push(!this.state.subscribe_columns.length) : '';
+    errors.push(!this.state.allowColumnSelection);
 
     return !errors.filter(x => x).length;
   }
@@ -194,6 +194,9 @@ export default class SubscriberLayer extends React.PureComponent {
       subscribe_columns,
       allowMoreColumns: subscribe_columns[index]['col'] && subscribe_columns[index]['op'] ? true : false,
     });
+
+    this.forceUpdate();
+
   }
 
   handleOperatorType(operatorType, index) {
@@ -210,6 +213,8 @@ export default class SubscriberLayer extends React.PureComponent {
       subscribe_columns,
       allowMoreColumns: subscribe_columns[index]['col'] && subscribe_columns[index]['op'] ? true : false,
     });
+
+    this.forceUpdate();
   }
 
   addMoreColumns() {
@@ -223,7 +228,13 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   removeColumn(e, column) {
+    this.state.subscribe_columns.splice(column.index, 1);
+
     this.setState(prevState => ({ subscriptionList: [...prevState.subscriptionList.filter(x => x.index !== column.index)] }))
+
+    this.setState({
+      allowMoreColumns: this.state.subscribe_columns.length === this.state.subscriptionList.length - 1 ? true : false,
+    })
   }
 
   deleteSubscriber() {
