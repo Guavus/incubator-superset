@@ -38,11 +38,17 @@ export default function transformProps(chartProps) {
     timeseriesLimitMetric,
     publishColumns,
   } = formData;
-  const { columnFormats, verboseMap } = datasource;
+  const { columnFormats, verboseMap, columns: ds_columns } = datasource;
   const { records, columns } = payload.data;
+
+  const expressionMap = {};
+  ds_columns.forEach(column => {
+    expressionMap[column.column_name] = column.expression 
+  });
 
   const processedColumns = columns.map((key) => {
     let label = verboseMap[key];
+    let expression = expressionMap[key];
     // Handle verbose names for percents
     if (!label) {
       if (key[0] === '%') {
@@ -55,6 +61,7 @@ export default function transformProps(chartProps) {
     return {
       key,
       label,
+      expression,
       format: columnFormats && columnFormats[key],
     };
   });
