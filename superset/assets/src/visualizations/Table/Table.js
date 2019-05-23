@@ -132,7 +132,6 @@ function TableVis(element, props) {
 
  
   function buttoRenderer(label) {
-      // console.log(slice.datasource)
       return `<button type="button" class="btn btn-sm btn-default">${label}</button>`
   }
 
