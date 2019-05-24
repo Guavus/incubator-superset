@@ -38,7 +38,7 @@ export default function transformProps(chartProps) {
     timeseriesLimitMetric,
     publishColumns,
   } = formData;
-  const { columnFormats, verboseMap, columns: datasourceColumns = []} = datasource;
+  const { columnFormats, verboseMap, columns: datasourceColumns = [] } = datasource;
   const { records, columns } = payload.data;
 
   const expressionMap = {};
