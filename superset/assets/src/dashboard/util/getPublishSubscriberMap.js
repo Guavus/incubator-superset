@@ -61,7 +61,8 @@ function createFilterDataFromPublishColumns(obj) {
     obj.publish_columns.forEach(element => {
         filterList.push({
             col: element,
-            op: 'in'
+            op: 'in',
+            actions: ["APPLY_FILTER"],
         })
     });
     return filterList;
@@ -131,12 +132,25 @@ export default function getPublishSubscriberMap(slices) {
 function updateSlices(slices) {
     let updatedSlices = _.clone(slices);
     updatedSlices.forEach(slice => {
-        let linkedSlices = getLinkedSlicesFromSubscriberLayer(slice.formData.subscriber_layers);
+        const linkedSlices = getLinkedSlicesFromSubscriberLayer(slice.formData.subscriber_layers);
         slice.formData.linked_slice = linkedSlices ? linkedSlices : slice.formData.linked_slice;
-        slice.formData.actions = ['APPLY_FILTER'];
+        slice.formData.actions = getUniqueActionsForSlice(slice.formData.subscriber_layers);
+        slice.formData.useAsModal = slice.formData.actions && slice.formData.actions.indexOf('USE_AS_MODAL') >= 0 ? true : false;
     });
 
     return updatedSlices;
+}
+
+function getUniqueActionsForSlice(subscriberLayers) {
+    let actions = [];
+
+    if (subscriberLayers) {
+        subscriberLayers.forEach(element => {
+            actions = _.union(actions, element.actions);
+        });
+    }
+
+    return actions;
 }
 
 function getLinkedSlicesFromSubscriberLayer(subscriberLayer) {
