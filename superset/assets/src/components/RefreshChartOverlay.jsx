@@ -25,6 +25,8 @@ const propTypes = {
   height: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   onQuery: PropTypes.func,
+  showOverlay: PropTypes.bool,
+  overlayLabel: PropTypes.string,
 };
 
 class RefreshChartOverlay extends React.PureComponent {
@@ -34,7 +36,7 @@ class RefreshChartOverlay extends React.PureComponent {
         style={{ height: this.props.height, width: this.props.width }}
         className="explore-chart-overlay"
       >
-        <div>
+        {!this.props.showOverlay && <div>
           <Button
             className="refresh-overlay-btn"
             onClick={this.props.onQuery}
@@ -42,7 +44,12 @@ class RefreshChartOverlay extends React.PureComponent {
           >
             {t('Run Query')}
           </Button>
-        </div>
+        </div>}
+        {this.props.showOverlay && <div>
+          <form >
+            <label>{this.props.overlayLabel}</label>
+          </form>
+        </div>}
       </div>
     );
   }

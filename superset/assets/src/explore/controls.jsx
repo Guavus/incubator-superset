@@ -1658,6 +1658,23 @@ export const controls = {
     default: true,
     description: t('Whether to display the trend line'),
   },
+  
+  show_overlay: {
+    type: 'CheckboxControl',
+    label: t('Show Overlay'),
+    renderTrigger: true,
+    default: false,
+    description: t('Adds overlay on the chart, query of this component will not get fired' + 
+    'unless some external filters drive this chart'),
+  },
+
+  overlay_label: {
+    type: 'TextControl',
+    label: t('Overlay Label'),
+    renderTrigger: true,
+    default: 'Placeholder for a chart to be shown on filters selection.' +
+     'Only applicable in case Show Overlay is checked',
+  },
 
   start_y_axis_at_zero: {
     type: 'CheckboxControl',

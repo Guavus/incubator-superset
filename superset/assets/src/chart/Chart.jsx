@@ -58,14 +58,15 @@ const BLANK = {};
 const defaultProps = {
   addFilter: () => BLANK,
   filters: BLANK,
-  setControlValue() {},
+  setControlValue() { },
   triggerRender: false,
   itemClick: () => BLANK
 };
 
 class Chart extends React.PureComponent {
   componentDidMount() {
-    if (this.props.triggerQuery) {
+    const { formData } = this.props;
+    if (this.props.triggerQuery && !formData.show_overlay) {
       this.props.actions.runQuery(
         this.props.formData,
         false,
@@ -89,10 +90,10 @@ class Chart extends React.PureComponent {
     });
   }
 
-  itemClick(data){
+  itemClick(data) {
     this.props.itemClick(data);
   }
-  
+
   renderStackTraceMessage() {
     const { chartAlert, chartStackTrace, queryResponse } = this.props;
     return (
@@ -100,6 +101,17 @@ class Chart extends React.PureComponent {
         message={chartAlert}
         link={queryResponse ? queryResponse.link : null}
         stackTrace={chartStackTrace}
+      />);
+  }
+
+  renderChartOverlay() {
+    const { width, height, formData } = this.props;
+    return (
+      <RefreshChartOverlay
+        width={width}
+        height={height}
+        showOverlay={formData.show_overlay}
+        overlayLabel={formData.overlay_label}
       />);
   }
 
@@ -111,6 +123,7 @@ class Chart extends React.PureComponent {
       chartStatus,
       errorMessage,
       onQuery,
+      formData,
       refreshOverlayVisible,
     } = this.props;
 
@@ -122,6 +135,17 @@ class Chart extends React.PureComponent {
     this.renderContainerStartTime = Logger.getTimestamp();
     if (chartStatus === 'failed') {
       return this.renderStackTraceMessage();
+    }
+    
+    this.showOverlay = formData.show_overlay;
+
+    if(formData.hasOwnProperty('extra_filters') && formData['extra_filters'].length > 0) {
+      formData.show_overlay = false;
+      this.showOverlay = false;
+    }
+    
+    if (this.showOverlay) {
+      return this.renderChartOverlay();
     }
 
     return (
