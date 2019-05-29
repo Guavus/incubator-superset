@@ -131,12 +131,36 @@ export default function getPublishSubscriberMap(slices) {
 function updateSlices(slices) {
     let updatedSlices = _.clone(slices);
     updatedSlices.forEach(slice => {
-        let linkedSlices = getLinkedSlicesFromSubscriberLayer(slice.formData.subscriber_layers);
-        slice.formData.linked_slice = linkedSlices ? linkedSlices : slice.formData.linked_slice;
-        slice.formData.actions = ['APPLY_FILTER'];
+       slice.formData.linked_slice = getLinkedSlicesFromSubscriberLayer(slice.formData.subscriber_layers);
+       slice.formData.actions = getUniqueActionsForSlice(slice.formData.subscriber_layers);
+       slice.formData.useAsModal =  isSliceUsedAsModal(slice.formData.subscriber_layers);
     });
 
     return updatedSlices;
+}
+
+function getUniqueActionsForSlice(subscriberLayers) {
+  let actions = [];
+
+  if (subscriberLayers) {
+      subscriberLayers.forEach(element => {
+        actions = _.union(actions, element.actions);
+      });
+  }
+
+  return actions;
+}
+
+function isSliceUsedAsModal(subscriberLayers) {
+  let useAsModal = false;
+
+  if (subscriberLayers) {
+      subscriberLayers.forEach(element => {
+        useAsModal = useAsModal ? useAsModal : element.useAsModal;
+      });
+  }
+
+  return useAsModal;
 }
 
 function getLinkedSlicesFromSubscriberLayer(subscriberLayer) {
