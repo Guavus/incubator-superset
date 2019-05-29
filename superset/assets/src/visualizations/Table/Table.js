@@ -153,7 +153,6 @@ function TableVis(element, props) {
           d3.select(this).classed('selected-row', false);
           publishSelections(REMOVE,d)
         } else {
-          d3.selectAll(".selected-row").classed('selected-row', false);
           d3.select(this).classed('selected-row', true);
           publishSelections(ADD,d);
         }
@@ -249,14 +248,19 @@ function TableVis(element, props) {
     .style('cursor', d => (!d.isMetric) ? 'pointer' : '')
     .html(d => d.html ? d.html : d.val);
   
+  let publishColumnsKeyValueMap = {} 
   const publishSelections = (function (type,data){
     if(tableFilter){
       publishColumns.forEach((column) => {
-        if(type == REMOVE){
-          onAddFilter(column, [], false);
-        }else {
-          onAddFilter(column, [data[column]], false);
+        if(!publishColumnsKeyValueMap[column]){
+          publishColumnsKeyValueMap[column] = []
         }
+        if(type == REMOVE){
+          publishColumnsKeyValueMap[column] = publishColumnsKeyValueMap[column].filter(item => item !== data[column])
+        }else {
+          publishColumnsKeyValueMap[column] = [...publishColumnsKeyValueMap[column],data[column]]
+        }
+        onAddFilter(column, publishColumnsKeyValueMap[column], false);
       });
     }
   })
