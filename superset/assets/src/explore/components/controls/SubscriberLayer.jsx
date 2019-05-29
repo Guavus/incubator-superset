@@ -354,9 +354,9 @@ export default class SubscriberLayer extends React.PureComponent {
 
               <CheckboxControl
               hovered
-                name="annotation-layer-hide-line"
-                label="Use as popup"
-                description={'If selected, this slice will not available to use in dashboard.'}
+                name="subscriber-use-modal"
+                label="Use as modal in dashboard"
+                description={'Modal slices will not available in creation of dashboards'}
                 value={useAsModal}
                 onChange={v => this.setState({ useAsModal: v })}
               />
