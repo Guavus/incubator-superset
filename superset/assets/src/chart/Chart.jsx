@@ -65,13 +65,13 @@ const defaultProps = {
 
 class Chart extends React.PureComponent {
   componentDidMount() {
-    const { formData } = this.props;
-    if (this.props.triggerQuery && !formData.show_overlay) {
-      this.props.actions.runQuery(
-        this.props.formData,
+    const { triggerQuery, formData, timeout, chartId, actions } = this.props;
+    if (triggerQuery && !formData.show_overlay) {
+      actions.runQuery(
+        formData,
         false,
-        this.props.timeout,
-        this.props.chartId,
+        timeout,
+        chartId,
       );
     }
   }
@@ -136,14 +136,14 @@ class Chart extends React.PureComponent {
     if (chartStatus === 'failed') {
       return this.renderStackTraceMessage();
     }
-    
+
     const showOverlay = formData.show_overlay;
 
-    if(showOverlay && formData.hasOwnProperty('extra_filters') && formData['extra_filters'].length > 0) {
+    if (showOverlay && formData.hasOwnProperty('extra_filters') && formData['extra_filters'].length > 0) {
       formData.show_overlay = false;
       showOverlay = false;
     }
-    
+
     if (showOverlay) {
       return this.renderChartOverlay();
     }
