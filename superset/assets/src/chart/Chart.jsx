@@ -137,14 +137,14 @@ class Chart extends React.PureComponent {
       return this.renderStackTraceMessage();
     }
     
-    this.showOverlay = formData.show_overlay;
+    const showOverlay = formData.show_overlay;
 
-    if(formData.hasOwnProperty('extra_filters') && formData['extra_filters'].length > 0) {
+    if(showOverlay && formData.hasOwnProperty('extra_filters') && formData['extra_filters'].length > 0) {
       formData.show_overlay = false;
-      this.showOverlay = false;
+      showOverlay = false;
     }
     
-    if (this.showOverlay) {
+    if (showOverlay) {
       return this.renderChartOverlay();
     }
 

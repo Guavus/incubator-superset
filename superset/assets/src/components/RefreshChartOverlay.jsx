@@ -29,6 +29,8 @@ const propTypes = {
   overlayLabel: PropTypes.string,
 };
 
+const DEFAULT_OVERLAY_MESSAGE = 'Placeholder to show overlay message';
+
 class RefreshChartOverlay extends React.PureComponent {
   render() {
     return (
@@ -46,8 +48,8 @@ class RefreshChartOverlay extends React.PureComponent {
           </Button>
         </div>}
         {this.props.showOverlay && <div>
-          <form >
-            <label>{this.props.overlayLabel}</label>
+          <form className="overlay-chart">
+            <label className="overlay-label">{this.props.overlayLabel || DEFAULT_OVERLAY_MESSAGE}</label>
           </form>
         </div>}
       </div>
