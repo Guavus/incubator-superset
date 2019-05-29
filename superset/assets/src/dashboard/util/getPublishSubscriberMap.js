@@ -61,7 +61,8 @@ function createFilterDataFromPublishColumns(obj) {
     obj.publish_columns.forEach(element => {
         filterList.push({
             col: element,
-            op: 'in'
+            op: 'in',
+            actions: ["APPLY_FILTER"],
         })
     });
     return filterList;
