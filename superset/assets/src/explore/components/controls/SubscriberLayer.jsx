@@ -266,7 +266,7 @@ export default class SubscriberLayer extends React.PureComponent {
         "APPLY_FILTER"
       ];
 
-      subscription['useAsModal'] ? subscription['actions'].push('USE_AS_POPUP') : subscription['actions'];
+      subscription['useAsModal'] ? subscription['actions'].push('USE_AS_MODAL') : subscription['actions'];
 
       subscription['linked_slice'] = [
         {
