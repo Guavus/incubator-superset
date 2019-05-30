@@ -217,6 +217,10 @@ class Chart extends React.Component {
       return <MissingChart height={this.getChartHeight()} />;
     }
 
+    if (formData.show_overlay && formData.hasOwnProperty('extra_filters') && formData['extra_filters'].length > 0) {
+      formData.show_overlay = false;
+    }
+
     const canExportCSV = !formData.show_overlay;
     const { queryResponse, chartUpdateEndTime } = chart;
     const isCached = queryResponse && queryResponse.is_cached;

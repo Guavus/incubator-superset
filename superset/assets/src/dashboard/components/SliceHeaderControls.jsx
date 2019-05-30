@@ -128,6 +128,9 @@ class SliceHeaderControls extends React.PureComponent {
     if(!this.props.canExportCSV) {
       return "export-csv-disabled";
     }
+    else {
+      return "export-csv-enabled";
+    }
   }
 
   render() {
