@@ -49,10 +49,12 @@ function mapStateToProps(
   const dashboardLayout = undoableLayout.present;
   const { id, parentId } = ownProps;
   const component = dashboardLayout[id];
+  const slice_id = component && component.meta.hasOwnProperty('chartId') ? component.meta.chartId : -1;
   const props = {
     component,
     parentComponent: dashboardLayout[parentId],
     editMode: dashboardState.editMode,
+    isModalSlice: (dashboardState.modalSliceIds.indexOf(slice_id) != -1),
   };
 
   // rows and columns need more data about their child dimensions

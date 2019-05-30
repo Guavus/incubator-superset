@@ -17,14 +17,20 @@
  * under the License.
  */
 import * as _ from 'lodash';
-const APPLY_FILTER = 'APPLY_FILTER';
+
+import {
+    APPLY_FILTER,
+    isUseAsModalActionExist,
+    getUniqueActionsForSlice,
+} from './publishSubscriberUtil'
 
 function createPublishDataFor(slice, slices) {
     return {
         id: slice.id,
         publish_columns: slice.formData.publish_columns,
         subcribers: getSubsribersFor(slice.id, slices),
-        viz_type: slice.formData.viz_type
+        viz_type: slice.formData.viz_type,
+        useAsModal: slice.formData.useAsModal,
     }
 
 }
@@ -62,7 +68,7 @@ function createFilterDataFromPublishColumns(obj) {
         filterList.push({
             col: element,
             op: 'in',
-            actions: ["APPLY_FILTER"],
+            actions: [APPLY_FILTER],
         })
     });
     return filterList;
@@ -134,23 +140,11 @@ function updateSlices(slices) {
     updatedSlices.forEach(slice => {
         const linkedSlices = getLinkedSlicesFromSubscriberLayer(slice.formData.subscriber_layers);
         slice.formData.linked_slice = linkedSlices ? linkedSlices : slice.formData.linked_slice;
-        slice.formData.actions = getUniqueActionsForSlice(slice.formData.subscriber_layers);
-        slice.formData.useAsModal = slice.formData.actions && slice.formData.actions.indexOf('USE_AS_MODAL') >= 0 ? true : false;
+        slice.formData.actions = getUniqueActionsForSlice(slice);
+        slice.formData.useAsModal = isUseAsModalActionExist(slice.formData.actions);
     });
 
     return updatedSlices;
-}
-
-function getUniqueActionsForSlice(subscriberLayers) {
-    let actions = [];
-
-    if (subscriberLayers) {
-        subscriberLayers.forEach(element => {
-            actions = _.union(actions, element.actions);
-        });
-    }
-
-    return actions;
 }
 
 function getLinkedSlicesFromSubscriberLayer(subscriberLayer) {

@@ -45,6 +45,10 @@ import '../stylesheets/index.less';
 
 import getPublishSubscriberMap from '../util/getPublishSubscriberMap';
 import { DASHBOARD_HEADER_ID } from '../util/constants';
+
+import ChartModal from './ChartModal';
+import { getModalSliceIDFor, getUpdateSucceededChartId } from '../util/publishSubscriberUtil';
+
 const propTypes = {
   actions: PropTypes.shape({
     addSliceToDashboard: PropTypes.func.isRequired,
@@ -170,6 +174,21 @@ class Dashboard extends React.PureComponent {
         this.props.actions.removeSliceFromDashboard(removedChartId),
       );
     }
+
+    if (nextProps.dashboardState.modalSliceId != this.props.dashboardState.modalSliceId) {
+      if (nextProps.dashboardState.modalSliceId != -1) {
+        // update modal  chart  state renedered
+        this.updateModalProps(nextProps.dashboardState.modalSliceId, "rendered", true)
+      } else {
+        // close modal  
+        this.updateModalProps(nextProps.dashboardState.modalSliceId, "rendered", false)
+      }
+    }
+
+  }
+
+  modalAddFilterHandler(...args) {
+    this.props.actions.changeFilter(this.modalChart, ...args);
   }
 
   componentDidUpdate(prevProps) {
@@ -210,6 +229,7 @@ class Dashboard extends React.PureComponent {
         !!changedFilterKey ||
         currFilterKeys.length !== prevFilterKeys.length
       ) {
+        this.openModal(changedFilterKey);
         this.refreshExcept(changedFilterKey);
       }
     }
@@ -219,6 +239,38 @@ class Dashboard extends React.PureComponent {
     } else {
       Dashboard.onBeforeUnload(false);
     }
+  }
+
+  openModal(filterKey) {
+    const slice_id = getModalSliceIDFor(this.props.dashboardState.publishSubscriberMap, filterKey);
+    if (slice_id) {
+      // open modal with chart in loading state
+      this.updateModalProps(slice_id, "loading", true)
+    }
+  }
+
+  updateModalProps(slice_id, status, showModal) {
+    if (showModal) {
+      this.modalChartStatus = status;
+      this.showModal = showModal
+      this.modalChart = this.props.charts[slice_id];
+      this.modalChart.chartStatus = status;
+      this.modalTitle = this.props.slices[slice_id].slice_name;
+      this.modalDatasource = this.props.datasources[this.modalChart.formData.datasource];
+    } else {
+      this.showModal = showModal
+    }
+  }
+
+  updateModalChart(filterKey, responseChatId) {
+    const modal_id = getModalSliceIDFor(this.props.dashboardState.publishSubscriberMap, filterKey);
+    if (modal_id == responseChatId) {
+      this.props.actions.updateModalChart(modal_id)
+    }
+  }
+
+  closeModal() {
+    this.props.actions.hideModal();
   }
 
   // return charts in array
@@ -246,7 +298,10 @@ class Dashboard extends React.PureComponent {
           false,
           this.props.timeout,
           chart.id,
-        );
+        ).then((items) => {
+          // update modal chart
+          this.updateModalChart(filterKey, getUpdateSucceededChartId(items));
+        });
       }
     });
   }
@@ -273,6 +328,14 @@ class Dashboard extends React.PureComponent {
       <React.Fragment>
         <OmniContianer impressionId={impressionId} dashboardId={id} />
         <DashboardBuilder />
+        <ChartModal showModal={this.showModal}
+          chart={this.modalChart}
+          addFilter={this.modalAddFilterHandler.bind(this)}
+          modalTitle={this.modalTitle}
+          datasource={this.modalDatasource}
+          close={this.closeModal.bind(this)}
+          chartStatus={this.modalChartStatus}
+        />
       </React.Fragment>
     );
   }

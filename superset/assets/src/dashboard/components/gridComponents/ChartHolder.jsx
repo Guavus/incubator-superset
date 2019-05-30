@@ -43,6 +43,7 @@ const propTypes = {
   index: PropTypes.number.isRequired,
   depth: PropTypes.number.isRequired,
   editMode: PropTypes.bool.isRequired,
+  isModalSlice:PropTypes.bool,
 
   // grid related
   availableColumnCount: PropTypes.number.isRequired,
@@ -108,6 +109,7 @@ class ChartHolder extends React.Component {
       onResizeStop,
       handleComponentDrop,
       editMode,
+      isModalSlice,
     } = this.props;
 
     // inherit the size of parent columns
@@ -115,8 +117,8 @@ class ChartHolder extends React.Component {
       parentComponent.type === COLUMN_TYPE
         ? parentComponent.meta.width || GRID_MIN_COLUMN_COUNT
         : component.meta.width || GRID_MIN_COLUMN_COUNT;
-
     return (
+      (!isModalSlice || editMode) && (
       <DragDroppable
         component={component}
         parentComponent={parentComponent}
@@ -174,7 +176,7 @@ class ChartHolder extends React.Component {
           </ResizableContainer>
         )}
       </DragDroppable>
-    );
+    ));
   }
 }
 
