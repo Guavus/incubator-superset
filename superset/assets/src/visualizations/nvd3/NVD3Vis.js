@@ -264,12 +264,12 @@ function nvd3Vis(element, props) {
     return types.indexOf(vizType) >= 0;
   }
 
-  function findYAxisField(metrics, publihedColumns) {
+  function findYAxisField(metrics, publishedColumns) {
     let columnName = '';
 
-    if (metrics && publihedColumns) {
+    if (metrics && publishedColumns) {
 
-      publihedColumns.forEach((column) => {
+      publishedColumns.forEach((column) => {
         metrics.forEach((d) => {
           if (d.column.column_name ===  column) {
             columnName = column;
@@ -282,17 +282,13 @@ function nvd3Vis(element, props) {
     return columnName;
   }
 
-  function findXAxisField(xField, publihedColumns) {
-    let columnName = '';
+  function findXAxisField(xField, publishedColumns) {
 
-    publihedColumns.forEach((column) => {
-       if (xField != column) {
-        columnName = column;
-        return;
-       }
+    let columnName  = publishedColumns.find((column) => {
+       return xField != column
     });
 
-    return columnName;
+    return columnName === undefined ? '' : columnName;
   }
 
   const drawGraph = function () {
