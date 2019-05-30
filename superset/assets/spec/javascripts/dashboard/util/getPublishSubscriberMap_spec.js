@@ -66,13 +66,14 @@ describe('getPublishSubscriberMap', () => {
             "actions": ["APPLY_FILTER"],
             "linked_slice": [1],
             "extras": {},
+            "useAsModal": false,
             "viz_type":"leaflet_map",
             },
         }
       ];
       const result = {
         publishers: {"1":{"id":1,"publish_columns":["A","B"],"subcribers":[2],"viz_type":"table"}},
-        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"A","op":"in"},{"col":"B","op":"in"}]},"extras":{}}}
+        subscribers: {"2":{"id":2,"viz_type":"leaflet_map", "useAsModal": false,"actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"A","op":"in","actions":["APPLY_FILTER"]},{"col":"B","op":"in","actions":["APPLY_FILTER"]}]},"extras":{}}}
       };
       expect(getPublishSubscriberMap(charts)).toEqual(result);
     });
@@ -153,13 +154,14 @@ describe('getPublishSubscriberMap', () => {
             "publish_columns": [],
             "actions": ["APPLY_FILTER"],
             "linked_slice": [1],
+            "useAsModal": false,
             "viz_type":"leaflet_map",
             },
         }
       ];
       const result = {
         publishers: {"1":{"id":1,"publish_columns":["A","B"],"subcribers":[2],"viz_type":"table"}},
-        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"A","op":"in"},{"col":"B","op":"in"}]}}}
+        subscribers: {"2":{"id":2,"useAsModal": false,"viz_type":"leaflet_map","actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"A","op":"in","actions":["APPLY_FILTER"]},{"col":"B","op":"in","actions":["APPLY_FILTER"]}]}}}
       };
       expect(getPublishSubscriberMap(charts)).toEqual(result);
     });
@@ -179,12 +181,13 @@ describe('getPublishSubscriberMap', () => {
             "publish_columns": [],
             "linked_slice": [1],
             "viz_type":"leaflet_map",
+            "useAsModal": false,
             },
         }
       ];
       const result = {
         publishers: {"1":{"id":1,"publish_columns":["A","B"],"subcribers":[2],"viz_type":"table"}},
-        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"A","op":"in"},{"col":"B","op":"in"}]}}}
+        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","actions":["APPLY_FILTER"], "useAsModal": false,"linked_slices":{"1":[{"col":"A","op":"in","actions":["APPLY_FILTER"]},{"col":"B","op":"in","actions":["APPLY_FILTER"]}]}}}
       };
       expect(getPublishSubscriberMap(charts)).toEqual(result);
     });
@@ -235,22 +238,25 @@ describe('getPublishSubscriberMap', () => {
               subscribe_columns: [
                 {
                   col: 'A',
-                  op: '=='
+                  op: '==',
+                  "actions":["APPLY_FILTER"],
                 },
                 {
                   col: 'B',
-                  op: '!='
+                  op: '!=',
+                  "actions":["APPLY_FILTER"],
                 }
               ]
             }],
             "extras": {},
+            "useAsModal": false,
             "viz_type":"leaflet_map",
             },
         }
       ];
       const result = {
         publishers: {"1":{"id":1,"publish_columns":["A","B"],"subcribers":[2],"viz_type":"table"}},
-        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"A","op":"=="},{"col":"B","op":"!="}]},"extras":{}}}
+        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","useAsModal": false,"actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"A","op":"==","actions":["APPLY_FILTER"]},{"col":"B","op":"!=","actions":["APPLY_FILTER"]}]},"extras":{}}}
       };
       expect(getPublishSubscriberMap(charts)).toEqual(result);
     });
@@ -276,18 +282,20 @@ describe('getPublishSubscriberMap', () => {
               subscribe_columns: [
                 {
                   col: 'B',
-                  op: '!='
+                  op: '!=',
+                  "actions":["APPLY_FILTER"]
                 }
               ]
             }],
             "extras": {},
+            "useAsModal": false,
             "viz_type":"leaflet_map",
             },
         }
       ];
       const result = {
         publishers: {"1":{"id":1,"publish_columns":["A","B"],"subcribers":[2],"viz_type":"table"}},
-        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"B","op":"!="}]},"extras":{}}}
+        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","useAsModal": false,"actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"B","op":"!=","actions":["APPLY_FILTER"]}]},"extras":{}}}
       };
       expect(getPublishSubscriberMap(charts)).toEqual(result);
     });
@@ -323,7 +331,8 @@ describe('getPublishSubscriberMap', () => {
               subscribe_columns: [
                 {
                   col: "B",
-                  op: "!="
+                  op: "!=",
+                  "actions":["APPLY_FILTER"]
                 }
               ]
             },
@@ -332,19 +341,21 @@ describe('getPublishSubscriberMap', () => {
               subscribe_columns: [
                 {
                   col: "C",
-                  op: "in"
+                  op: "in",
+                  "actions":["APPLY_FILTER"]
                 }
               ]
             }
           ],
             "extras": {},
+            "useAsModal": false,
             "viz_type":"leaflet_map",
             },
         }
       ];
       const result = {
         publishers: {"1":{"id":1,"publish_columns":["A","B"],"subcribers":[2],"viz_type":"table"},"3":{"id":3,"publish_columns":["C"],"subcribers":[2],"viz_type":"filter_box"}},
-        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"B","op":"!="}],"3":[{"col":"C","op":"in"}]},"extras":{}}}
+        subscribers: {"2":{"id":2,"viz_type":"leaflet_map", "useAsModal": false,"actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"B","op":"!=","actions":["APPLY_FILTER"]}],"3":[{"col":"C","op":"in","actions":["APPLY_FILTER"]}]},"extras":{}}}
       };
       expect(getPublishSubscriberMap(charts)).toEqual(result);
     });
@@ -380,12 +391,14 @@ describe('getPublishSubscriberMap', () => {
               subscribe_columns: [
                 {
                   col: "B",
-                  op: "!="
+                  op: "!=",
+                  "actions":["APPLY_FILTER"]
                 }
               ]
             }
           ],
             "extras": {},
+            "useAsModal": false,
             "viz_type":"leaflet_map",
             },
         },
@@ -400,7 +413,8 @@ describe('getPublishSubscriberMap', () => {
                 subscribe_columns: [
                   {
                     col: "A",
-                    op: ">="
+                    op: ">=",
+                    "actions":["APPLY_FILTER"]
                   }
                 ]
               },
@@ -409,19 +423,21 @@ describe('getPublishSubscriberMap', () => {
               subscribe_columns: [
                 {
                   col: "C",
-                  op: "in"
+                  op: "in",
+                  "actions":["APPLY_FILTER"]
                 }
               ]
             }
           ],
             "extras": {},
+            "useAsModal": false,
             "viz_type":"table",
             },
         }
       ];
       const result = {
         publishers: {"1":{"id":1,"publish_columns":["A","B"],"subcribers":[2,4],"viz_type":"table"},"3":{"id":3,"publish_columns":["C"],"subcribers":[4],"viz_type":"filter_box"}},
-        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"B","op":"!="}]},"extras":{}},"4":{"id":4,"viz_type":"table","actions":["APPLY_FILTER"],"linked_slices":{"3":[{"col":"C","op":"in"}],"1":[{"col":"A","op":">="}]},"extras":{}}}
+        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","useAsModal": false,"actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"B","op":"!=","actions":["APPLY_FILTER"]}]},"extras":{}},"4":{"id":4,"useAsModal": false,"viz_type":"table","actions":["APPLY_FILTER"],"linked_slices":{"3":[{"col":"C","op":"in","actions":["APPLY_FILTER"]}],"1":[{"col":"A","op":">=","actions":["APPLY_FILTER"]}]},"extras":{}}}
       };
       expect(getPublishSubscriberMap(charts)).toEqual(result);
     });
@@ -457,12 +473,14 @@ describe('getPublishSubscriberMap', () => {
               subscribe_columns: [
                 {
                   col: "B",
-                  op: "!="
+                  op: "!=",
+                  "actions":["APPLY_FILTER"]
                 }
               ]
             }
           ],
             "extras": {},
+            "useAsModal": false,
             "viz_type":"leaflet_map",
             },
         },
@@ -477,19 +495,21 @@ describe('getPublishSubscriberMap', () => {
               subscribe_columns: [
                 {
                   col: "C",
-                  op: "in"
+                  op: "in",
+                  "actions":["APPLY_FILTER"]
                 }
               ]
             }
           ],
             "extras": {},
+            "useAsModal": false,
             "viz_type":"table",
             },
         }
       ];
       const result = {
         publishers: {"1":{"id":1,"publish_columns":["A","B"],"subcribers":[2],"viz_type":"table"},"3":{"id":3,"publish_columns":["C"],"subcribers":[4],"viz_type":"filter_box"}},
-        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"B","op":"!="}]},"extras":{}},"4":{"id":4,"viz_type":"table","actions":["APPLY_FILTER"],"linked_slices":{"3":[{"col":"C","op":"in"}]},"extras":{}}}
+        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","useAsModal": false,"actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"B","op":"!=","actions":["APPLY_FILTER"]}]},"extras":{}},"4":{"id":4,"useAsModal": false,"viz_type":"table","actions":["APPLY_FILTER"],"linked_slices":{"3":[{"col":"C","op":"in","actions":["APPLY_FILTER"]}]},"extras":{}}}
       };
       expect(getPublishSubscriberMap(charts)).toEqual(result);
     });
@@ -535,12 +555,14 @@ describe('getPublishSubscriberMap', () => {
               subscribe_columns: [
                 {
                   col: "B",
-                  op: "!="
+                  op: "!=",
+                  "actions":["APPLY_FILTER"]
                 }
               ]
             }
           ],
             "extras": {},
+            "useAsModal": false,
             "viz_type":"leaflet_map",
             },
         },
@@ -555,19 +577,21 @@ describe('getPublishSubscriberMap', () => {
               subscribe_columns: [
                 {
                   col: "C",
-                  op: "in"
+                  op: "in",
+                  "actions":["APPLY_FILTER"]
                 }
               ]
             }
           ],
             "extras": {},
+            "useAsModal": false,
             "viz_type":"table",
             },
         }
       ];
       const result = {
         publishers: {"1":{"id":1,"publish_columns":["A","B"],"subcribers":[2],"viz_type":"table"},"3":{"id":3,"publish_columns":["C"],"subcribers":[4],"viz_type":"filter_box"}},
-        subscribers: {"2":{"id":2,"viz_type":"leaflet_map","actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"B","op":"!="}]},"extras":{}},"4":{"id":4,"viz_type":"table","actions":["APPLY_FILTER"],"linked_slices":{"3":[{"col":"C","op":"in"}]},"extras":{}}}
+        subscribers: {"2":{"id":2,"useAsModal": false,"viz_type":"leaflet_map","actions":["APPLY_FILTER"],"linked_slices":{"1":[{"col":"B","op":"!=","actions":["APPLY_FILTER"]}]},"extras":{}},"4":{"id":4,"useAsModal": false,"viz_type":"table","actions":["APPLY_FILTER"],"linked_slices":{"3":[{"col":"C","op":"in","actions":["APPLY_FILTER"]}]},"extras":{}}}
       };
       expect(getPublishSubscriberMap(charts)).toEqual(result);
     });

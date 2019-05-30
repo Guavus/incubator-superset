@@ -30,7 +30,7 @@ function createPublishDataFor(slice, slices) {
         publish_columns: slice.formData.publish_columns,
         subcribers: getSubsribersFor(slice.id, slices),
         viz_type: slice.formData.viz_type,
-        useAsModal: slice.formData.useAsModal,
+       
     }
 
 }
@@ -101,9 +101,10 @@ function createSubscriberDataFor(slice, publishers) {
     return {
         id: slice.id,
         viz_type: slice.formData.viz_type,
-        actions: slice.formData.hasOwnProperty('actions') ? slice.formData.actions : [APPLY_FILTER],
+        actions: slice.formData.hasOwnProperty('actions') && slice.formData.actions ? slice.formData.actions : [APPLY_FILTER],
         linked_slices: getLinkedSlices(slice.formData.linked_slice, publishers),
-        extras: slice.formData.hasOwnProperty('extras') ? slice.formData.extras : undefined
+        extras: slice.formData.hasOwnProperty('extras') ? slice.formData.extras : undefined,
+        useAsModal: slice.formData.useAsModal,
     }
 
 }
