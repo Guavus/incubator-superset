@@ -123,14 +123,8 @@ class SliceHeaderControls extends React.PureComponent {
     });
   }
 
-  getClass()
-  {
-    if(!this.props.canExportCSV) {
-      return "export-csv-disabled";
-    }
-    else {
-      return "export-csv-enabled";
-    }
+  getClass() {
+    return this.props.canExportCSV ? "export-csv-enabled" : "export-csv-disabled";
   }
 
   render() {
@@ -153,7 +147,7 @@ class SliceHeaderControls extends React.PureComponent {
           <VerticalDotsTrigger />
         </Dropdown.Toggle>
 
-        <Dropdown.Menu className ="slice-header-dropdown-menu">
+        <Dropdown.Menu className="slice-header-dropdown-menu">
           <MenuItem className={this.getClass()} onClick={this.refreshChart}>
             {t('Force refresh')}
             <div className="refresh-tooltip">{refreshTooltip}</div>

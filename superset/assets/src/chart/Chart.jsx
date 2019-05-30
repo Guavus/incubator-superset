@@ -134,18 +134,11 @@ class Chart extends React.PureComponent {
     const isFaded = refreshOverlayVisible && !errorMessage;
     this.renderContainerStartTime = Logger.getTimestamp();
    
-    let showOverlay = formData.show_overlay;
-
-    if (showOverlay && formData.hasOwnProperty('extra_filters') && formData['extra_filters'].length > 0) {
-      formData.show_overlay = false;
-      showOverlay = false;
-    }
-
-    if (showOverlay) {
+    if (formData.show_overlay) {
       return this.renderChartOverlay();
     }
 
-    if (chartStatus === 'failed' && !showOverlay) {
+    if (chartStatus === 'failed') {
       return this.renderStackTraceMessage();
     }
 
