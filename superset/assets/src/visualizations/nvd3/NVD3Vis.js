@@ -129,6 +129,7 @@ const propTypes = {
   showLegend: PropTypes.bool,
   showMarkers: PropTypes.bool,
   useRichTooltip: PropTypes.bool,
+  formData: PropTypes.object,
   vizType: PropTypes.oneOf([
     'area',
     'bar',
@@ -192,6 +193,7 @@ const propTypes = {
   sizeField: stringOrObjectWithLabelType,
   // time-pivot only
   baseColor: rgbObjectType,
+  onAddFilter: PropTypes.func,
 };
 
 const NOOP = () => {};
@@ -200,6 +202,7 @@ const formatter = getNumberFormatter();
 function nvd3Vis(element, props) {
   const {
     data,
+    formData,
     width: maxWidth,
     height: maxHeight,
     annotationData,
@@ -245,6 +248,7 @@ function nvd3Vis(element, props) {
     yAxisShowMinMax = false,
     yField,
     yIsLogScale,
+    onAddFilter = NOOP,
   } = props;
 
   const isExplore = document.querySelector('#explorer-container') !== null;
@@ -258,6 +262,37 @@ function nvd3Vis(element, props) {
 
   function isVizTypes(types) {
     return types.indexOf(vizType) >= 0;
+  }
+
+  function findYAxisField(metrics, publihedColumns) {
+    let columnName = '';
+
+    if (metrics && publihedColumns) {
+
+      publihedColumns.forEach((column) => {
+        metrics.forEach((d) => {
+          if (d.column.column_name ===  column) {
+            columnName = column;
+            return;
+          }
+        });
+      });
+    }
+
+    return columnName;
+  }
+
+  function findXAxisField(xField, publihedColumns) {
+    let columnName = '';
+
+    publihedColumns.forEach((column) => {
+       if (xField != column) {
+        columnName = column;
+        return;
+       }
+    });
+
+    return columnName;
   }
 
   const drawGraph = function () {
@@ -300,6 +335,17 @@ function nvd3Vis(element, props) {
         } else {
           chart = nv.models.lineChart();
         }
+        chart.lines.dispatch.on('elementClick', function(e) {
+          const publihedColumns = formData.publishColumns;
+          const metrics = formData.metrics;
+
+
+          const yField = findYAxisField(metrics, publihedColumns);
+          const xField = findXAxisField(yField, publihedColumns);
+
+          if (xField != '') onAddFilter(xField, e.point.x, false);
+          if (yField != '') onAddFilter(yField, e.point.y, false);
+        });
         chart.xScale(d3.time.scale.utc());
         chart.interpolate(lineInterpolation);
         chart.clipEdge(false);
@@ -926,7 +972,7 @@ function nvd3Vis(element, props) {
               annotatedLayerMarkerWidth = annotatedLayer.markerWidth;
             }
           });
-        }  
+        }
 
         // Display styles for Time Series Annotations
         d3.selectAll('.slice_container .nv-timeseries-annotation-layer.showMarkerstrue .nv-point')
