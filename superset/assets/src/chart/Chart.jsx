@@ -133,10 +133,7 @@ class Chart extends React.PureComponent {
     const containerStyles = isLoading ? { height, width } : null;
     const isFaded = refreshOverlayVisible && !errorMessage;
     this.renderContainerStartTime = Logger.getTimestamp();
-    if (chartStatus === 'failed') {
-      return this.renderStackTraceMessage();
-    }
-
+   
     let showOverlay = formData.show_overlay;
 
     if (showOverlay && formData.hasOwnProperty('extra_filters') && formData['extra_filters'].length > 0) {
@@ -146,6 +143,10 @@ class Chart extends React.PureComponent {
 
     if (showOverlay) {
       return this.renderChartOverlay();
+    }
+
+    if (chartStatus === 'failed' && !showOverlay) {
+      return this.renderStackTraceMessage();
     }
 
     return (
