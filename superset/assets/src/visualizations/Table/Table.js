@@ -148,18 +148,18 @@ function TableVis(element, props) {
     .append('tr')
     .on('click', function (d) {
       if (!enableCellClick) {
-        const clickRowNode = d3.select(this);
+        const rowNodeClicked = d3.select(this);
         if(!d3.event.shiftKey){
           resetPublishSelection();    
           table.selectAll('.selected-row').classed('selected-row', function () {
             const currentNode = d3.select(this); 
-            return clickRowNode.node() != currentNode.node() ? false : clickRowNode.classed('selected-row');
+            return rowNodeClicked.node() != currentNode.node() ? false : rowNodeClicked.classed('selected-row');
           }); 
         } 
         //publish the row selection
-        clickRowNode.classed('selected-row') ? publishSelections(REMOVE,d) : publishSelections(ADD,d) ;
+        rowNodeClicked.classed('selected-row') ? publishSelections(REMOVE,d) : publishSelections(ADD,d) ;
         //update the row seletion
-        clickRowNode.classed('selected-row', !clickRowNode.classed('selected-row'));  
+        rowNodeClicked.classed('selected-row', !rowNodeClicked.classed('selected-row'));  
       }
     })
     .selectAll('td')
@@ -239,10 +239,10 @@ function TableVis(element, props) {
   )
     .on('click', function (d) {
       if (enableCellClick && tableFilter && !d.isMetric) {
-        const clickCellNode = d3.select(this);
+        const cellNodeClicked = d3.select(this);
 
-        clickCellNode.classed('filtered') ? onRemoveFilter(d.col, [d.val]) : onAddFilter(d.col, [d.val]);
-        clickCellNode.classed('filtered', !clickCellNode.classed('filtered'));
+        cellNodeClicked.classed('filtered') ? onRemoveFilter(d.col, [d.val]) : onAddFilter(d.col, [d.val]);
+        cellNodeClicked.classed('filtered', !cellNodeClicked.classed('filtered'));
       }
     })
     .style('cursor', d => (!d.isMetric) ? 'pointer' : '')
