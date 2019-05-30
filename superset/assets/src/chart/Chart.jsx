@@ -108,7 +108,7 @@ class Chart extends React.PureComponent {
     const { width, height, formData } = this.props;
     return (
       <RefreshChartOverlay
-        width={width}
+        width="100%"
         height={height}
         showOverlay={formData.show_overlay}
         overlayLabel={formData.overlay_label}
@@ -137,7 +137,7 @@ class Chart extends React.PureComponent {
       return this.renderStackTraceMessage();
     }
 
-    const showOverlay = formData.show_overlay;
+    let showOverlay = formData.show_overlay;
 
     if (showOverlay && formData.hasOwnProperty('extra_filters') && formData['extra_filters'].length > 0) {
       formData.show_overlay = false;
