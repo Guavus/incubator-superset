@@ -32,7 +32,7 @@ import {
   UPDATE_CSS,
   ON_RECONCILE,
   ON_SUCCESS_RECONCILE,
-  MODAL_CHART_UPDATE_SUCCEEDED,
+  UPDATE_MODAL_CHART_ID,
   CLOSE_MODAL,
 } from '../actions/dashboardState';
 
@@ -40,11 +40,11 @@ import { isModalSlice } from '../util/publishSubscriberUtil'
 
 export default function dashboardStateReducer(state = {}, action) {
   const actionHandlers = {
-    [MODAL_CHART_UPDATE_SUCCEEDED]() {
-      return { ...state, modalSliceId: action.modalSliceId };
+    [UPDATE_MODAL_CHART_ID]() {
+      return { ...state, modalChartId: action.modalChartId };
     },
     [CLOSE_MODAL]() {
-      return { ...state, modalSliceId: -1 };
+      return { ...state, modalChartId: -1 };
     },
     [ON_RECONCILE]() {
       return { ...state, doReconcile: true };

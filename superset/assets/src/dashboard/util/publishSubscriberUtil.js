@@ -38,17 +38,9 @@ export function getModalSliceIDFor(publishSubscriberMap, publisherId) {
     return undefined
 }
 
-export function getUpdateSucceededChartId(items) {
-    let _chart = _.find(items, function (item) {
-        return (item.type == CHART_UPDATE_SUCCEEDED);
-    })
-    return _chart.key;
-}
-
 export default {
     APPLY_FILTER,
     USE_AS_MODAL,
     isModalSlice,
     getModalSliceIDFor,
-    getUpdateSucceededChartId,
 }

@@ -47,7 +47,8 @@ import getPublishSubscriberMap from '../util/getPublishSubscriberMap';
 import { DASHBOARD_HEADER_ID } from '../util/constants';
 
 import ChartModal from './ChartModal';
-import { getModalSliceIDFor, getUpdateSucceededChartId } from '../util/publishSubscriberUtil';
+import { getModalSliceIDFor } from '../util/publishSubscriberUtil';
+import { chart as initChart } from '../../chart/chartReducer';
 
 const propTypes = {
   actions: PropTypes.shape({
@@ -101,6 +102,12 @@ class Dashboard extends React.PureComponent {
     });
     Logger.start(this.actionLog);
     this.initTs = new Date().getTime();
+    //init  required modal props 
+    this.modalChart = { ...initChart };
+    this.modalDatasource = {};
+    this.closeModal = this.closeModal.bind(this);
+    this.modalAddFilterHandler = this.modalAddFilterHandler.bind(this);
+
   }
 
   componentDidMount() {
@@ -175,14 +182,9 @@ class Dashboard extends React.PureComponent {
       );
     }
 
-    if (nextProps.dashboardState.modalSliceId != this.props.dashboardState.modalSliceId) {
-      if (nextProps.dashboardState.modalSliceId != -1) {
-        // update modal  chart  state renedered
-        this.updateModalProps(nextProps.dashboardState.modalSliceId, "rendered", true)
-      } else {
-        // close modal  
-        this.updateModalProps(nextProps.dashboardState.modalSliceId, "rendered", false)
-      }
+    if (nextProps.dashboardState.modalChartId != this.props.dashboardState.modalChartId) {
+      // update modal  chart  state renedered
+      this.updateModalProps(nextProps.dashboardState.modalChartId, (nextProps.dashboardState.modalChartId != -1))
     }
 
   }
@@ -245,27 +247,24 @@ class Dashboard extends React.PureComponent {
     const slice_id = getModalSliceIDFor(this.props.dashboardState.publishSubscriberMap, filterKey);
     if (slice_id) {
       // open modal with chart in loading state
-      this.updateModalProps(slice_id, "loading", true)
+      this.updateModalProps(slice_id, true,'loading')
     }
   }
 
-  updateModalProps(slice_id, status, showModal) {
-    if (showModal) {
-      this.modalChartStatus = status;
-      this.showModal = showModal
-      this.modalChart = this.props.charts[slice_id];
-      this.modalChart.chartStatus = status;
+  updateModalProps(slice_id, showModal,status = undefined) {
+    this.showModal = showModal
+    this.modalChart = this.props.charts[slice_id];
+    if (this.modalChart) {
+      this.modalChartStatus = status ? status : this.modalChart.chartStatus;
       this.modalTitle = this.props.slices[slice_id].slice_name;
       this.modalDatasource = this.props.datasources[this.modalChart.formData.datasource];
-    } else {
-      this.showModal = showModal
     }
   }
 
   updateModalChart(filterKey, responseChatId) {
-    const modal_id = getModalSliceIDFor(this.props.dashboardState.publishSubscriberMap, filterKey);
-    if (modal_id == responseChatId) {
-      this.props.actions.updateModalChart(modal_id)
+    const slice_id = getModalSliceIDFor(this.props.dashboardState.publishSubscriberMap, filterKey);
+    if (slice_id == responseChatId) {
+      this.props.actions.updateModalChart(slice_id)
     }
   }
 
@@ -298,9 +297,14 @@ class Dashboard extends React.PureComponent {
           false,
           this.props.timeout,
           chart.id,
-        ).then((items) => {
-          // update modal chart
-          this.updateModalChart(filterKey, getUpdateSucceededChartId(items));
+        ).then((responses) => {
+          // 1st promise response is always about chart status
+          const response = responses[0];
+          if (this.props.dashboardState.modalSliceIds.indexOf(response.key) != -1) {
+            this.updateModalChart(filterKey, response.key);
+          }
+        }).catch((response) => {
+          console.log(response)
         });
       }
     });
@@ -330,10 +334,10 @@ class Dashboard extends React.PureComponent {
         <DashboardBuilder />
         <ChartModal showModal={this.showModal}
           chart={this.modalChart}
-          addFilter={this.modalAddFilterHandler.bind(this)}
+          addFilter={this.modalAddFilterHandler}
           modalTitle={this.modalTitle}
           datasource={this.modalDatasource}
-          close={this.closeModal.bind(this)}
+          close={this.closeModal}
           chartStatus={this.modalChartStatus}
         />
       </React.Fragment>

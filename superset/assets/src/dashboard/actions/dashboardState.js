@@ -258,9 +258,9 @@ export const TOGGLE_BUILDER_PANE = 'TOGGLE_BUILDER_PANE';
 export function toggleBuilderPane() {
   return { type: TOGGLE_BUILDER_PANE };
 }
-export const MODAL_CHART_UPDATE_SUCCEEDED = 'MODAL_CHART_UPDATE_SUCCEEDED';
+export const UPDATE_MODAL_CHART_ID = 'UPDATE_MODAL_CHART_ID';
 export function updateModalChartId(id) {
-  return { type: MODAL_CHART_UPDATE_SUCCEEDED ,modalSliceId :id};
+  return { type: UPDATE_MODAL_CHART_ID, modalChartId: id };
 }
 
 export const CLOSE_MODAL = 'CLOSE_MODAL';
@@ -268,13 +268,13 @@ export function closeModal() {
   return { type: CLOSE_MODAL };
 }
 
-export function updateModalChart(id){
+export function updateModalChart(id) {
   return dispatch => {
     dispatch(updateModalChartId(id));
   };
 }
 
-export function hideModal(){
+export function hideModal() {
   return dispatch => {
     dispatch(closeModal());
   };

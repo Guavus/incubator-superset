@@ -21,6 +21,7 @@ import { Modal } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import ChartContainer from '../../chart/ChartContainer';
 import { chartPropShape } from '../util/propShapes';
+import { chart as initChart } from '../../chart/chartReducer';
 const propTypes = {
   showModal: PropTypes.bool,
   animation: PropTypes.bool,
@@ -46,13 +47,16 @@ const defaultProps = {
   modalTitle: 'Details',
   showModal: false,
   addFilter: () => BLANK,
-  chart: undefined,
-  datasource: undefined,
+  close:() => BLANK,
+  chart:  {
+    ...initChart,
+  },
+  datasource: {},
   timeout: 60,
   chartStatus: 'loading',
 };
 
-export default class ChartModal extends React.PureComponent {
+export default class ChartModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
