@@ -43,7 +43,7 @@ describe('dashboardState reducer', () => {
         { "modalSliceIds": [], sliceIds: [1] },
         { type: ADD_SLICE, slice: { slice_id: 2 } },
       ),
-    ).toEqual({ "modalSliceIds": [],sliceIds: [1, 2] });
+    ).toEqual({ "modalSliceIds": [], sliceIds: [1, 2] });
   });
 
   it('should remove a slice', () => {
