@@ -41,8 +41,8 @@ const propTypes = {
 };
 const BLANK = {};
 const defaultProps = {
-  width: 550,
-  height: 350,
+  width: 760,
+  height: 460,
   animation: true,
   modalTitle: 'Details',
   showModal: false,
@@ -97,6 +97,7 @@ export default class ChartModal extends React.Component {
         onHide={close}
         onExit={close}
         backdrop="static"
+        dialogClassName="chart-modal-style"
       >
         {this.props.modalTitle &&
           <Modal.Header closeButton>
