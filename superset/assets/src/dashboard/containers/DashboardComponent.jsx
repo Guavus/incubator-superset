@@ -50,9 +50,9 @@ function mapStateToProps(
   const { id, parentId } = ownProps;
   const component = dashboardLayout[id];
   const slice_id = component && component.meta && component.meta.hasOwnProperty('chartId') ? component.meta.chartId : -1;
-  const shouldRenderComponent = ()=> {
-      let isModalSlice = (dashboardState.modalSliceIds && dashboardState.modalSliceIds.indexOf(slice_id) != -1)
-      return (!isModalSlice || dashboardState.editMode)
+  const shouldRenderComponent = () => {
+    let isModalSlice = (dashboardState.modalSliceIds && dashboardState.modalSliceIds.indexOf(slice_id) != -1)
+    return (!isModalSlice || dashboardState.editMode)
   }
   const props = {
     component,
@@ -93,7 +93,7 @@ function mapDispatchToProps(dispatch) {
 
 class DashboardComponent extends React.PureComponent {
   render() {
-    const { component ,renderComponent,} = this.props;
+    const { component, renderComponent } = this.props;
     const Component = component ? ComponentLookup[component.type] : null;
     return Component && renderComponent ? <Component {...this.props} /> : null;
   }
