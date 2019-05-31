@@ -319,8 +319,9 @@ function nvd3Vis(element, props) {
           const yField = findYAxisField(xField, publishedColumns);
 
 
-          if (xField != undefined) onAddFilter(xField, e.point.x, false);
-          if (yField != undefined) onAddFilter(yField, e.point.y, false);
+          if (yField != undefined && e.point) onAddFilter(yField, e.point.y, false);
+          if (xField != undefined && e.point) onAddFilter(xField, e.point.x, false);
+
         });
         chart.xScale(d3.time.scale.utc());
         chart.interpolate(lineInterpolation);
