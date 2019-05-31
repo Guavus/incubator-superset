@@ -264,31 +264,12 @@ function nvd3Vis(element, props) {
     return types.indexOf(vizType) >= 0;
   }
 
-  function findYAxisField(metrics, publishedColumns) {
-    let columnName = '';
+  function findYAxisField(xField, publishedColumns) {
 
-    if (metrics && publishedColumns) {
-
-      publishedColumns.forEach((column) => {
-        metrics.forEach((d) => {
-          if (d.column.column_name ===  column) {
-            columnName = column;
-            return;
-          }
-        });
-      });
-    }
-
-    return columnName;
-  }
-
-  function findXAxisField(xField, publishedColumns) {
-
-    let columnName  = publishedColumns.find((column) => {
+    return publishedColumns.find((column) => {
        return xField != column
     });
 
-    return columnName === undefined ? '' : columnName;
   }
 
   const drawGraph = function () {
@@ -332,15 +313,14 @@ function nvd3Vis(element, props) {
           chart = nv.models.lineChart();
         }
         chart.lines.dispatch.on('elementClick', function(e) {
-          const publihedColumns = formData.publishColumns;
-          const metrics = formData.metrics;
+          const publishedColumns = formData.publishColumns;
+
+          const xField = formData.granularitySqla;
+          const yField = findYAxisField(xField, publishedColumns);
 
 
-          const yField = findYAxisField(metrics, publihedColumns);
-          const xField = findXAxisField(yField, publihedColumns);
-
-          if (xField != '') onAddFilter(xField, e.point.x, false);
-          if (yField != '') onAddFilter(yField, e.point.y, false);
+          if (xField != undefined) onAddFilter(xField, e.point.x, false);
+          if (yField != undefined) onAddFilter(yField, e.point.y, false);
         });
         chart.xScale(d3.time.scale.utc());
         chart.interpolate(lineInterpolation);
