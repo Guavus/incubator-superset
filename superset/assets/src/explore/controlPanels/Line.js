@@ -30,7 +30,7 @@ export default {
       controlSetRows: [
         ['color_scheme'],
         ['show_brush', 'send_time_range', 'show_legend'],
-        ['rich_tooltip', 'show_markers'],
+        ['show_markers'],
         ['line_interpolation'],
         ['show_overlay'],
         ['overlay_label'],
