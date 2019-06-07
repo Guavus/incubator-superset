@@ -255,6 +255,9 @@ class Dashboard extends React.PureComponent {
     this.showModal = showModal
     this.modalChart = this.props.charts[slice_id];
     if (this.modalChart) {
+      if(status){
+        this.modalChart.chartStatus = status
+      }
       this.modalChartStatus = status ? status : this.modalChart.chartStatus;
       this.modalTitle = this.props.slices[slice_id].slice_name;
       this.modalDatasource = this.props.datasources[this.modalChart.formData.datasource];
