@@ -247,15 +247,15 @@ class Dashboard extends React.PureComponent {
     const slice_id = getModalSliceIDFor(this.props.dashboardState.publishSubscriberMap, filterKey);
     if (slice_id) {
       // open modal with chart in loading state
-      this.updateModalProps(slice_id, true,'loading')
+      this.updateModalProps(slice_id, true, 'loading')
     }
   }
 
-  updateModalProps(slice_id, showModal,status = undefined) {
+  updateModalProps(slice_id, showModal, status = undefined) {
     this.showModal = showModal
     this.modalChart = this.props.charts[slice_id];
     if (this.modalChart) {
-      if(status){
+      if (status) {
         this.modalChart.chartStatus = status
       }
       this.modalChartStatus = status ? status : this.modalChart.chartStatus;
