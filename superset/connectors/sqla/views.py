@@ -271,13 +271,15 @@ class TableModelView(DatasourceModelView, DeleteMixin, YamlExportMixin):  # noqa
 
     @expose('/create', methods=['POST'])
     def create(self):
-        database_id = request.args.get('database_id')
+        database_id = int(request.args.get('database_id'))
         table_name =  request.args.get('table_name')
         schema =  request.args.get('schema')
+        database = db.session.query(models.Database).filter_by(id=database_id).one()
         table_model = models.SqlaTable(
             table_name=table_name,
             schema=schema,
             database_id=database_id,
+            database = database
         )
         db.session.add(table_model)
         db.session.commit()

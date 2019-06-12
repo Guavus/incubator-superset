@@ -276,10 +276,12 @@ class DatabaseView(SupersetModelView, DeleteMixin, YamlExportMixin):  # noqa
         database_name = request.form.get('database_name')
         sqlalchemy_uri = request.form.get('sqlalchemy_uri')
         extra = request.form.get('extra')
+        impersonate_user = eval(request.form.get('impersonate_user'))
         db_model = models.Database(
             database_name=database_name,
             sqlalchemy_uri=sqlalchemy_uri,
-            extra=extra
+            extra=extra,
+            impersonate_user=impersonate_user
         )
         db.session.add(db_model)
         db.session.commit()
