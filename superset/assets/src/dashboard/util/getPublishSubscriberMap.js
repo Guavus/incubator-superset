@@ -21,7 +21,7 @@ import * as _ from 'lodash';
 import {
     APPLY_FILTER,
     isUseAsModalActionExist,
-    getUniqueActionsForSlice,
+    getActionsMapForSlice,
 } from './publishSubscriberUtil'
 
 function createPublishDataFor(slice, slices) {
@@ -101,7 +101,7 @@ function createSubscriberDataFor(slice, publishers) {
     return {
         id: slice.id,
         viz_type: slice.formData.viz_type,
-        actions: slice.formData.hasOwnProperty('actions') && slice.formData.actions ? slice.formData.actions : [APPLY_FILTER],
+        actions: slice.formData.hasOwnProperty('actions') && slice.formData.actions ? slice.formData.actions :{},
         linked_slices: getLinkedSlices(slice.formData.linked_slice, publishers),
         extras: slice.formData.hasOwnProperty('extras') ? slice.formData.extras : undefined,
         useAsModal: slice.formData.useAsModal,
@@ -141,7 +141,7 @@ function updateSlices(slices) {
     updatedSlices.forEach(slice => {
         const linkedSlices = getLinkedSlicesFromSubscriberLayer(slice.formData.subscriber_layers);
         slice.formData.linked_slice = linkedSlices ? linkedSlices : slice.formData.linked_slice;
-        slice.formData.actions = getUniqueActionsForSlice(slice);
+        slice.formData.actions = getActionsMapForSlice(slice);
         slice.formData.useAsModal = isUseAsModalActionExist(slice.formData.actions);
     });
 
