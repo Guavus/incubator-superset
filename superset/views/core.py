@@ -23,6 +23,7 @@ import re
 import time
 import traceback
 from urllib import parse
+import requests
 
 from flask import (
     abort, flash, g, Markup, redirect, render_template, request, Response, url_for,
@@ -269,6 +270,22 @@ class DatabaseView(SupersetModelView, DeleteMixin, YamlExportMixin):  # noqa
         'allow_multi_schema_metadata_fetch': _('Allow Multi Schema Metadata Fetch'),
         'backend': _('Backend'),
     }
+    
+    @expose('/create', methods=['POST'])
+    def create(self):
+        database_name = request.form.get('database_name')
+        sqlalchemy_uri = request.form.get('sqlalchemy_uri')
+        extra = request.form.get('extra')
+        db_model = models.Database(
+            database_name=database_name,
+            sqlalchemy_uri=sqlalchemy_uri,
+            extra=extra
+        )
+        db.session.add(db_model)
+        db.session.commit()
+        return  Response(
+            json.dumps({'database_id': db_model.id}),
+            status=200)
 
     def pre_add(self, db):
         self.check_extra(db)
@@ -813,6 +830,30 @@ appbuilder.add_view_no_menu(R)
 
 class Superset(BaseSupersetView):
     """The base views for Superset!"""
+
+    @expose('/add_to_dashboard', methods=['POST'])
+    def addtodashboard(self):
+        cookies = 'session='+request.cookies['session']
+        headers = {
+            'content_type': 'multipart/form-data',
+            'cookie':cookies,
+            }
+        req_session = requests.Session()
+        db_response = req_session.post(request.host_url+'databaseview/create' ,headers = headers,data = request.form)
+        slices = json.loads(request.form.get('slices'))
+        for _slice in slices:
+            params = {
+                'database_id': json.loads(db_response.content)['database_id'],
+                'table_name':_slice['table_name'],
+                'schema':_slice['schema']
+                }
+            table_response = req_session.post(request.host_url+'tablemodelview/create' ,headers = headers,data = request.form,params=params)
+            _slice['datasource'] =  json.loads(table_response.content)['table_name']
+        
+        return  Response(
+            json.dumps(slices),
+            status=200)
+
     @has_access_api
     @expose('/datasources/')
     def datasources(self):

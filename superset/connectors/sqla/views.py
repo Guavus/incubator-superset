@@ -18,14 +18,14 @@
 """Views used by the SqlAlchemy connector"""
 import logging
 
-from flask import flash, Markup, redirect
+from flask import flash, Markup, redirect,request, Response
 from flask_appbuilder import CompactCRUDMixin, expose
 from flask_appbuilder.actions import action
 from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder.security.decorators import has_access
 from flask_babel import gettext as __
 from flask_babel import lazy_gettext as _
-
+import simplejson as json
 from superset import appbuilder, db, security_manager
 from superset.connectors.base.views import DatasourceModelView
 from superset.utils import core as utils
@@ -268,6 +268,23 @@ class TableModelView(DatasourceModelView, DeleteMixin, YamlExportMixin):  # noqa
         'modified': _('Modified'),
         'hive_partitions': _('Hive Partitions')
     }
+
+    @expose('/create', methods=['POST'])
+    def create(self):
+        database_id = request.args.get('database_id')
+        table_name =  request.args.get('table_name')
+        schema =  request.args.get('schema')
+        table_model = models.SqlaTable(
+            table_name=table_name,
+            schema=schema,
+            database_id=database_id,
+        )
+        db.session.add(table_model)
+        db.session.commit()
+        return Response(
+            json.dumps({'table_name': table_model.name}),
+            status=200)
+
 
     def pre_add(self, table):
         with db.session.no_autoflush:
