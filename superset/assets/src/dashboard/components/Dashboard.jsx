@@ -258,7 +258,6 @@ class Dashboard extends React.PureComponent {
       if (status) {
         this.modalChart.chartStatus = status
       }
-      this.modalChartStatus = status ? status : this.modalChart.chartStatus;
       this.modalTitle = this.props.slices[slice_id].slice_name;
       this.modalDatasource = this.props.datasources[this.modalChart.formData.datasource];
     }
@@ -341,7 +340,6 @@ class Dashboard extends React.PureComponent {
           modalTitle={this.modalTitle}
           datasource={this.modalDatasource}
           close={this.closeModal}
-          chartStatus={this.modalChartStatus}
         />
       </React.Fragment>
     );
