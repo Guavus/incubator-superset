@@ -72,6 +72,33 @@ export default function (bootstrapData) {
     return slice_data;
   }
 
+  const getDefaultFilters = (publishSliceData, publish_id) => {
+    let defaultFilters = {};
+
+    // As per the current support only filter_box can publish global default filters
+    if (publishSliceData.viz_type == "filter_box") {
+
+      let slice = getSliceData(publish_id, dashboard.slices);
+      if (slice) {
+        const publish_columns = publishSliceData.hasOwnProperty("publish_columns") ? publishSliceData.publish_columns : [];
+        const filterConfigFilters = getFiltersFromFilterConfig(slice.form_data.filter_configs);
+
+        publish_columns.forEach(col => {
+          if (isPublishColumnExistsInFilters(filterConfigFilters, col)) {
+            defaultFilters[col] = filterConfigFilters[col];
+          }
+        })
+
+        // check date filter is applicable for filter
+        if (slice.form_data.date_filter) {
+          defaultFilters["__time_range"] = slice.form_data.time_range;
+        }
+      }
+    }
+
+    return defaultFilters;
+  }
+
   // try {
   //   // allow request parameter overwrite dashboard metadata
   //   filters = JSON.parse(
@@ -178,33 +205,6 @@ export default function (bootstrapData) {
 
   // Create pubsub info and store in state
   publishSubscriberMap = getPublishSubscriberMap(Object.values(chartQueries));
-  
-  const getDefaultFilters = (publishSliceData, publish_id) => {
-    let defaultFilters = {};
-
-    // As per the current support only filter_box can publish global default filters
-    if (publishSliceData.viz_type == "filter_box") {
-
-      let slice = getSliceData(publish_id, dashboard.slices);
-      if (slice) {
-        const publish_columns = publishSliceData.hasOwnProperty("publish_columns") ? publishSliceData.publish_columns : [];
-        const filterConfigFilters = getFiltersFromFilterConfig(slice.form_data.filter_configs);
-
-        publish_columns.forEach(col => {
-          if (isPublishColumnExistsInFilters(filterConfigFilters, col)) {
-            defaultFilters[col] = filterConfigFilters[col];
-          }
-        })
-
-        // check date filter is applicable for filter
-        if (slice.form_data.date_filter) {
-          defaultFilters["__time_range"] = slice.form_data.time_range;
-        }
-      }
-    }
-
-    return defaultFilters;
-  }
 
   try {
     let publishers = publishSubscriberMap.hasOwnProperty("publishers") ? publishSubscriberMap["publishers"] : {};
