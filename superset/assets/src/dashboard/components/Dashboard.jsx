@@ -57,7 +57,6 @@ const propTypes = {
     runQuery: PropTypes.func.isRequired,
   }).isRequired,
   dashboardInfo: dashboardInfoPropShape.isRequired,
-  dashboardState: dashboardStatePropShape.isRequired,
   charts: PropTypes.objectOf(chartPropShape).isRequired,
   slices: PropTypes.objectOf(slicePropShape).isRequired,
   datasources: PropTypes.object.isRequired,
@@ -341,7 +340,6 @@ class Dashboard extends React.PureComponent {
           addFilter={this.modalAddFilterHandler}
           modalTitle={this.modalTitle}
           datasource={this.modalDatasource}
-          dashboardState={this.props.dashboardState}
           close={this.closeModal}
         />
       </React.Fragment>

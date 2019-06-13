@@ -37,7 +37,6 @@ const propTypes = {
   timeout: PropTypes.number,
   addFilter: PropTypes.func.isRequired,
   datasource: PropTypes.object.isRequired,
-  dashboardState: PropTypes.object.isRequired,
 };
 const BLANK = {};
 var subHeaderForModalCharts = '';
@@ -54,7 +53,6 @@ const defaultProps = {
   },
   datasource: {},
   timeout: 60,
-  dashboardState: {}
 };
 
 export default class ChartModal extends React.Component {
