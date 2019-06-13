@@ -53,8 +53,11 @@ export function getSubHeaderForSlice(subscribers, chartId, filters) {
                             let subHeaderValues = filters[lsKey][columnName];
                             const values = subHeaderValues ? getSubHeaderValues(subHeaderValues) : [];
 
-                            if (subHeaderValues) {
-                                (subHeader != '') ? values.push(subHeader) : [];
+                            if(values.length > 0) {
+                                if(subHeader != '') {
+                                    values.push(subHeader) 
+                                }
+                                
                                 subHeader = values.join(' | ');
                             }
                         }
