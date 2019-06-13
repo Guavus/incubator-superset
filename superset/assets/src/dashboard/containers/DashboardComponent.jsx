@@ -55,12 +55,13 @@ function mapStateToProps(
     let isModalSlice = (dashboardState.modalSliceIds && dashboardState.modalSliceIds.indexOf(slice_id) != -1)
     return (!isModalSlice || dashboardState.editMode)
   }
+
   const props = {
     component,
     parentComponent: dashboardLayout[parentId],
     editMode: dashboardState.editMode,
     renderComponent: shouldRenderComponent(),
-    sliceSubHeader: getSlicesWithSubHeader(dashboardState.publishSubscriberMap.subscribers, slice_id, dashboardState.filters)
+    sliceSubHeader: getSlicesWithSubHeader(dashboardState.publishSubscriberMap && dashboardState.publishSubscriberMap.subscribers, slice_id, dashboardState.filters)
   };
 
   // rows and columns need more data about their child dimensions

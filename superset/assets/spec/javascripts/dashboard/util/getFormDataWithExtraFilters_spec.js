@@ -53,8 +53,8 @@ describe('getFormDataWithExtraFilters', () => {
           ],
           linked_slices: {
             filterId: [
-              { col: 'region',op: 'in'},
-              { col: 'color', op: 'in'},
+              { col: 'region',op: 'in', actions: ['APPLY_FILTER']},
+              { col: 'color', op: 'in', actions: ['APPLY_FILTER']},
             ]
           }
         }
@@ -110,8 +110,8 @@ describe('getFormDataWithExtraFilters', () => {
             ],
             linked_slices: {
               chartId: [
-                { col: 'region',op: 'in'},
-                { col: 'color', op: 'in'},
+                { col: 'region',op: 'in', actions: ['APPLY_FILTER']},
+                { col: 'color', op: 'in', actions: ['APPLY_FILTER']},
               ]
             }
           }
@@ -151,7 +151,7 @@ describe('getFormDataWithExtraFilters', () => {
               ],
               linked_slices: {
                 filterId: [
-                  { col: 'region',op: 'in'},
+                  { col: 'region',op: 'in', actions: ['APPLY_FILTER']},
                 ]
               }
             }
@@ -175,7 +175,7 @@ describe('getFormDataWithExtraFilters', () => {
                 ],
                 linked_slices: {
                   filterId: [
-                    { col: 'region',op: '=='},
+                    { col: 'region',op: '==', actions: ['APPLY_FILTER']},
                   ]
                 }
               }
@@ -202,8 +202,8 @@ describe('getFormDataWithExtraFilters', () => {
             ],
             linked_slices: {
               filterId: [
-                { col: 'region',op: '=='},
-                { col: 'color', op: '=='},
+                { col: 'region',op: '==', actions: ['APPLY_FILTER']},
+                { col: 'color', op: '==', actions: ['APPLY_FILTER']},
               ]
             }
           }
@@ -213,7 +213,7 @@ describe('getFormDataWithExtraFilters', () => {
     expect(result.extra_filters).toHaveLength(3);
   });
 
-  it('should include filters only when subscribers have action APPLY_FILTER', () => {
+  it('should include filters only when subscribers have atleast one action as APPLY_FILTER', () => {
     const result = getFormDataWithExtraFilters({ 
       ...mockArgs,
       publishSubscriberMap: {
@@ -221,12 +221,12 @@ describe('getFormDataWithExtraFilters', () => {
         subscribers: {
           chartId: {
             actions: [
-              "APPLY_SCHEMA"
+              "INCLUDE_IN_TITLE"
             ],
             linked_slices: {
               filterId: [
-                { col: 'region',op: '=='},
-                { col: 'color', op: '=='},
+                { col: 'region',op: '==', actions: ['INCLUDE_IN_TITLE']},
+                { col: 'color', op: '==', actions: ['INCLUDE_IN_TITLE']},
               ]
             }
           }
@@ -234,6 +234,30 @@ describe('getFormDataWithExtraFilters', () => {
       },
     });
     expect(result.extra_filters).toHaveLength(0);
+  });
+
+  it('should include filters only when subscribers have atleast one action as APPLY_FILTER', () => {
+    const result = getFormDataWithExtraFilters({ 
+      ...mockArgs,
+      publishSubscriberMap: {
+        publishers: undefined,
+        subscribers: {
+          chartId: {
+            actions: [
+              "APPLY_FILTER",
+              "INCLUDE_IN_TITLE"
+            ],
+            linked_slices: {
+              filterId: [
+                { col: 'region',op: '==', actions: ['APPLY_FILTER']},
+                { col: 'color', op: '==', actions: ['INCLUDE_IN_TITLE']},
+              ]
+            }
+          }
+        }
+      },
+    });
+    expect(result.extra_filters).toHaveLength(1);
   });
 
   it('should not add additional filters if the slice is immune to them', () => {
