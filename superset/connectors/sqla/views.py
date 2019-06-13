@@ -30,7 +30,7 @@ from superset import appbuilder, db, security_manager
 from superset.connectors.base.views import DatasourceModelView
 from superset.utils import core as utils
 from superset.views.base import (
-    DatasourceFilter, DeleteMixin, get_datasource_exist_error_msg,
+    DatasourceFilter, DeleteMixin, get_datasource_exist_error_msg,json_error_response, json_success,
     ListWidgetWithCheckboxes, SupersetModelView, YamlExportMixin,
 )
 from . import models
@@ -271,21 +271,25 @@ class TableModelView(DatasourceModelView, DeleteMixin, YamlExportMixin):  # noqa
 
     @expose('/create', methods=['POST'])
     def create(self):
-        database_id = int(request.args.get('database_id'))
-        table_name =  request.args.get('table_name')
-        schema =  request.args.get('schema')
-        database = db.session.query(models.Database).filter_by(id=database_id).one()
-        table_model = models.SqlaTable(
-            table_name=table_name,
-            schema=schema,
-            database_id=database_id,
-            database = database
-        )
-        db.session.add(table_model)
-        db.session.commit()
-        return Response(
-            json.dumps({'table_name': table_model.name}),
-            status=200)
+        try:
+            database_id = int(request.args.get('database_id'))
+            table_name =  request.args.get('table_name')
+            schema =  request.args.get('schema')
+            database = db.session.query(models.Database).filter_by(id=database_id).one()
+            table_model = models.SqlaTable(
+                table_name=table_name,
+                schema=schema,
+                database_id=database_id,
+                database = database
+            )
+            db.session.add(table_model)
+            db.session.commit()
+            logging.info('table is created with id = '+str(table_model.id)+' and linked with database id = '+str(database_id))
+        except Exception as e:
+            logging.exception(e)
+            return json_error_response(e)
+
+        return json_success(json.dumps({'table_name': table_model.name}))
 
 
     def pre_add(self, table):

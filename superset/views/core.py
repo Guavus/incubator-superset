@@ -273,21 +273,25 @@ class DatabaseView(SupersetModelView, DeleteMixin, YamlExportMixin):  # noqa
     
     @expose('/create', methods=['POST'])
     def create(self):
-        database_name = request.form.get('database_name')
-        sqlalchemy_uri = request.form.get('sqlalchemy_uri')
-        extra = request.form.get('extra')
-        impersonate_user = eval(request.form.get('impersonate_user'))
-        db_model = models.Database(
-            database_name=database_name,
-            sqlalchemy_uri=sqlalchemy_uri,
-            extra=extra,
-            impersonate_user=impersonate_user
-        )
-        db.session.add(db_model)
-        db.session.commit()
-        return  Response(
-            json.dumps({'database_id': db_model.id}),
-            status=200)
+        try:
+            database_name = request.form.get('database_name')
+            sqlalchemy_uri = request.form.get('sqlalchemy_uri')
+            extra = request.form.get('extra')
+            impersonate_user = eval(request.form.get('impersonate_user'))
+            db_model = models.Database(
+                database_name=database_name,
+                sqlalchemy_uri=sqlalchemy_uri,
+                extra=extra,
+                impersonate_user=impersonate_user
+            )
+            db.session.add(db_model)
+            db.session.commit()
+            logging.info('database connection is created with id = '+str(db_model.id))
+        except Exception as e:
+            logging.exception(e)
+            return json_error_response(e)
+ 
+        return json_success(json.dumps({'database_id': db_model.id}))
 
     def pre_add(self, db):
         self.check_extra(db)
@@ -835,26 +839,29 @@ class Superset(BaseSupersetView):
 
     @expose('/add_to_dashboard', methods=['POST'])
     def addtodashboard(self):
-        cookies = 'session='+request.cookies['session']
-        headers = {
-            'content_type': 'multipart/form-data',
-            'cookie':cookies,
-            }
-        req_session = requests.Session()
-        db_response = req_session.post(request.host_url+'databaseview/create' ,headers = headers,data = request.form)
-        slices = json.loads(request.form.get('slices'))
-        for _slice in slices:
-            params = {
-                'database_id': json.loads(db_response.content)['database_id'],
-                'table_name':_slice['table_name'],
-                'schema':_slice['schema']
+        try:
+            cookies = 'session='+request.cookies['session']
+            headers = {
+                'content_type': 'multipart/form-data',
+                'cookie':cookies,
                 }
-            table_response = req_session.post(request.host_url+'tablemodelview/create' ,headers = headers,data = request.form,params=params)
-            _slice['datasource'] =  json.loads(table_response.content)['table_name']
-        
-        return  Response(
-            json.dumps(slices),
-            status=200)
+            req_session = requests.Session()
+            db_response = req_session.post(request.host_url+'databaseview/create' ,headers = headers,data = request.form)
+            slices = json.loads(request.form.get('slices'))
+            for _slice in slices:
+                params = {
+                    'database_id': json.loads(db_response.content)['database_id'],
+                    'table_name':_slice['table_name'],
+                    'schema':_slice['schema']
+                    }
+                table_response = req_session.post(request.host_url+'tablemodelview/create' ,headers = headers,data = request.form,params=params)
+                _slice['datasource'] =  json.loads(table_response.content)['table_name']
+
+        except Exception as e:
+            logging.exception(e)
+            return json_error_response(e)
+
+        return json_success(json.dumps(slices))
 
     @has_access_api
     @expose('/datasources/')
