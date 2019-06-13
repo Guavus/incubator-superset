@@ -45,14 +45,13 @@ export function getSubHeaderForSlice(subscribers, chartId, filters) {
     if (chartId != -1 && subscribers && subscribers[chartId]) {
         const subscriber = subscribers[chartId];
         if (subscriber.actions.indexOf(INCLUDE_IN_TITLE) > -1) {
-            subHeader = '';
             for (let lsKey in subscriber.linked_slices) {
                 if (keyExists(lsKey, filters)) {
                     subscriber.linked_slices[lsKey].forEach(linkedSlice => {
                         if (linkedSlice.actions.indexOf(INCLUDE_IN_TITLE) > -1) {
                             let columnName = linkedSlice['col'];
                             let subHeaderValues = filters[lsKey][columnName];
-                            const values = getSubHeaderValues(subHeaderValues);
+                            const values = subHeaderValues ? getSubHeaderValues(subHeaderValues) : [];
 
                             if (subHeaderValues) {
                                 (subHeader != '') ? values.push(subHeader) : [];
@@ -68,17 +67,13 @@ export function getSubHeaderForSlice(subscribers, chartId, filters) {
 }
 
 function getSubHeaderValues(headerValues) {
-    let subTitleHeaders = '';
-    if (headerValues) {
-        if (headerValues.constructor == Array) {
-            subTitleHeaders = headerValues.concat();
-        }
-        else {
-            subTitleHeaders = [headerValues];
-        }
+    let subTitleHeaders;
+
+    if (headerValues.constructor == Array) {
+        subTitleHeaders = headerValues.concat();
     }
     else {
-        subTitleHeaders = [];
+        subTitleHeaders = [headerValues];
     }
 
     return subTitleHeaders;
