@@ -339,6 +339,7 @@ class Dashboard extends React.PureComponent {
           addFilter={this.modalAddFilterHandler}
           modalTitle={this.modalTitle}
           datasource={this.modalDatasource}
+          dashboardState={this.props.dashboardState}
           close={this.closeModal}
         />
       </React.Fragment>

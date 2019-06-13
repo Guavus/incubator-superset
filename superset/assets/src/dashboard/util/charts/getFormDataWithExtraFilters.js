@@ -17,6 +17,7 @@
  * under the License.
  */
 import { getEffectiveExtraFilters, filterKeys } from './getEffectiveExtraFilters';
+import { keyExists } from '../publishSubscriberUtil';
 
 // We cache formData objects so that our connected container components don't always trigger
 // render cascades. we cannot leverage the reselect library because our cache size is >1
@@ -24,8 +25,10 @@ const cachedDashboardMetadataByChart = {};
 const cachedFiltersByChart = {};
 const cachedFormdataByChart = {};
 
+const APPLY_FILTER = 'APPLY_FILTER';
+
 const getExtraFilters = (subscriberMap, globalFilters, slicesInState) => {
-  if (subscriberMap && subscriberMap.actions.indexOf("APPLY_FILTER") > -1) {
+  if (subscriberMap && subscriberMap.actions.indexOf(APPLY_FILTER) > -1) {
     const filters = getFiltersFromSlices(slicesInState, globalFilters)
     return filters;
   }
@@ -56,14 +59,15 @@ const getFiltersFromSlices = (slices, globalFilters) => {
 
 const getLinkedSlicesExistInFilters = (subscriberMap, globalFilters) => {
   let linkedSlicesExistInFilters = [];
-  if (subscriberMap && subscriberMap.actions.indexOf("APPLY_FILTER") > -1) {
-    const propExist = subscriberMap.hasOwnProperty("linked_slices");
-    if (propExist) {
+  if (subscriberMap && subscriberMap.actions.indexOf(APPLY_FILTER) > -1) {
+    if (keyExists('linked_slices', subscriberMap)) {
       const linked_slices = subscriberMap.linked_slices;
       for (var sliceId in linked_slices) {
-        if (globalFilters.hasOwnProperty(sliceId)) {
+        if (keyExists(sliceId, globalFilters)) {
+          let linkedSlice = linked_slices[sliceId];
+          const filteredSlice = linkedSlice.filter(slice => slice.actions.indexOf(APPLY_FILTER) > -1);
           let slice = {};
-          slice[sliceId] = linked_slices[sliceId];
+          slice[sliceId] = filteredSlice;
           linkedSlicesExistInFilters.push(slice);
         }
       }
