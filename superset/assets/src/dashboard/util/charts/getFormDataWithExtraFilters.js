@@ -64,9 +64,11 @@ const getLinkedSlicesExistInFilters = (subscriberMap, globalFilters) => {
         if (keyExists(sliceId, globalFilters)) {
           let linkedSlice = linked_slices[sliceId];
           const filteredSlice = linkedSlice.filter(slice => slice.actions.indexOf(APPLY_FILTER) > -1);
-          let slice = {};
-          slice[sliceId] = filteredSlice;
-          linkedSlicesExistInFilters.push(slice);
+          if (filteredSlice) {
+            let slice = {};
+            slice[sliceId] = filteredSlice;
+            linkedSlicesExistInFilters.push(slice);
+          }
         }
       }
     }
