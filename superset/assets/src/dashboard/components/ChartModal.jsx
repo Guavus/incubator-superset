@@ -22,7 +22,6 @@ import PropTypes from 'prop-types';
 import ChartContainer from '../../chart/ChartContainer';
 import { chartPropShape } from '../util/propShapes';
 import { chart as initChart } from '../../chart/chartReducer';
-import { getSlicesWithSubHeader } from '../util/publishSubscriberUtil';
 
 const propTypes = {
   showModal: PropTypes.bool,
@@ -68,7 +67,6 @@ export default class ChartModal extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.showModal != this.state.showModal) {
-      this.subHeaderForModalCharts = getSlicesWithSubHeader(this.props.dashboardState.publishSubscriberMap.subscribers, this.props.dashboardState.modalSliceIds[0], nextProps.dashboardState.filters)
       return true;
     }
     if (nextProps.chart.chartStatus != this.props.chart.chartStatus) {
@@ -95,8 +93,6 @@ export default class ChartModal extends React.Component {
       close
     } = this.props;
 
-    let title = (this.subHeaderForModalCharts != '') ? modalTitle + ' ' + this.subHeaderForModalCharts : modalTitle;
-
     return (
       <Modal
         animation={this.props.animation}
@@ -106,9 +102,9 @@ export default class ChartModal extends React.Component {
         backdrop="static"
         dialogClassName="chart-modal-style"
       >
-        {title &&
+        {modalTitle &&
           <Modal.Header closeButton>
-            <Modal.Title>{title}</Modal.Title>
+            <Modal.Title>{modalTitle}</Modal.Title>
           </Modal.Header>
         }
         <Modal.Body>

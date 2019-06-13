@@ -40,7 +40,7 @@ export function getModalSliceIDFor(publishSubscriberMap, publisherId) {
     return undefined
 }
 
-export function getSlicesWithSubHeader(subscribers, chartId, filters) {
+export function getSubHeaderForSlice(subscribers, chartId, filters) {
     let subHeader = '';
     if (chartId != -1 && subscribers && subscribers[chartId]) {
         const subscriber = subscribers[chartId];
@@ -48,22 +48,18 @@ export function getSlicesWithSubHeader(subscribers, chartId, filters) {
             subHeader = '';
             for (let lsKey in subscriber.linked_slices) {
                 if (keyExists(lsKey, filters)) {
-                    let linkedSlicesLength = subscriber.linked_slices[lsKey].length;
-
-                    for (let i = 0; i < linkedSlicesLength; i++) {
-                        let linkedSlice = subscriber.linked_slices[lsKey];
-
-                        if (linkedSlice[i].actions.indexOf(INCLUDE_IN_TITLE) > -1) {
-                            let columnName = linkedSlice[i]['col'];
+                    subscriber.linked_slices[lsKey].forEach(linkedSlice => {
+                        if (linkedSlice.actions.indexOf(INCLUDE_IN_TITLE) > -1) {
+                            let columnName = linkedSlice['col'];
                             let subHeaderValues = filters[lsKey][columnName];
-                            const values = subHeaderValues ? subHeaderValues.constructor == Array ? subHeaderValues.concat() : [subHeaderValues] : [];
+                            const values = getSubHeaderValues(subHeaderValues);
 
                             if (subHeaderValues) {
                                 (subHeader != '') ? values.push(subHeader) : [];
                                 subHeader = values.join(' | ');
                             }
                         }
-                    }
+                    });
                 }
             }
         }
@@ -71,10 +67,28 @@ export function getSlicesWithSubHeader(subscribers, chartId, filters) {
     return subHeader;
 }
 
+function getSubHeaderValues(headerValues) {
+    let subTitleHeaders = '';
+    if (headerValues) {
+        if (headerValues.constructor == Array) {
+            subTitleHeaders = headerValues.concat();
+        }
+        else {
+            subTitleHeaders = [headerValues];
+        }
+    }
+    else {
+        subTitleHeaders = [];
+    }
+
+    return subTitleHeaders;
+}
+
 export function keyExists(key, search) {
     if (!search || (search.constructor !== Array && search.constructor !== Object)) {
         return false;
     }
+
     for (let i = 0; i < search.length; i++) {
         if (search[i] === key) {
             return true;
@@ -88,6 +102,6 @@ export default {
     USE_AS_MODAL,
     isModalSlice,
     getModalSliceIDFor,
-    getSlicesWithSubHeader,
+    getSubHeaderForSlice,
     keyExists,
 }

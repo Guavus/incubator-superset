@@ -25,7 +25,7 @@ import ComponentLookup from '../components/gridComponents';
 import getDetailedComponentWidth from '../util/getDetailedComponentWidth';
 import { componentShape } from '../util/propShapes';
 import { COLUMN_TYPE, ROW_TYPE } from '../util/componentTypes';
-import { getSlicesWithSubHeader } from '../util/publishSubscriberUtil';
+import { getSubHeaderForSlice } from '../util/publishSubscriberUtil';
 
 import {
   createComponent,
@@ -61,7 +61,7 @@ function mapStateToProps(
     parentComponent: dashboardLayout[parentId],
     editMode: dashboardState.editMode,
     renderComponent: shouldRenderComponent(),
-    sliceSubHeader: getSlicesWithSubHeader(dashboardState.publishSubscriberMap && dashboardState.publishSubscriberMap.subscribers, slice_id, dashboardState.filters)
+    sliceSubHeader: getSubHeaderForSlice(dashboardState.publishSubscriberMap && dashboardState.publishSubscriberMap.subscribers, slice_id, dashboardState.filters)
   };
 
   // rows and columns need more data about their child dimensions

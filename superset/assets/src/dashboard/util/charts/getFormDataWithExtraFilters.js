@@ -17,15 +17,13 @@
  * under the License.
  */
 import { getEffectiveExtraFilters, filterKeys } from './getEffectiveExtraFilters';
-import { keyExists } from '../publishSubscriberUtil';
+import { keyExists, APPLY_FILTER } from '../publishSubscriberUtil';
 
 // We cache formData objects so that our connected container components don't always trigger
 // render cascades. we cannot leverage the reselect library because our cache size is >1
 const cachedDashboardMetadataByChart = {};
 const cachedFiltersByChart = {};
 const cachedFormdataByChart = {};
-
-const APPLY_FILTER = 'APPLY_FILTER';
 
 const getExtraFilters = (subscriberMap, globalFilters, slicesInState) => {
   if (subscriberMap && subscriberMap.actions.indexOf(APPLY_FILTER) > -1) {
