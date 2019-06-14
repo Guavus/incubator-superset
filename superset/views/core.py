@@ -867,22 +867,18 @@ class Superset(BaseSupersetView):
                 _slice = update_slice_metadata(_slice)
 
                 slice_param_data = {
-                  'action':	'saveas',
-                  'slice_name':	_slice['slice_name'],
-                  'add_to_dash':	'existing',
-                  'save_to_dashboard_id':	json.loads(new_dashboard.content)['dashboard_id'],
-                  'goto_dash':	'false',
+                  'action':'saveas',
+                  'slice_name':_slice['slice_name'],
+                  'add_to_dash':'existing',
+                  'save_to_dashboard_id':json.loads(new_dashboard.content)['dashboard_id'],
+                  'goto_dash':'false',
+                  'form_data':json.dumps(_slice),
                 }
-
-                form_data = request.form
-                setattr(form_data, 'form-data', _slice)
 
                 slice_response = req_session.post(request.host_url + 'superset/explore/',
                                                   headers = headers,
-                                                  data = form_data,
+                                                  data = request.form,
                                                   params = slice_param_data)
-
-                print(slice_response)
 
         except Exception as e:
             logging.exception(e)

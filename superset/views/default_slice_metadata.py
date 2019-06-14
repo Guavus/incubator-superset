@@ -8,23 +8,23 @@ DEFAULT_SLICES = {
                       'granularity_sqla':'timestamp',
                       'time_grain_sqla':'P1D',
                       'time_range':'No filter',
-                      'query_with_partitions':'true',
+                      'query_with_partitions':False,
                       'groupby':[],
-                      'metrics':'null',
+                      'metrics':None,
                       'percent_metrics':[],
-                      'timeseries_limit_metric':'null',
+                      'timeseries_limit_metric':None,
                       'row_limit':100,
-                      'include_time':'false',
-                      'order_desc':'true',
-                      'all_columns':['event','counts','timestamp'],
+                      'include_time':False,
+                      'order_desc':False,
+                      'all_columns':[],
                       'order_by_cols':[],
                       'adhoc_filters':[],
                       'table_timestamp_format':'%Y-%m-%d %H:%M:%S',
                       'page_length':0,
-                      'include_search':'false',
-                      'table_filter':'false',
-                      'align_pn':'false',
-                      'color_pn':'true'
+                      'include_search':False,
+                      'table_filter':False,
+                      'align_pn':False,
+                      'color_pn':True
                   },
                   "pie": {
                       "datasource":"5__table",
@@ -34,27 +34,27 @@ DEFAULT_SLICES = {
                       "granularity_sqla":"bin_ts",
                       "time_grain_sqla":"P1D",
                       "time_range":"No filter",
-                      "query_with_partitions":'true',
+                      "query_with_partitions":True,
                       "metric":{
                           "expressionType":"SIMPLE",
                           "column":{
                               "id":'46',
                               "column_name":"variable",
-                              "verbose_name":'null',
-                              "description":'null',
+                              "verbose_name":None,
+                              "description":None,
                               "expression":"",
-                              "filterable":'true',
-                              "groupby":'true',
-                              "is_dttm":'false',
+                              "filterable":True,
+                              "groupby":True,
+                              "is_dttm":False,
                               "type":"STRING",
-                              "database_expression":'null',
-                              "python_date_format":'null',
+                              "database_expression":None,
+                              "python_date_format":None,
                               "optionName":"_col_variable"
                             },
                           "aggregate":"COUNT_DISTINCT",
-                          "sqlExpression":'null',
-                          "hasCustomLabel":'false',
-                          "fromFormData":'false',
+                          "sqlExpression":None,
+                          "hasCustomLabel":False,
+                          "fromFormData":False,
                           "label":"COUNT_DISTINCT(variable)",
                           "optionName":"metric_02qsr6hpi1cw_a31d68o81b"
                       },
@@ -63,10 +63,10 @@ DEFAULT_SLICES = {
                       "row_limit":'25',
                       "pie_label_type":"key",
                       "number_format":".3s",
-                      "donut":'false',
-                      "show_legend":'true',
-                      "show_labels":'true',
-                      "labels_outside":'true',
+                      "donut":False,
+                      "show_legend":True,
+                      "show_labels":True,
+                      "labels_outside":True,
                       "color_scheme":"bnbColors"
                     }
 }
@@ -76,25 +76,25 @@ SIMPLE_ADHOC_FILTER = {
                 "comparator": "0",
                 "expressionType": "SIMPLE",
                 "filterOptionName": "filter_kzua5dxzas_eny55grh7z",
-                "fromFormData": 'true',
+                "fromFormData": True,
                 "operator": "==",
-                "sqlExpression": 'null',
+                "sqlExpression": None,
                 "subject": "control_availability"
 }
 
 DEFAULT_COLUMN = {
               "column_name": "aggregated_metric",
-              "database_expression": 'null',
-              "description": 'null',
+              "database_expression": None,
+              "description": None,
               "expression": "",
-              "filterable": 'true',
-              "groupby": 'true',
+              "filterable": True,
+              "groupby": True,
               "id": '193',
-              "is_dttm": 'false',
+              "is_dttm": False,
               "optionName": "_col_aggregated_metric",
-              "python_date_format": 'null',
+              "python_date_format": None,
               "type": "NUMBER",
-              "verbose_name": 'null'
+              "verbose_name": None
 }
 
 DEFAULT_METRIC = {
@@ -102,11 +102,11 @@ DEFAULT_METRIC = {
               "column": {
               },
               "expressionType": "SIMPLE",
-              "fromFormData": 'true',
-              "hasCustomLabel": 'false',
+              "fromFormData": True,
+              "hasCustomLabel": False,
               "label": "SUM(aggregated_metric)",
               "optionName": "metric_kdw7m7era8_n3780y6yebi",
-              "sqlExpression": 'null'
+              "sqlExpression": None
 }
 
 def update_slice_metadata(slice):
@@ -118,13 +118,13 @@ def update_slice_metadata(slice):
       if key not in slice:
         slice[key] = default_slice_info[key]
 
-      if key == 'adhoc_filters' and key in slice  and slice[key] != 'null':
+      if key == 'adhoc_filters' and key in slice  and slice[key] != None:
         for filter in slice[key]:
           for prop in SIMPLE_ADHOC_FILTER:
             if prop not in filter:
               filter[prop] = SIMPLE_ADHOC_FILTER[prop]
 
-      if key == 'metrics' and key in slice and slice[key] != 'null':
+      if key == 'metrics' and key in slice and slice[key] != None:
           for metric in slice[key]:
               for prop in DEFAULT_METRIC:
                 if prop not in metric:
