@@ -15,13 +15,16 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-from flask import g, redirect
+from flask import g, redirect, request, Response
 from flask_appbuilder import expose
 from flask_appbuilder.security.decorators import has_access
 
 from superset import appbuilder, db
 from superset.models import core as models
 from .base import BaseSupersetView
+import simplejson as json
+import logging
+
 
 
 class Dashboard(BaseSupersetView):
@@ -38,6 +41,22 @@ class Dashboard(BaseSupersetView):
         db.session.add(new_dashboard)
         db.session.commit()
         return redirect(f'/superset/dashboard/{new_dashboard.id}/?edit=true')
+
+
+    @expose('/add_new', methods=['POST'])
+    def addnew(self):
+        """Creates a new, blank dashboard and redirects to it in edit mode"""
+        new_dashboard = models.Dashboard(
+            dashboard_title= request.form.get('dashboard_title'),
+            slug=request.form.get('slug'),
+        )
+        db.session.add(new_dashboard)
+        db.session.commit()
+        logging.info('new dashboard created with name = ' + request.form.get('dashboard_title'))
+
+        return Response(
+            json.dumps({'dashboard_id': new_dashboard.id}),
+            status=200)
 
 
 appbuilder.add_view_no_menu(Dashboard)
