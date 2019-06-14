@@ -247,11 +247,11 @@ class Dashboard extends React.PureComponent {
     const slice_id = getModalSliceIDFor(this.props.dashboardState.publishSubscriberMap, filterKey);
     if (slice_id) {
       // open modal with chart in loading state
-      this.updateModalProps(slice_id, true,'loading')
+      this.updateModalProps(slice_id, true, 'loading')
     }
   }
 
-  updateModalProps(slice_id, showModal,status = undefined) {
+  updateModalProps(slice_id, showModal, status = undefined) {
     this.showModal = showModal
     this.modalChart = this.props.charts[slice_id];
     if (this.modalChart) {
@@ -313,8 +313,8 @@ class Dashboard extends React.PureComponent {
   isFilterkeyExistInLinkedSlices(subscribers, sliceId, publisherId) {
     let keyExists = false;
     if (subscribers && subscribers[sliceId]) {
-      let applyFilterPublisherIds = subscribers[parseInt(sliceId)].actions['APPLY_FILTER'];
-      keyExists = (applyFilterPublisherIds && applyFilterPublisherIds.indexOf(parseInt(publisherId)) != -1) ? true : false;
+      let applyFilterPublisherIds = subscribers[parseInt(sliceId)].actions['APPLY_FILTER'] || [];
+      keyExists = (applyFilterPublisherIds.some((id) => id == parseInt(publisherId)));
     }
     return keyExists
   }

@@ -142,7 +142,7 @@ function updateSlices(slices) {
         const linkedSlices = getLinkedSlicesFromSubscriberLayer(slice.formData.subscriber_layers);
         slice.formData.linked_slice = linkedSlices ? linkedSlices : slice.formData.linked_slice;
         slice.formData.actions = getActionsMapForSlice(slice);
-        slice.formData.useAsModal = isUseAsModalActionExist(slice.formData.actions);
+        slice.formData.useAsModal = 'USE_AS_MODAL' in slice.formData.actions;
     });
 
     return updatedSlices;
