@@ -288,9 +288,7 @@ class TableModelView(DatasourceModelView, DeleteMixin, YamlExportMixin):  # noqa
         except Exception as e:
             logging.exception(e)
             return json_error_response(e)
-
         return json_success(json.dumps({'table_name': table_model.name}))
-
 
     def pre_add(self, table):
         with db.session.no_autoflush:
