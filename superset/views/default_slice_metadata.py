@@ -38,7 +38,6 @@ DEFAULT_SLICES = {
                       'metric':{
                           'expressionType':'SIMPLE',
                           'column':{
-                              'id':'46',
                               'column_name':'variable',
                               'verbose_name':None,
                               'description':None,
@@ -144,7 +143,6 @@ DEFAULT_SLICES = {
                       {
                          'expressionType':'SIMPLE',
                          'column':{
-                           'id':2,
                            'column_name':'changed_on',
                            'verbose_name':None,
                            'description':None,
@@ -240,12 +238,13 @@ def update_slice_metadata(slice):
       if key == 'metrics' and key in slice and slice[key] != None:
         for metric in slice[key]:
           for prop in DEFAULT_METRIC:
+            if prop == 'column':
+                for column_prop in DEFAULT_COLUMN:
+                  if column_prop not in metric[prop]:
+                    metric[prop][column_prop] = DEFAULT_COLUMN[column_prop]
             if prop not in metric:
               metric[prop] = DEFAULT_METRIC[prop]
-              if prop == 'column':
-                for column_prop in DEFAULT_COLUMN:
-                  if column_prop in metric[prop]:
-                    metric[prop][column_prop] = DEFAULT_COLUMN[column_prop]
+
 
       if key == 'metric' and key in slice and slice[key] != None:
          metric = slice[key]
