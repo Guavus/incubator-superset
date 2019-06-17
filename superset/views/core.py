@@ -848,7 +848,7 @@ class Superset(BaseSupersetView):
                 'cookie':cookies,
                 }
             req_session = requests.Session()
-            db_response = req_session.post(request.host_url+'databaseview/create' ,headers = headers,data = request.form)
+            db_response = req_session.post(request.host_url+'databaseview/create',headers = headers,data = request.form)
 
             new_dashboard = req_session.post(request.host_url+'dashboard/add_new',
                                              headers = headers,
@@ -861,8 +861,8 @@ class Superset(BaseSupersetView):
                     'table_name':_slice['table_name'],
                     'schema':_slice['schema']
                     }
-                table_response = req_session.post(request.host_url+'tablemodelview/create' ,headers = headers,data = request.form,params=params)
-                _slice['datasource'] =  json.loads(table_response.content)['table_name']
+               table_response = req_session.post(request.host_url+'tablemodelview/create' ,headers = headers,data = request.form,params=params)
+               _slice['datasource'] =  json.loads(table_response.content)['table_name']
 
                 _slice = update_slice_metadata(_slice)
 

@@ -51,11 +51,11 @@ DEFAULT_SLICES = {
                               'python_date_format':None,
                               'optionName':'_col_variable'
                             },
-                          'aggregate':'COUNT_DISTINCT',
+                          'aggregate':'SUM',
                           'sqlExpression':None,
                           'hasCustomLabel':False,
                           'fromFormData':False,
-                          'label':'COUNT_DISTINCT(variable)',
+                          'label':'SUM(variable)',
                           'optionName':'metric_02qsr6hpi1cw_a31d68o81b'
                       },
                       'adhoc_filters':[],
@@ -82,7 +82,6 @@ DEFAULT_SLICES = {
                     {
                       'expressionType':'SIMPLE',
                       'column':{
-                        'id':48,
                         'column_name':'intensity_anomaly',
                         'verbose_name':None,
                         'description':None,
@@ -90,7 +89,7 @@ DEFAULT_SLICES = {
                         'filterable':True,
                         'groupby':True,
                         'is_dttm':True,
-                        'type':'FLOAT',
+                        'type':'NUMBER',
                         'database_expression':None,
                         'python_date_format':None,
                         'optionName':'_col_intensity_anomaly'
@@ -204,7 +203,6 @@ DEFAULT_COLUMN = {
               'expression': '',
               'filterable': True,
               'groupby': True,
-              'id': '193',
               'is_dttm': False,
               'optionName': '_col_aggregated_metric',
               'python_date_format': None,
@@ -240,14 +238,25 @@ def update_slice_metadata(slice):
               filter[prop] = SIMPLE_ADHOC_FILTER[prop]
 
       if key == 'metrics' and key in slice and slice[key] != None:
-          for metric in slice[key]:
-              for prop in DEFAULT_METRIC:
-                if prop not in metric:
-                  metric[prop] = SIMPLE_ADHOC_FILTER[prop]
-                  if prop == 'column':
-                    for column_prop in DEFAULT_COLUMN:
-                      if column_prop in metric[prop]:
-                        metric[prop][column_prop] = DEFAULT_COLUMN[column_prop]
+        for metric in slice[key]:
+          for prop in DEFAULT_METRIC:
+            if prop not in metric:
+              metric[prop] = DEFAULT_METRIC[prop]
+              if prop == 'column':
+                for column_prop in DEFAULT_COLUMN:
+                  if column_prop in metric[prop]:
+                    metric[prop][column_prop] = DEFAULT_COLUMN[column_prop]
+
+      if key == 'metric' and key in slice and slice[key] != None:
+         metric = slice[key]
+         for prop in DEFAULT_METRIC:
+            if prop == 'column':
+                for column_prop in DEFAULT_COLUMN:
+                  if column_prop not in metric[prop]:
+                    metric[prop][column_prop] = DEFAULT_COLUMN[column_prop]
+            if prop not in metric:
+              metric[prop] = DEFAULT_METRIC[prop]
+
 
     return slice
 

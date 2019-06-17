@@ -21,7 +21,7 @@ from flask_appbuilder.security.decorators import has_access
 
 from superset import appbuilder, db
 from superset.models import core as models
-from .base import BaseSupersetView
+from .base import BaseSupersetView, json_success
 import simplejson as json
 import logging
 
@@ -54,7 +54,7 @@ class Dashboard(BaseSupersetView):
         db.session.commit()
         logging.info('new dashboard created with name = ' + request.form.get('dashboard_title'))
 
-        return self.json_success(json.dumps({
+        return json_success(json.dumps({
             'dashboard_id': new_dashboard.id,
         }))
 
