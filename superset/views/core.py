@@ -857,7 +857,7 @@ class Superset(BaseSupersetView):
             slices = json.loads(request.form.get('slices'))
             for _slice in slices:
                 params = {
-                    'database_id': json.loads(db_response.content)['database_id'],
+                    'database_id':json.loads(db_response.content)['database_id'],
                     'table_name':_slice['table_name'],
                     'schema':_slice['schema']
                     }
@@ -2039,7 +2039,6 @@ class Superset(BaseSupersetView):
 
 
         payload = []
-
         for o in qry.all():
             publish_columns = []
             property = False

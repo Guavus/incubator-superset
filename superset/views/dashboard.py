@@ -54,9 +54,8 @@ class Dashboard(BaseSupersetView):
         db.session.commit()
         logging.info('new dashboard created with name = ' + request.form.get('dashboard_title'))
 
-        return Response(
-            json.dumps({'dashboard_id': new_dashboard.id}),
-            status=200)
-
+        return self.json_success(json.dumps({
+            'dashboard_id': new_dashboard.id,
+        }))
 
 appbuilder.add_view_no_menu(Dashboard)
