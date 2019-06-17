@@ -255,7 +255,7 @@ function TableVis(element, props) {
   }
   const publishSelections = (function (type,data){
     if(tableFilter){
-      publishColumns.forEach((column, i, arr) => {
+      publishColumns.forEach((column, i, columns) => {
         if(!publishColumnsKeyValueMap[column]){
           publishColumnsKeyValueMap[column] = []
         }
@@ -264,11 +264,8 @@ function TableVis(element, props) {
         }else {
           publishColumnsKeyValueMap[column] = [...publishColumnsKeyValueMap[column],data[column]]
         }
-        let refresh = false;
-        if (i === arr.length - 1) {
-          refresh = true;
-        }
-        onAddFilter(column, publishColumnsKeyValueMap[column], false, refresh);
+
+        onAddFilter(column, publishColumnsKeyValueMap[column], false, (i === columns.length - 1));
       });
     }
   })
