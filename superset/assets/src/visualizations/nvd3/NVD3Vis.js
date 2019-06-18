@@ -151,6 +151,7 @@ const propTypes = {
   xAxisShowMinMax: PropTypes.bool,
   xIsLogScale: PropTypes.bool,
   showOverlay: PropTypes.bool,
+  tableFilter: PropTypes.bool,
   xTicksLayout: PropTypes.oneOf(['auto', 'staggered', '45°']),
   yAxisFormat: PropTypes.string,
   yAxisBounds: PropTypes.arrayOf(PropTypes.number),
@@ -251,6 +252,7 @@ function nvd3Vis(element, props) {
     yIsLogScale,
     onAddFilter = NOOP,
     showOverlay,
+    tableFilter,
   } = props;
 
   const isExplore = document.querySelector('#explorer-container') !== null;
@@ -315,15 +317,16 @@ function nvd3Vis(element, props) {
           chart = nv.models.lineChart();
         }
         chart.lines.dispatch.on('elementClick', function(e) {
-          const publishedColumns = formData.publishColumns;
+          if(tableFilter){
+            const publishedColumns = formData.publishColumns;
 
-          const xField = formData.granularitySqla;
-          const yField = findYAxisField(xField, publishedColumns);
+            const xField = formData.granularitySqla;
+            const yField = findYAxisField(xField, publishedColumns);
 
 
-          if (yField != undefined && e.point) onAddFilter(yField, e.point.y, false);
-          if (xField != undefined && e.point) onAddFilter(xField, e.point.x, false);
-
+            if (yField != undefined && e.point) onAddFilter(yField, e.point.y, false);
+            if (xField != undefined && e.point) onAddFilter(xField, e.point.x, false);
+          }
         });
         chart.xScale(d3.time.scale.utc());
         chart.interpolate(lineInterpolation);
@@ -970,7 +973,7 @@ function nvd3Vis(element, props) {
   // hide tooltips before rendering chart, if the chart is being re-rendered sometimes
   // there are left over tooltips in the dom,
   // this will clear them before rendering the chart again.
-  hideTooltips();
+  hideTooltips(true);
 
   nv.addGraph(drawGraph);
 }
