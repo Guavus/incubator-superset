@@ -268,10 +268,10 @@ function nvd3Vis(element, props) {
     return types.indexOf(vizType) >= 0;
   }
 
-  function findYAxisField(xField, publishedColumns) {
+  function findYAxisField(key, publishedColumns) {
 
     return publishedColumns.find((column) => {
-      return xField != column
+      return key == column
     });
 
   }
@@ -319,9 +319,9 @@ function nvd3Vis(element, props) {
         chart.lines.dispatch.on('elementClick', function (e) {
           if (tableFilter) {
             const publishedColumns = formData.publishColumns;
-
+            const yColumn = formData.metrics[e.seriesIndex].column.column_name
             const xField = formData.granularitySqla;
-            const yField = findYAxisField(xField, publishedColumns);
+            const yField = findYAxisField(yColumn, publishedColumns);
 
 
             if (yField != undefined && e.point) onAddFilter(yField, e.point.y, false);

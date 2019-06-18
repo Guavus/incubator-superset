@@ -1717,14 +1717,11 @@ export const controls = {
       'point in time'),
     mapStateToProps: (state, controls, actions) => {
       let props = {};
-      if (state && state.controls) {
-        if (state.controls.hasOwnProperty('table_filter') && controls.label == "Rich Tooltip") {
-          props.disabled = (state.controls.table_filter.value) ? true : false;
-          if (props.disabled && state.controls.rich_tooltip.value) {
-            props.default = false;
-            props.value = false;
-            actions.setControlValue('rich_tooltip', props.value, undefined);
-          }
+      if (state && state.controls && state.controls.hasOwnProperty('table_filter') && controls.label == t("Rich Tooltip")) {
+        props.disabled = (state.controls.table_filter.value) ? true : false;
+        if (props.disabled && state.controls.rich_tooltip.value) {
+          props.default = props.value = false;
+          actions.setControlValue('rich_tooltip', props.value, undefined);
         }
       }
       return { ...props };
