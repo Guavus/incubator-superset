@@ -322,10 +322,8 @@ function nvd3Vis(element, props) {
             const yColumn = formData.metrics[e.seriesIndex].column.column_name
             const xField = formData.granularitySqla;
             const yField = findYAxisField(yColumn, publishedColumns);
-
-
-            if (yField != undefined && e.point) onAddFilter(yField, e.point.y, false);
-            if (xField != undefined && e.point) onAddFilter(xField, e.point.x, false);
+            if (xField != undefined && e.point) onAddFilter(xField, e.point.x, false, false);
+            if (yField != undefined && e.point) onAddFilter(yField, e.point.y, false, true);
           }
         });
         chart.xScale(d3.time.scale.utc());
