@@ -271,7 +271,7 @@ function nvd3Vis(element, props) {
   function findYAxisField(xField, publishedColumns) {
 
     return publishedColumns.find((column) => {
-       return xField != column
+      return xField != column
     });
 
   }
@@ -316,8 +316,8 @@ function nvd3Vis(element, props) {
         } else {
           chart = nv.models.lineChart();
         }
-        chart.lines.dispatch.on('elementClick', function(e) {
-          if(tableFilter){
+        chart.lines.dispatch.on('elementClick', function (e) {
+          if (tableFilter) {
             const publishedColumns = formData.publishColumns;
 
             const xField = formData.granularitySqla;

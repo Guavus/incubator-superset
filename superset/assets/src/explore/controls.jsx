@@ -1714,21 +1714,21 @@ export const controls = {
     renderTrigger: true,
     default: true,
     description: t('The rich tooltip shows a list of all series for that ' +
-      'point in time'), 
+      'point in time'),
     mapStateToProps: (state, controls, actions) => {
       let props = {};
       if (state && state.controls) {
         if (state.controls.hasOwnProperty('table_filter') && controls.label == "Rich Tooltip") {
           props.disabled = (state.controls.table_filter.value) ? true : false;
-          if(props.disabled && state.controls.rich_tooltip.value){
+          if (props.disabled && state.controls.rich_tooltip.value) {
             props.default = false;
             props.value = false;
-            actions.setControlValue('rich_tooltip',props.value, undefined);
+            actions.setControlValue('rich_tooltip', props.value, undefined);
           }
         }
       }
-      return {...props};
-    },  
+      return { ...props };
+    },
   },
 
   chart_interactivity: {
