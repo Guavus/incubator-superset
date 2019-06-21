@@ -273,10 +273,10 @@ class TableModelView(DatasourceModelView, DeleteMixin, YamlExportMixin):  # noqa
     def get_table_columns(self,columns):
         table_columns = []
         for column in columns:
-            tablecolumn = TableColumn()
+            table_column = TableColumn()
             for prop in column:
-                setattr(tablecolumn, prop, column[prop])
-            table_columns.append(tablecolumn)
+                setattr(table_column, prop, column[prop])
+            table_columns.append(table_column)
         return table_columns
 
     @expose('/create', methods=['POST'])
