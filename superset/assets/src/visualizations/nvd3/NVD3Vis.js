@@ -326,7 +326,7 @@ function nvd3Vis(element, props) {
             } else {
               let key = e.series.key;
               metric = formData.metrics.find((metric) => {
-                return key.includes(metric.label) ? true : false;
+                return key.includes(metric.label);
               })
             }
             if (metric.column) {
@@ -334,7 +334,8 @@ function nvd3Vis(element, props) {
             }
             const xField = formData.granularitySqla;
             const yField = findYAxisField(yColumn, publishedColumns);
-            if (xField != undefined && e.point) onAddFilter(xField, e.point.x, false, yField ? false : true);
+            
+            if (xField != undefined && e.point) onAddFilter(xField, e.point.x, false, !yField);
             if (yField != undefined && e.point) onAddFilter(yField, e.point.y, false, true);
           }
         });
