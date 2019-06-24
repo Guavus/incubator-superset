@@ -102,16 +102,16 @@ export default class SubscriberLayer extends React.PureComponent {
     this.state.subscriptionList = this.state.isNew ? [{ columnType: '', operatorType: '', actionType: '', index: 0 }] : this.state.subscriptionList;
 
     this.handleSliceType = this.handleSliceType.bind(this);
+    this.handleColumnType = this.handleColumnType.bind(this);
+    this.handleOperatorType = this.handleOperatorType.bind(this);
     this.submitSubscription = this.submitSubscription.bind(this);
     this.deleteSubscriber = this.deleteSubscriber.bind(this);
     this.applySubscription = this.applySubscription.bind(this);
-    this.handleColumnType = this.handleColumnType.bind(this);
-    this.handleOperatorType = this.handleOperatorType.bind(this);
     this.isValidForm = this.isValidForm.bind(this);
     this.addMoreColumns = this.addMoreColumns.bind(this);
     this.getSupportedOperators = this.getSupportedOperators.bind(this);
     this.getActions = this.getActions.bind(this);
-    this.getPublisedColumns = this.getPublisedColumns.bind(this);
+    this.getPublishedColumns = this.getPublishedColumns.bind(this);
     this.getPublishedSlices = this.getPublishedSlices.bind(this);
     this.getRefactoredPublisedColumns = this.getRefactoredPublisedColumns.bind(this);
   }
@@ -141,7 +141,7 @@ export default class SubscriberLayer extends React.PureComponent {
     return this.props.sliceOptions;
   }
 
-  getPublisedColumns(sliceId) {
+  getPublishedColumns(sliceId) {
     let sliceColumns = [];
     this.props.sliceOptions.forEach(slice => {
       if (slice.value === sliceId) {
@@ -167,12 +167,13 @@ export default class SubscriberLayer extends React.PureComponent {
     const errors = [nonEmpty(sliceId), nonEmpty(name)];
     this.state.subscribe_columns ? errors.push(!this.state.subscribe_columns.length) : '';
     errors.push(!this.state.allowColumnSelection);
+    errors.push(!this.state.allowMoreColumns);
 
     return !errors.filter(x => x).length;
   }
 
   handleSliceType(sliceId) {
-    let publishedSliceColumns = this.getPublisedColumns(sliceId);
+    let publishedSliceColumns = this.getPublishedColumns(sliceId);
     publishedSliceColumns = this.getRefactoredPublisedColumns(publishedSliceColumns);
     this.setState({
       sliceId,
@@ -315,6 +316,7 @@ export default class SubscriberLayer extends React.PureComponent {
 
     const operators = this.getSupportedOperators();
     const actions = this.getActions();
+    const publishedSlices = this.state.sliceId ? this.getRefactoredPublisedColumns(this.getPublishedColumns(this.state.sliceId)) : this.state.publishedSliceColumns;
 
     return (
       <div key={index} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '885px', marginTop: '10px' }}>
@@ -326,7 +328,7 @@ export default class SubscriberLayer extends React.PureComponent {
           disabled={!allowColumnSelection}
           label="Select Column"
           name="column-source-type"
-          options={this.state.publishedSliceColumns}
+          options={publishedSlices}
           value={columnType}
           onChange={(e) => this.handleColumnType(e, index)}
         />
