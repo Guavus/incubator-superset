@@ -329,7 +329,7 @@ function nvd3Vis(element, props) {
                 return key.includes(metric.label);
               })
             }
-            if (metric.column) {
+            if (metric && metric.column) {
               yColumn = metric.column.column_name;
             }
             const xField = formData.granularitySqla;
