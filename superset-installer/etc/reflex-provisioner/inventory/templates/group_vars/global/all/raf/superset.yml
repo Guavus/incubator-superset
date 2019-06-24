@@ -70,8 +70,8 @@ superset_postgres_db_password: "{{ superset_sql_conn_creds['admin']['postgres'][
 
 superset_host_port: "8888"
 superset_docker_restart_policy: "Always"
-superset_service_port: "32443"
-superset_nginx_port: "32443"
+superset_service_port: "11443"
+superset_nginx_port: "11443"
 
 SUPERSET_NPROCESSORS: 1
 SUPERSET_SERVER_WORKER_TIMEOUT: 300 #in secs
