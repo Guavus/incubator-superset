@@ -112,8 +112,8 @@ spec:
           value: "{{ RVF_LOG_LEVEL }}"
         - name: CACHE_DEFAULT_TIMEOUT
           value: "{{ RVF_CACHE_DEFAULT_TIMEOUT }}"
-        - name: CACHE_CONFIG
-          value: "{{ RVF_CACHE_CONFIG }}"
+        - name: CACHE_TYPE
+          value: "{{ RVF_CACHE_TYPE }}"
         image: {{ superset_docker_image_name }}:{{ superset_image_tag }}
         name: superset
         ports:
