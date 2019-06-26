@@ -90,7 +90,6 @@ export default class SubscriberLayer extends React.PureComponent {
 
     this.state.subscribe_columns = this.state.isNew ? [{ col: '', op: '', actions: [], id: this.state.lastAddedRowId }] : this.state.subscribe_columns;
     this.state.addNewRow = this.isAllSubscribersValid();
-    this.state.enableRowSelection = this.isSliceValid();
 
     this.handleSliceType = this.handleSliceType.bind(this);
     this.submitSubscription = this.submitSubscription.bind(this);
@@ -151,18 +150,9 @@ export default class SubscriberLayer extends React.PureComponent {
     return publishSliceCols;
   }
 
-  isSliceValid() {
-    if (nonEmpty(this.state.sliceId) && this.props.sliceOptions && this.props.sliceOptions.length > 0) {
-      return this.props.sliceOptions.indexOf(this.state.sliceId) != -1;
-    }
-    return false;
-  }
-
   isValidForm() {
     const { sliceId, name } = this.state;
     const errors = [nonEmpty(sliceId), nonEmpty(name)];
-
-     errors.push(this.isSliceValid());
 
     if (this.state.subscribe_columns) {
       errors.push(!this.state.subscribe_columns.length)
