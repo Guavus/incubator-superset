@@ -1,11 +1,5 @@
 ---
 
-- debug:
-    msg: "{{ RVF_CACHE_DEFAULT_TIMEOUT }}"
-
-- debug:
-    msg: "{{ RVF_CACHE_TYPE }}"
-
 - name: Set superset docker registry
   set_fact:
     superset_docker_registry: '{{ docker_default_registry }}'
