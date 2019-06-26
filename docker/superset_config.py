@@ -35,6 +35,10 @@ LOG_LEVEL = boolify(get_env_variable('LOG_LEVEL'))
 SESSION_LIFETIME_SECONDS = eval(get_env_variable('SESSION_LIFETIME_SECONDS'))
 PERMANENT_SESSION_LIFETIME = timedelta(seconds=SESSION_LIFETIME_SECONDS)
 
+# Enable Simple Flask Caching
+CACHE_DEFAULT_TIMEOUT = eval(get_env_variable('RVF_CACHE_DEFAULT_TIMEOUT'))
+CACHE_CONFIG = get_env_variable('RVF_CACHE_CONFIG')
+
 # Change application name
 APP_NAME = get_env_variable('APP_NAME')
 
