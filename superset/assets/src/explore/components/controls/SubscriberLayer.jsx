@@ -256,13 +256,6 @@ export default class SubscriberLayer extends React.PureComponent {
         subscription['actions'].push('USE_AS_MODAL')
       }
 
-      subscription['linked_slice'] = [
-        {
-          publisher_id: this.state.sliceId,
-          subscribe_columns: this.state.subscribe_columns,
-        }
-      ];
-
       this.props.addSubscriberLayer(subscription);
       this.setState({ isNew: false, oldName: this.state.name });
     }
