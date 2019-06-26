@@ -34,13 +34,13 @@ const propTypes = {
   publishedSliceColumns: PropTypes.arrayOf(PropTypes.object),
   vizType: PropTypes.string,
   sliceOptions: PropTypes.arrayOf(PropTypes.object),
-  subscribeColumnId: PropTypes.number,
+  lastAddedRowId: PropTypes.number,
   error: PropTypes.string,
   addSubscriberLayer: PropTypes.func,
   removeSubscriberLayer: PropTypes.func,
   close: PropTypes.func,
-  allowMoreColumns: PropTypes.bool,
-  allowColumnSelection: PropTypes.bool,
+  addNewRow: PropTypes.bool,
+  enableRowSelection: PropTypes.bool,
   useAsModal: PropTypes.bool,
 };
 
@@ -49,9 +49,9 @@ const defaultProps = {
   overrides: {},
   subscribe_columns: [],
   publishedSliceColumns: [],
-  allowMoreColumns: false,
-  allowColumnSelection: false,
-  subscribeColumnId: 0,
+  addNewRow: false,
+  enableRowSelection: false,
+  lastAddedRowId: 0,
   useAsModal: false,
   addSubscriberLayer: () => { },
   removeSubscriberLayer: () => { },
@@ -67,9 +67,9 @@ export default class SubscriberLayer extends React.PureComponent {
       subscribe_columns,
       sliceOptions,
       publishedSliceColumns,
-      allowMoreColumns,
-      subscribeColumnId,
-      allowColumnSelection,
+      addNewRow,
+      lastAddedRowId,
+      enableRowSelection,
       useAsModal
     } = props;
 
@@ -78,9 +78,9 @@ export default class SubscriberLayer extends React.PureComponent {
       oldName: !this.props.name ? null : name,
       sliceOptions,
       sliceId,
-      allowMoreColumns,
-      subscribeColumnId,
-      allowColumnSelection,
+      addNewRow,
+      lastAddedRowId,
+      enableRowSelection,
       subscribe_columns,
       publishedSliceColumns,
       isNew: !this.props.name,
@@ -88,7 +88,9 @@ export default class SubscriberLayer extends React.PureComponent {
       useAsModal
     };
 
-    this.state.subscribe_columns = this.state.isNew ? [{ col: '', op: '', actions: [], id: this.state.subscribeColumnId }] : this.state.subscribe_columns;
+    this.state.subscribe_columns = this.state.isNew ? [{ col: '', op: '', actions: [], id: this.state.lastAddedRowId }] : this.state.subscribe_columns;
+    this.state.addNewRow = this.isAllSubscribersValid();
+    this.state.enableRowSelection = this.isSliceValid();
 
     this.handleSliceType = this.handleSliceType.bind(this);
     this.submitSubscription = this.submitSubscription.bind(this);
@@ -100,7 +102,7 @@ export default class SubscriberLayer extends React.PureComponent {
     this.getActions = this.getActions.bind(this);
     this.getPublishedColumns = this.getPublishedColumns.bind(this);
     this.getPublishedSlices = this.getPublishedSlices.bind(this);
-    this.getRefactoredPublisedColumns = this.getRefactoredPublisedColumns.bind(this);
+    this.getRefactoredPublishedColumns = this.getRefactoredPublishedColumns.bind(this);
   }
 
   getSupportedOperators() {
@@ -139,7 +141,7 @@ export default class SubscriberLayer extends React.PureComponent {
     return sliceColumns;
   }
 
-  getRefactoredPublisedColumns(pubSliceCols) {
+  getRefactoredPublishedColumns(pubSliceCols) {
     let publishSliceCols = [];
 
     pubSliceCols.forEach(element => {
@@ -149,12 +151,24 @@ export default class SubscriberLayer extends React.PureComponent {
     return publishSliceCols;
   }
 
+  isSliceValid() {
+    if (nonEmpty(this.state.sliceId) && this.props.sliceOptions && this.props.sliceOptions.length > 0) {
+      return this.props.sliceOptions.indexOf(this.state.sliceId) != -1;
+    }
+    return false;
+  }
+
   isValidForm() {
     const { sliceId, name } = this.state;
     const errors = [nonEmpty(sliceId), nonEmpty(name)];
-    this.state.subscribe_columns ? errors.push(!this.state.subscribe_columns.length) : '';
-    errors.push(!this.state.allowColumnSelection);
-    errors.push(!this.state.allowMoreColumns);
+
+     errors.push(this.isSliceValid());
+
+    if (this.state.subscribe_columns) {
+      errors.push(!this.state.subscribe_columns.length)
+    }
+    errors.push(!this.state.enableRowSelection);
+    errors.push(!this.isAllSubscribersValid());
 
     return !errors.filter(x => x).length;
   }
@@ -163,21 +177,21 @@ export default class SubscriberLayer extends React.PureComponent {
     const newData = { col: '', op: '', actions: [], id: 0 }
 
     this.setState({
-      allowColumnSelection: true,
-      allowMoreColumns: false,
+      enableRowSelection: true,
+      addNewRow: false,
       subscribe_columns: [newData]
     });
   }
 
   handleSliceType(sliceId) {
     let publishedSliceColumns = this.getPublishedColumns(sliceId);
-    publishedSliceColumns = this.getRefactoredPublisedColumns(publishedSliceColumns);
+    publishedSliceColumns = this.getRefactoredPublishedColumns(publishedSliceColumns);
 
     this.resetSubscriptionFields();
 
     this.setState({
       sliceId,
-      allowColumnSelection: true,
+      enableRowSelection: true,
       publishedSliceColumns,
     });
   }
@@ -194,19 +208,19 @@ export default class SubscriberLayer extends React.PureComponent {
 
     this.setState({
       subscribe_columns,
-      allowMoreColumns: this.isAllSubscribersValid()
+      addNewRow: this.isAllSubscribersValid()
     });
 
     this.forceUpdate();
   }
 
   addMoreColumns() {
-    this.state.subscribeColumnId += 1;
-    const newData = { col: '', op: '', actions: [], id: this.state.subscribeColumnId };
+    this.state.lastAddedRowId += 1;
+    const newData = { col: '', op: '', actions: [], id: this.state.lastAddedRowId };
 
     this.setState(prevState => ({ subscribe_columns: [...prevState.subscribe_columns, newData] }))
     this.setState({
-      allowMoreColumns: false,
+      addNewRow: false,
     })
   }
 
@@ -218,15 +232,21 @@ export default class SubscriberLayer extends React.PureComponent {
     });
 
     this.setState({
-      allowMoreColumns: this.isAllSubscribersValid(),
+      addNewRow: this.isAllSubscribersValid(),
     })
     this.forceUpdate();
   }
 
   isAllSubscribersValid() {
     let isValid = true;
+    let publishedSliceColumns;
+
+    if (this.state.sliceId) {
+      publishedSliceColumns = this.getPublishedColumns(this.state.sliceId);
+    }
 
      this.state.subscribe_columns.forEach(item => {
+      isValid = publishedSliceColumns ? publishedSliceColumns.indexOf(item['col']) >= 0 : false;
       isValid = isValid && item['col'] && item['op'] &&  item['actions'].length > 0 ? true : false;
      })
 
@@ -282,11 +302,11 @@ export default class SubscriberLayer extends React.PureComponent {
 
   renderSingleSubscription(subscriptionData) {
     const { col, op, actions, id } = subscriptionData;
-    const { allowColumnSelection } = this.state;
+    const { enableRowSelection } = this.state;
 
     const operators = this.getSupportedOperators();
     const allActions = this.getActions();
-    const publishedSlices = this.state.sliceId ? this.getRefactoredPublisedColumns(this.getPublishedColumns(this.state.sliceId)) : this.state.publishedSliceColumns;
+    const publishedSlices = this.state.sliceId ? this.getRefactoredPublishedColumns(this.getPublishedColumns(this.state.sliceId)) : this.state.publishedSliceColumns;
 
     return (
       <div key={id} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '885px', marginTop: '10px' }}>
@@ -295,7 +315,7 @@ export default class SubscriberLayer extends React.PureComponent {
           hovered
           autosize={false}
           description="Choose the Column"
-          disabled={!allowColumnSelection}
+          disabled={!enableRowSelection}
           label="Select Column"
           name="column-source-type"
           options={publishedSlices}
@@ -307,7 +327,7 @@ export default class SubscriberLayer extends React.PureComponent {
           hovered
           autosize={false}
           description="Choose the Operator"
-          disabled={!allowColumnSelection}
+          disabled={!enableRowSelection}
           label="Select Operator"
           name="operator-source-type"
           options={operators}
@@ -321,7 +341,7 @@ export default class SubscriberLayer extends React.PureComponent {
           hovered
           autosize={false}
           description="Select Actions"
-          disabled={!allowColumnSelection}
+          disabled={!enableRowSelection}
           label="Select Actions"
           name="action-source-type"
           options={allActions}
@@ -342,7 +362,7 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   render() {
-    const { isNew, sliceId, allowMoreColumns, name, useAsModal } = this.state;
+    const { isNew, sliceId, name, addNewRow, useAsModal } = this.state;
     const isValid = this.isValidForm();
 
     const publishedSlices = this.getPublishedSlices();
@@ -396,7 +416,7 @@ export default class SubscriberLayer extends React.PureComponent {
               }
               </div>
 
-              <Button title="Add subscription columns and operators" bsSize="sm" disabled={!allowMoreColumns} onClick={this.addMoreColumns} style={{ marginTop: '10px' }}>
+              <Button title="Add subscription columns and operators" bsSize="sm" disabled={!addNewRow} onClick={this.addMoreColumns} style={{ marginTop: '10px' }}>
                 {'+'}
               </Button>
 
