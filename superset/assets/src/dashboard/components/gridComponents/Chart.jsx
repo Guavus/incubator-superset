@@ -227,26 +227,28 @@ class Chart extends React.Component {
 
     return (
       <div>
-        <SliceHeader
-          innerRef={this.setHeaderRef}
-          slice={slice}
-          isExpanded={!!isExpanded}
-          isCached={isCached}
-          cachedDttm={cachedDttm}
-          updatedDttm={chartUpdateEndTime}
-          toggleExpandSlice={toggleExpandSlice}
-          forceRefresh={this.forceRefresh}
-          editMode={editMode}
-          annotationQuery={chart.annotationQuery}
-          exploreChart={this.exploreChart}
-          exportCSV={this.exportCSV}
-          canExportCSV={canExportCSV}
-          updateSliceName={updateSliceName}
-          sliceName={sliceName}
-          sliceSubHeader={sliceSubHeader}
-          supersetCanExplore={supersetCanExplore}
-          sliceCanEdit={sliceCanEdit}
-        />
+        {formData.chart_header && (
+          <SliceHeader
+            innerRef={this.setHeaderRef}
+            slice={slice}
+            isExpanded={!!isExpanded}
+            isCached={isCached}
+            cachedDttm={cachedDttm}
+            updatedDttm={chartUpdateEndTime}
+            toggleExpandSlice={toggleExpandSlice}
+            forceRefresh={this.forceRefresh}
+            editMode={editMode}
+            annotationQuery={chart.annotationQuery}
+            exploreChart={this.exploreChart}
+            exportCSV={this.exportCSV}
+            canExportCSV={canExportCSV}
+            updateSliceName={updateSliceName}
+            sliceName={sliceName}
+            sliceSubHeader={sliceSubHeader}
+            supersetCanExplore={supersetCanExplore}
+            sliceCanEdit={sliceCanEdit}
+          />
+        )}
 
         {/*
           This usage of dangerouslySetInnerHTML is safe since it is being used to render

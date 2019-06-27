@@ -1556,6 +1556,13 @@ export const controls = {
     description: t('Whether to apply filter when items are clicked'),
   },
 
+  chart_header: {
+    type: 'CheckboxControl',
+    label: t('Show Chart Header'),
+    default: true,
+    description: t('Use this flag to on/off chart header in dashboard view.'),
+  },
+
   align_pn: {
     type: 'CheckboxControl',
     label: t('Align +/-'),
