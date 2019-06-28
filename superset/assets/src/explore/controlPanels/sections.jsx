@@ -91,7 +91,7 @@ export const subscribers = {
 };
 
 export const advanceOptions = {
-  label: t('Advance Options'),
+  label: t('Advanced Options'),
   expanded: true,
   controlSetRows: [
     ['chart_header'],

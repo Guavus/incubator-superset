@@ -149,14 +149,13 @@ class Chart extends React.Component {
     return this.props.dashboardInfo.id;
   }
 
-  getChartHeight() {
+  getChartHeight(includeChartHeaderHeight = true) {
     const headerHeight = this.getHeaderHeight();
     const descriptionHeight =
       this.props.isExpanded && this.descriptionRef
         ? this.descriptionRef.offsetHeight
         : 0;
-
-    return this.state.height - headerHeight - descriptionHeight;
+    return includeChartHeaderHeight ? this.state.height - headerHeight - descriptionHeight : this.state.height - descriptionHeight;
   }
 
   getHeaderHeight() {
@@ -274,7 +273,7 @@ class Chart extends React.Component {
         >
           <ChartContainer
             width={width}
-            height={this.getChartHeight()}
+            height={this.getChartHeight(formData.chart_header)}
             addFilter={this.addFilter}
             annotationData={chart.annotationData}
             chartAlert={chart.chartAlert}

@@ -1559,8 +1559,9 @@ export const controls = {
   chart_header: {
     type: 'CheckboxControl',
     label: t('Show Chart Header'),
+    renderTrigger: false,
     default: true,
-    description: t('Use this flag to on/off chart header in dashboard view.'),
+    description: t('Toggle visibility of chart header on dashboard view.'),
   },
 
   align_pn: {
