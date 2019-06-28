@@ -90,7 +90,7 @@ export const subscribers = {
   ],
 };
 
-export const advanceOptions = {
+export const advancedOptions = {
   label: t('Advanced Options'),
   expanded: true,
   controlSetRows: [
