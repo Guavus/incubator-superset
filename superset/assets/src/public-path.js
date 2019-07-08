@@ -18,7 +18,7 @@
  */
 
 export var APPLICATION_PREFIX = ""
-const container = document.getElementById('prefix');
+const container = document.getElementById('app_prefix');
 if (container) {
     APPLICATION_PREFIX = container.value;
 }

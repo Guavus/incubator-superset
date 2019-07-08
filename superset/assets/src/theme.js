@@ -18,5 +18,6 @@
  */
 
 import { __webpack_public_path__ } from './public-path';
+__webpack_public_path__ = __webpack_public_path__;
 import '../stylesheets/react-select/select.less';
 import '../stylesheets/superset.less';
