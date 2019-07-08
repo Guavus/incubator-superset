@@ -107,11 +107,13 @@ ENABLE_PROXY_FIX = False
 # ------------------------------
 # GLOBALS FOR APP Builder
 # ------------------------------
+
+APPLICATION_PREFIX = ''
 # Uncomment to setup Your App name
 APP_NAME = 'Dashboard Builder'
 
 # Uncomment to setup an App icon
-APP_ICON = '/static/assets/images/Logo_guavusThales.svg'
+APP_ICON = 'assets/images/Logo_guavusThales.svg'
 
 # Druid query timezone
 # tz.tzutc() : Using utc timezone

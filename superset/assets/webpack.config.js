@@ -86,7 +86,7 @@ if (isDevMode) {
 
 const output = {
   path: BUILD_DIR,
-  publicPath: '/static/assets/dist/', // necessary for lazy-loaded chunks
+  publicPath: '' , // necessary for lazy-loaded chunks
 };
 
 if (isDevMode) {

@@ -20,6 +20,7 @@
 import { t } from '@superset-ui/translation';
 import { SupersetClient } from '@superset-ui/connection';
 import { addDangerToast } from '../../messageToasts/actions';
+import { APPLICATION_PREFIX } from '../../public-path';
 
 const FAVESTAR_BASE_URL = '/superset/favstar/slice';
 
@@ -93,7 +94,7 @@ export function resetControls() {
 export function fetchDatasources() {
   return function (dispatch) {
     dispatch(fetchDatasourcesStarted());
-    const url = '/superset/datasources/';
+    const url = APPLICATION_PREFIX+'/superset/datasources/';
     $.ajax({
       type: 'GET',
       url,
@@ -111,7 +112,7 @@ export function fetchDatasources() {
 export function fetchSlices() {
   return function (dispatch) {
     dispatch(fetchSlicesStarted());
-    const url = '/superset/user_slices';
+    const url = APPLICATION_PREFIX+'/superset/user_slices';
     $.ajax({
       type: 'GET',
       url,
