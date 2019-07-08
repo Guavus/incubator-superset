@@ -1317,7 +1317,7 @@ class Superset(BaseSupersetView):
         f = request.files.get('file')
         if request.method == 'POST' and f:
             dashboard_import_export.import_dashboards(db.session, f.stream)
-            return redirect(url_for('Dashboard.list'))
+            return redirect(url_for('DashboardAddView.list'))
         return self.render_template('superset/import_dashboards.html')
 
     @log_this
