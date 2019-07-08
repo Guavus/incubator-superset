@@ -18,6 +18,7 @@
  */
 import { SupersetClient } from '@superset-ui/connection';
 import { getExploreUrlAndPayload } from '../exploreUtils';
+import { APPLICATION_PREFIX } from '../../public-path';
 
 export const FETCH_DASHBOARDS_SUCCEEDED = 'FETCH_DASHBOARDS_SUCCEEDED';
 export function fetchDashboardsSucceeded(choices) {
@@ -87,7 +88,7 @@ export function sliceByIdFailed() {
 export function getSliceById(sliceId)
 {
   return (dispatch) => {
-    const url = '/superset/slice_json/'+ sliceId;
+    const url = APPLICATION_PREFIX+'/superset/slice_json/'+ sliceId;
     return $.ajax({
       type: 'GET',
       url,

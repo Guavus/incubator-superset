@@ -16,13 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { __webpack_public_path__ } from '../public-path';
-__webpack_public_path__ = __webpack_public_path__;
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('js-add-slice-container'),
-);
+export var APPLICATION_PREFIX = ""
+const container = document.getElementById('prefix');
+if (container) {
+    APPLICATION_PREFIX = container.value;
+}
+
+export var __webpack_public_path__ = APPLICATION_PREFIX + "/static/assets/dist/";
+
+export default {
+    __webpack_public_path__,
+    APPLICATION_PREFIX
+}    
