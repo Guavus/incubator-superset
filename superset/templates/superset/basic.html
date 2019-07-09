@@ -37,13 +37,13 @@
       <link rel="stylesheet" type="text/css" href="{{ url_for('static' , filename='appbuilder/css/font-awesome.min.css') }}">
 
       {% for entry in get_unloaded_chunks(css_manifest('theme'), loaded_chunks) %}
-        <link rel="stylesheet" type="text/css" href="{{  url_for('static' , filename=entry) }}" />
+        <link rel="stylesheet" type="text/css" href="{{  url_for('static' , filename='assets/dist/'+entry) }}" />
       {% endfor %}
 
       {% if entry %}
         {% set entry_files = css_manifest(entry) %}
         {% for entry in get_unloaded_chunks(entry_files, loaded_chunks) %}
-          <link rel="stylesheet" type="text/css" href="{{  url_for('static' , filename=entry) }}" />
+          <link rel="stylesheet" type="text/css" href="{{  url_for('static' , filename='assets/dist/'+entry) }}" />
         {% endfor %}
       {% endif %}
 
