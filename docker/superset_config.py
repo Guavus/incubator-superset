@@ -122,3 +122,8 @@ class CeleryConfig(object):
 
 
 CELERY_CONFIG = CeleryConfig
+
+# KnoxSSO-superset integration constants
+KNOX_SSO_ENABLED = boolify(get_env_variable('KNOX_SSO_ENABLED'))
+KNOX_PUBLIC_KEY = get_env_variable('KNOX_PUBLIC_KEY')  
+KNOX_SSO_URL = get_env_variable('KNOX_SSO_URL')
