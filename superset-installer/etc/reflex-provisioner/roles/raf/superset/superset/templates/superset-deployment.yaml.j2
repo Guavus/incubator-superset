@@ -125,11 +125,7 @@ spec:
            subPath: auth-kerberized.sh
          - name: superset-configmap-volume
            mountPath: /usr/local/bin/docker-init.sh
-           subPath: docker-init.sh  
-{% if SUPERSET_AUTH_TYPE == 'AUTH_LDAP' %}            
-         - name: superset-cert-configmap-volume
-           mountPath: {{ SUPERSET_AUTH_LDAP_TLS_CACERTDIR }}
-{% endif %}            
+           subPath: docker-init.sh          
 {% if superset_kerberos_enabled  %} 
          - name: secret-krb5-keytab-volume
            readOnly: true
@@ -155,13 +151,7 @@ spec:
         - name: superset-configmap-volume
           configMap:
             name: superset-configmap
-            defaultMode: 0755
-{% if SUPERSET_AUTH_TYPE == 'AUTH_LDAP' %}             
-        - name: superset-cert-configmap-volume
-          configMap:
-            name: superset-cert-configmap
-            defaultMode: 0755
-{% endif %}            
+            defaultMode: 0755         
         - name: superset-nginx-configmap-volume
           configMap:
             name: superset-nginx-configmap
