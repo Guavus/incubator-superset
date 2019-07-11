@@ -1,4 +1,5 @@
 import logging
+from dateutil import tz
 from datetime import timezone, datetime
 import jwt
 from cryptography.hazmat.backends import default_backend
@@ -10,7 +11,7 @@ from superset import security_manager
 from . import config
 
 def get_publickey():
-    key = config.KNOX_PUBLIC_KEY
+    key = config.KNOX_SSO_PUBLIC_KEY
     #coverting to pem cert string
     PEM_HEADER = "-----BEGIN CERTIFICATE-----\n"
     PEM_FOOTER = "\n-----END CERTIFICATE-----"
@@ -26,22 +27,22 @@ def _find_user(username, sm):
     """extracted from flask_appbuilder.security.manager.BaseSecurityManager.find_user"""
     user = sm.find_user(username)
     if not user:
-        user = security_manager.add_user(
+        user = sm.add_user(
                 username= username,
                 first_name= username,
                 last_name=username,
                 email=username + '@email.notfound',
-                role=security_manager.find_role("Admin")
+                role=sm.find_role("Admin")
             )
     return user
 
 def parse_hadoop_jwt():
-    if(config.KNOX_SSO_ENABLED):
+    if(config.IS_KNOX_SSO_ENABLED):
         logging.info("Attaching JWT handler")
-        jwt_token = request.cookies.get("hadoop-jwt", None)
+        jwt_token = request.cookies.get(config.KNOX_SSO_COOKIE_NAME, None)
         logging.debug("Token: %s"%jwt_token)
         
-        sso_login_url = config.KNOX_SSO_URL+"?originalUrl="+request.url
+        sso_login_url = config.KNOX_SSO_URL+"?"+config.KNOX_SSO_ORIGINALURL+"="+request.url
         logging.debug("SSO LOGIN URL:"+sso_login_url)  
 
         if not jwt_token:
@@ -58,8 +59,9 @@ def parse_hadoop_jwt():
                 return redirect(sso_login_url)
 
         token_expiry = int(token_contents['exp'])
-        now = int(datetime.now(tz=timezone.utc).timestamp())
-        logging.info("Token Expries in "+ str(token_expiry - now )+" seconds.")
+        now = int(datetime.now(tz=tz.tzlocal()).timestamp())
+
+        logging.info("Token Expries (token_expiry - now ) in "+ str(token_expiry - now )+" seconds. where token_expiry is "+ str(token_expiry)+" and  now is "+ str(now) )
         
         #check token_expiry 
         if ( token_expiry - now ) <= 0:
