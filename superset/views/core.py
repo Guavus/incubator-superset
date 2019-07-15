@@ -826,8 +826,8 @@ class R(BaseSupersetView):
         obj = models.Url(url=url)
         db.session.add(obj)
         db.session.commit()
-        return Response(url_for('R') + '{obj.id}'.format(obj=obj),
-            mimetype='text/plain')
+        return Response(
+            config.get("APPLICATION_PREFIX")+'/r/{obj.id}'.format(obj=obj),mimetype='text/plain')
 
 
 appbuilder.add_view_no_menu(R)
