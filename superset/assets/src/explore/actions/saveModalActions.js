@@ -85,20 +85,18 @@ export const GET_SLICE_BY_ID_FAILED = 'GET_SLICE_BY_ID_FAILED';
 export function sliceByIdFailed() {
   return { type: GET_SLICE_BY_ID_FAILED };
 }
-export function getSliceById(sliceId)
-{
+export function getSliceById(sliceId) {
   return (dispatch) => {
-    const url = APPLICATION_PREFIX+'/superset/slice_json/'+ sliceId;
-    return $.ajax({
-      type: 'GET',
-      url,
-      data: undefined,
-      success: ((data) => {
-        dispatch(sliceById(data));
-      }),
-      error: (() => {
+    dispatch(fetchSlicesStarted());
+    return SupersetClient.get({
+      endpoint: `/superset/slice_json/${sliceId}`
+    })
+      .then(({ json }) => {
+        dispatch(sliceById(json));
+      })
+      .catch(response => getClientErrorObject(response).then(() => {
         dispatch(sliceByIdFailed());
       }),
-    });
+      );
   };
 }

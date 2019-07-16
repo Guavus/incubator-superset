@@ -291,7 +291,7 @@ class Slice(Model, AuditMixinNullable, ImportMixin):
 
     @property
     def edit_url(self):
-        return '/chart/edit/{}'.format(self.id)
+        return url_for('SliceModelView.edit', pk = self.id)
 
     @property
     def slice_link(self):
