@@ -31,11 +31,10 @@
     </title>
     {% block head_meta %}{% endblock %}
     {% block head_css %}
-      <input type="hidden" id="app_prefix" name="app_prefix" value="{{ serverRoot }}">
       <link rel="icon" type="image/png" href="{{ url_for('static' , filename='assets/images/guavus.ico') }}">
       <link rel="stylesheet" type="text/css" href="{{ url_for('static' , filename='appbuilder/css/flags/flags16.css') }}" />
       <link rel="stylesheet" type="text/css" href="{{ url_for('static' , filename='appbuilder/css/font-awesome.min.css') }}">
-
+      <input type="hidden" id="app_prefix" name="app_prefix" value="{{ serverRoot }}">
       {% for entry in get_unloaded_chunks(css_manifest('theme'), loaded_chunks) %}
         <link rel="stylesheet" type="text/css" href="{{  url_for('static' , filename='assets/dist/'+entry) }}" />
       {% endfor %}

@@ -200,7 +200,7 @@ const config = {
         test: /\.png$/,
         loader: 'url-loader',
         options: {
-          limit: 10000,
+          limit: 1000000,
           name: '[name].[hash:8].[ext]',
         },
       },
