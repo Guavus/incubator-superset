@@ -350,7 +350,7 @@ class TableModelView(DatasourceModelView, DeleteMixin, YamlExportMixin):  # noqa
         resp = super(TableModelView, self).edit(pk)
         if isinstance(resp, str):
             return resp
-        return redirect(url_for('Superset.explore', datasource_type='table')+'{}/'.format(pk))
+        return redirect(url_for('Superset.explore')+'table/{}/'.format(pk))
 
     @action(
         'refresh',
