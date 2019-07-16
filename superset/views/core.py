@@ -826,8 +826,8 @@ class R(BaseSupersetView):
         obj = models.Url(url=url)
         db.session.add(obj)
         db.session.commit()
-        return Response(url_for('R') + '{obj.id}'.format(obj=obj),
-            mimetype='text/plain')
+        return Response(
+            config.get("APPLICATION_PREFIX")+'/r/{obj.id}'.format(obj=obj),mimetype='text/plain')
 
 
 appbuilder.add_view_no_menu(R)
@@ -845,9 +845,9 @@ class Superset(BaseSupersetView):
                 'cookie':cookies,
                 }
             req_session = requests.Session()
-            db_response = req_session.post(request.host_url+'databaseview/create',headers = headers,data = request.form)
+            db_response = req_session.post(request.url_root+'databaseview/create',headers = headers,data = request.form)
 
-            new_dashboard = req_session.post(request.host_url+'dashboard/add_new',
+            new_dashboard = req_session.post(request.url_root+'dashboard/add_new',
                                              headers = headers,
                                              data = request.form)
 
@@ -862,7 +862,7 @@ class Superset(BaseSupersetView):
                     'schema':_slice['schema'],
                     'columns':columns,
                     }
-                table_response = req_session.post(request.host_url+'tablemodelview/create' ,headers = headers,data = request.form,params=params)
+                table_response = req_session.post(request.url_root+'tablemodelview/create' ,headers = headers,data = request.form,params=params)
                 _slice['datasource'] =  json.loads(table_response.content)['table_name']
 
                 _slice = update_slice_metadata(_slice)
@@ -876,7 +876,7 @@ class Superset(BaseSupersetView):
                   'form_data':json.dumps(_slice),
                 }
 
-                slice_response = req_session.post(request.host_url + 'superset/explore/',
+                slice_response = req_session.post(request.url_root + 'superset/explore/',
                                                   headers = headers,
                                                   data = request.form,
                                                   params = slice_param_data)

@@ -18,6 +18,7 @@
  */
 import { SupersetClient } from '@superset-ui/connection';
 import { getExploreUrlAndPayload } from '../exploreUtils';
+import { APPLICATION_PREFIX } from '../../public-path';
 
 export const FETCH_DASHBOARDS_SUCCEEDED = 'FETCH_DASHBOARDS_SUCCEEDED';
 export function fetchDashboardsSucceeded(choices) {
