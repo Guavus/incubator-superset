@@ -19,43 +19,17 @@
     <rule dir="IN" name="SUPERSETUI/rvf2/inbound/root" pattern="*://*:*/**/rvf2/">
         <rewrite template="{$serviceUrl[SUPERSETUI]}/"/>
     </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/back" pattern="*://*:*/**/rvf2/back">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/back"/>
-    </rule>
-   <rule dir="IN" name="SUPERSETUI/rvf2/inbound/path" flow="OR">
+    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/path" flow="OR">
         <match pattern="*://*:*/**/rvf2/{**}/{*}/">
-              <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}/{*}/"/>
+            <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}/{*}/"/>
         </match>
         <match pattern="*://*:*/**/rvf2/{*}/">
-              <rewrite template="{$serviceUrl[SUPERSETUI]}/{*}/"/>
+            <rewrite template="{$serviceUrl[SUPERSETUI]}/{*}/"/>
         </match>
     </rule>
     <rule dir="IN" name="SUPERSETUI/rvf2/inbound/path-noslash" pattern="*://*:*/**/rvf2/{**}/">
         <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}"/>
     </rule>
-   <!-- <rule dir="IN" name="SUPERSETUI/rvf2/inbound/path" pattern="*://*:*/**/rvf2/{**}/{**}/">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}/"/>
-    </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/path" pattern="*://*:*/**/rvf2/{**}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}"/>
-    </rule> 
--->
-    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query2" pattern="*://*:*/**/rvf2/{**}?{**}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}?{**}"/>
-    </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query" pattern="*://*:*/**/rvf2/{**}?{**}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}/?{**}"/>
-    </rule>
-
-    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query-slash" pattern="*://*:*/**/rvf2/{**}/?{**}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}/?{**}"/>
-    </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query-noslash" pattern="*://*:*/**/rvf2/{**}/?{**}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}?{**}"/>
-    </rule>
-    <!--<rule dir="IN" name="SUPERSETUI/rvf2/inbound/edit" pattern="*://*:*/**/rvf2/{**}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}"/>
-    </rule>-->
     <rule dir="IN" name="SUPERSETUI/rvf2/inbound/edit" flow="OR">
       <match pattern="*://*:*/**/rvf2/tablecolumninlineview/add/?_flt_0_table={*}">
         <rewrite template="{$serviceUrl[SUPERSETUI]}/tablecolumninlineview/add/?_flt_0_table={*}"/>
@@ -67,42 +41,38 @@
         <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}"/>
       </match>
    </rule>
-    
- <!--   <rule dir="OUT" name="SUPERSETUI/rvf2/outbound/basehref" pattern = "/rvf2/{**}?{**}">
-        <rewrite template="{$frontend[path]}/rvf2/{**}?{**}"/>
+    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query" pattern="*://*:*/**/rvf2/{**}?{**}">
+        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}/?{**}"/>
     </rule>
- 
-    <rule dir="OUT" name="SUPERSETUI/rvf2/outbound/basehref" pattern = "/rvf2/{**}">
-        <rewrite template="{$frontend[path]}/rvf2/{**}"/>
-    </rule> -->
-    
+    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query-slash" pattern="*://*:*/**/rvf2/{**}/?{**}">
+        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}/?{**}"/>
+    </rule>
+    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query2" pattern="*://*:*/**/rvf2/{**}?{**}">
+        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}?{**}"/>
+    </rule>
+    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query-noslash" pattern="*://*:*/**/rvf2/{**}/?{**}">
+        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}?{**}"/>
+    </rule>
+    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/back" pattern="*://*:*/**/rvf2/back">
+        <rewrite template="{$serviceUrl[SUPERSETUI]}/back"/>
+    </rule>
     <filter name="SUPERSETUI/rvf2/outbound/headers">
      <content type="application/x-http-headers">
       <apply path="Location" rule="SUPERSETUI/rvf2/outbound/headers/location"/>
      </content>
     </filter>
-
-    <filter name="SUPERSETUI/rvf2/outbound/headers-query">
-     <content type="application/x-http-headers">
-      <apply path="Location" rule="SUPERSETUI/rvf2/outbound/headers/location-query"/>
-     </content>
-    </filter>
-    <rule dir="OUT" name="SUPERSETUI/rvf2/outbound/headers/location-query" pattern="*://*:*/*/*/{path=**}/export_dashboards_form?{**}">
-        <rewrite template="{$frontend[path]}/{path}/export_dashboards_form?{**}"/>
-    </rule>
-
-   <rule dir="OUT" name="SUPERSETUI/rvf2/outbound/headers/location" flow="OR">
+    <rule dir="OUT" name="SUPERSETUI/rvf2/outbound/headers/location" flow="OR">
         <match pattern="*://*:*/*/*/{path=**}/export_dashboards_form?{**}">
-                <rewrite template="{$frontend[path]}/{path}/export_dashboards_form?{**}"/>
+            <rewrite template="{$frontend[path]}/{path}/export_dashboards_form?{**}"/>
         </match>
         <match pattern="*://*:*/*/*/{path=**}/?{**}">
-                <rewrite template="{$frontend[path]}/{path}/?{**}"/>
+            <rewrite template="{$frontend[path]}/{path}/?{**}"/>
         </match>
         <match pattern="*://*:*/*/*/{**}/welcome">
-		<rewrite template="{$frontend[path]}/{**}/welcome"/>        
-	</match>
+		    <rewrite template="{$frontend[path]}/{**}/welcome"/>        
+	    </match>
         <match pattern="*://*:*/*/*/{**}">
-                <rewrite template="{$frontend[path]}/{**}/"/>
+            <rewrite template="{$frontend[path]}/{**}/"/>
         </match>
     </rule>
 </rules>
