@@ -9,6 +9,7 @@ from flask import g, redirect, request
 from flask_login import login_user
 from superset import security_manager
 from . import config
+from urllib import parse
 
 def get_publickey():
     key = config.KNOX_SSO_PUBLIC_KEY
@@ -39,10 +40,16 @@ def _find_user(username, sm):
 def parse_hadoop_jwt():
     if config.IS_KNOX_SSO_ENABLED is True:
         logging.info("Attaching JWT handler")
+        
         jwt_token = request.cookies.get(config.KNOX_SSO_COOKIE_NAME, None)
         logging.debug("Token: %s"%jwt_token)
         
-        sso_login_url = config.KNOX_SSO_URL+"?"+config.KNOX_SSO_ORIGINALURL+"="+request.url
+        #update scheme in url
+        uri = parse.urlparse(request.url)
+        new_uri = uri._replace(scheme=request.environ['HTTP_X_FORWARDED_PROTO'])
+        login_url = parse.urlunparse(new_uri)
+        
+        sso_login_url = config.KNOX_SSO_URL+"?"+config.KNOX_SSO_ORIGINALURL+"="+login_url
         logging.debug("SSO LOGIN URL:"+sso_login_url)  
 
         if not jwt_token:
