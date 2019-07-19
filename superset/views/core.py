@@ -2404,7 +2404,7 @@ class Superset(BaseSupersetView):
             SqlMetric(metric_name='count', expression='count(*)'),
         ]
         db.session.commit()
-        return self.json_response(json.dumps({
+        return json_success(json.dumps({
             'table_id': table.id,
         }))
 
