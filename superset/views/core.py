@@ -1089,15 +1089,22 @@ class Superset(BaseSupersetView):
         request_args_data = request.args.get('form_data')
         # Supporting POST
         if post_data:
-            form_data.update(json.loads(post_data))
+            try:
+                form_data.update(json.loads(post_data))
+            except:
+                decoded_post_data = parse.unquote_plus(post_data)
+                logging.debug('Superset.get_form_data(). Decoded post formdata {0}'.format(decoded_post_data))
+                form_data.update(json.loads(decoded_post_data))
+
+
         # request params can overwrite post body
         if request_args_data:
-          try:
-            form_data.update(json.loads(request_args_data))
-          except:
-            decoded_request_args_data = parse.unquote_plus(request_args_data)
-            logging.debug('Superset.get_form_data(). Decoded formdata {0}'.format(decoded_request_args_data))
-            form_data.update(json.loads(decoded_request_args_data))
+            try:
+                form_data.update(json.loads(request_args_data))
+            except:
+                decoded_request_args_data = parse.unquote_plus(request_args_data)
+                logging.debug('Superset.get_form_data(). Decoded formdata {0}'.format(decoded_request_args_data))
+                form_data.update(json.loads(decoded_request_args_data))
 
 
         url_id = request.args.get('r')
