@@ -37,7 +37,7 @@ def _find_user(username, sm):
     return user
 
 def parse_hadoop_jwt():
-    if(config.IS_KNOX_SSO_ENABLED):
+    if config.IS_KNOX_SSO_ENABLED is True:
         logging.info("Attaching JWT handler")
         jwt_token = request.cookies.get(config.KNOX_SSO_COOKIE_NAME, None)
         logging.debug("Token: %s"%jwt_token)
