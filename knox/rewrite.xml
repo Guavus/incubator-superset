@@ -27,10 +27,7 @@
             <rewrite template="{$serviceUrl[SUPERSETUI]}/{*}/"/>
         </match>
     </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/path-noslash" pattern="*://*:*/**/rvf2/{**}/">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}"/>
-    </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/edit" flow="OR">
+    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/path-noslash" flow="OR">
       <match pattern="*://*:*/**/rvf2/tablecolumninlineview/add/?_flt_0_table={*}">
         <rewrite template="{$serviceUrl[SUPERSETUI]}/tablecolumninlineview/add/?_flt_0_table={*}"/>
       </match>
@@ -40,11 +37,8 @@
       <match pattern="*://*:*/**/rvf2/{**}">
         <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}"/>
       </match>
-   </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query" pattern="*://*:*/**/rvf2/{**}?{**}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}/?{**}"/>
     </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query-slash" pattern="*://*:*/**/rvf2/{**}/?{**}">
+    <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query" pattern="*://*:*/**/rvf2/{**}/?{**}">
         <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}/?{**}"/>
     </rule>
     <rule dir="IN" name="SUPERSETUI/rvf2/inbound/query2" pattern="*://*:*/**/rvf2/{**}?{**}">
