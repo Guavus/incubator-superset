@@ -42,7 +42,6 @@ const propTypes = {
   exploreChart: PropTypes.func,
   exportCSV: PropTypes.func,
   canExportCSV: PropTypes.bool,
-  restActions: PropTypes.array,
 };
 
 const defaultProps = {
@@ -57,7 +56,6 @@ const defaultProps = {
   supersetCanExplore: false,
   canExportCSV: true,
   sliceCanEdit: false,
-  restActions: [{url: "http://www.google.com", label: "Google"}, {url: "http://www.facebook.com", label: "FB"}]
 };
 
 const VerticalDotsTrigger = () => (
@@ -79,7 +77,10 @@ class SliceHeaderControls extends React.PureComponent {
       this,
       this.props.slice.slice_id,
     );
+    this.restActions = this.props.slice.form_data.rest_actions || [];
+
     this.renderRestActions = this.renderRestActions.bind(this);
+    this.executeRestAction = this.executeRestAction.bind(this);
     this.state = {
       showControls: false,
     };
@@ -129,10 +130,14 @@ class SliceHeaderControls extends React.PureComponent {
     return this.props.canExportCSV ? "export-csv-enabled" : "export-csv-disabled";
   }
 
+  executeRestAction(action) {
+    window.open(action.url, action.target || "_blank");
+  }
+
   renderRestActions() {
     const actionItems = []
-    for (const restAction of  this.props.restActions) {
-      actionItems.push(<MenuItem href={restAction.url} target="_blank">
+    for (const restAction of  this.restActions) {
+      actionItems.push(<MenuItem  eventKey={restAction} onSelect={this.executeRestAction}>
           {restAction.label}
       </MenuItem>);
     }
