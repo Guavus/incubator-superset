@@ -144,3 +144,9 @@ if not KNOX_SSO_COOKIE_NAME:
 KNOX_SSO_ORIGINALURL  = get_env_variable('KNOX_SSO_ORIGINALURL')
 if not KNOX_SSO_ORIGINALURL:
     KNOX_SSO_ORIGINALURL = 'originalUrl'
+ 
+# expose deployement var for WTF_CSRF_EXEMPT_LIST
+WTF_CSRF_EXEMPT_STR = get_env_variable('WTF_CSRF_EXEMPT_STR').strip()
+if WTF_CSRF_EXEMPT_STR:
+    WTF_CSRF_EXEMPT_LIST = WTF_CSRF_EXEMPT_STR.split(",")
+   
