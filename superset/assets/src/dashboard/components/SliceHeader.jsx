@@ -34,6 +34,7 @@ const propTypes = {
   updateSliceName: PropTypes.func,
   toggleExpandSlice: PropTypes.func,
   forceRefresh: PropTypes.func,
+  executeRestAction: PropTypes.func,
   exploreChart: PropTypes.func,
   exportCSV: PropTypes.func,
   canExportCSV: PropTypes.bool,
@@ -81,6 +82,7 @@ class SliceHeader extends React.PureComponent {
       updatedDttm,
       toggleExpandSlice,
       forceRefresh,
+      executeRestAction,
       exploreChart,
       exportCSV,
       canExportCSV,
@@ -139,6 +141,7 @@ class SliceHeader extends React.PureComponent {
               updatedDttm={updatedDttm}
               toggleExpandSlice={toggleExpandSlice}
               forceRefresh={forceRefresh}
+              executeRestAction={executeRestAction}
               exploreChart={exploreChart}
               exportCSV={exportCSV}
               canExportCSV={canExportCSV}

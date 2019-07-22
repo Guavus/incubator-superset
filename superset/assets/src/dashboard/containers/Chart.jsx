@@ -23,7 +23,7 @@ import {
   changeFilter as addFilter,
   toggleExpandSlice,
 } from '../actions/dashboardState';
-import { refreshChart } from '../../chart/chartAction';
+import { refreshChart, executeRestAction } from '../../chart/chartAction';
 import * as  saveModalActions from '../../explore/actions/saveModalActions';
 import getFormDataWithExtraFilters from '../util/charts/getFormDataWithExtraFilters';
 import { updateComponents } from '../actions/dashboardLayout';
@@ -80,6 +80,7 @@ function mapDispatchToProps(dispatch) {
     toggleExpandSlice,
     addFilter,
     refreshChart,
+    executeRestAction
   }, saveModalActions );
 
   return bindActionCreators(

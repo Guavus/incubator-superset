@@ -39,12 +39,14 @@ const propTypes = {
   sliceCanEdit: PropTypes.bool,
   toggleExpandSlice: PropTypes.func,
   forceRefresh: PropTypes.func,
+  executeRestAction: PropTypes.func,
   exploreChart: PropTypes.func,
   exportCSV: PropTypes.func,
   canExportCSV: PropTypes.bool,
 };
 
 const defaultProps = {
+  executeRestAction: () => ({}),
   forceRefresh: () => ({}),
   toggleExpandSlice: () => ({}),
   exploreChart: () => ({}),
@@ -80,7 +82,7 @@ class SliceHeaderControls extends React.PureComponent {
     this.restActions = this.props.slice.form_data.rest_actions || [];
 
     this.renderRestActions = this.renderRestActions.bind(this);
-    this.executeRestAction = this.executeRestAction.bind(this);
+    this.executeRestAction = this.props.executeRestAction.bind(this);
     this.state = {
       showControls: false,
     };

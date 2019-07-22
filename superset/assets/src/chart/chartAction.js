@@ -28,6 +28,7 @@ import { Logger, LOG_ACTIONS_LOAD_CHART } from '../logger';
 import getClientErrorObject from '../utils/getClientErrorObject';
 import { allowCrossDomain } from '../utils/hostNamesConfig';
 import { APPLICATION_PREFIX } from '../public-path';
+import { func } from 'prop-types';
 
 export const CHART_UPDATE_STARTED = 'CHART_UPDATE_STARTED';
 export function chartUpdateStarted(queryController, latestQueryFormData, key) {
@@ -133,7 +134,7 @@ export function runAnnotationQuery(annotation, timeout = 60, formData = null, ke
           dispatch(annotationQueryFailed(annotation, err, sliceKey));
         }
       }),
-    );
+      );
   };
 }
 
@@ -268,5 +269,53 @@ export function refreshChart(chart, force, timeout) {
       return;
     }
     dispatch(runQuery(chart.latestQueryFormData, force, timeout, chart.id));
+  };
+}
+
+export function runRestQuery(action) {
+  return (dispatch) => {
+    if ("get" === (action.method).toLowerCase()) {
+      window.open(action.url, action.target || "_blank");
+      return Promise.resolve(true);
+    }
+    else {
+      var request = new XMLHttpRequest();
+      var xhrPromise = new Promise(function (resolve, reject) {
+        request.onreadystatechange = function () {
+
+          // Only run if the request is complete
+          if (request.readyState !== 4) return;
+
+          // Process the response
+          if (request.status >= 200 && request.status < 300) {
+            // If successful
+            resolve(request);
+          } else {
+            // If failed
+            reject({
+              status: request.status,
+              statusText: request.statusText
+            });
+          }
+
+        };
+        xhr.open('POST', action.url);
+        xhr.withCredentials = true;
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Authorization', 'Basic YXJwaXQuYWdhcndhbEBndWF2dXMuY29tOnZPekFnRWJ3RERRRWhxYjJpZGxlNzNGRg==');
+        xhr.send(JSON.stringify(action.data));
+      }).then((response) => {
+        console.log(response)
+      }).catch((error) => {
+        console.log(error)
+      })
+      return xhrPromise;
+    }
+  }
+}
+
+export function executeRestAction(restAction) {
+  return (dispatch) => {
+    dispatch(runRestQuery(restAction));
   };
 }

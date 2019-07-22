@@ -41,6 +41,7 @@ const propTypes = {
   timeout: PropTypes.number.isRequired,
   filters: PropTypes.object.isRequired,
   refreshChart: PropTypes.func.isRequired,
+  executeRestAction: PropTypes.func.isRequired,
   toggleExpandSlice: PropTypes.func.isRequired,
   addFilter: PropTypes.func.isRequired,
   editMode: PropTypes.bool.isRequired,
@@ -69,6 +70,7 @@ class Chart extends React.Component {
     this.exploreChart = this.exploreChart.bind(this);
     this.exportCSV = this.exportCSV.bind(this);
     this.forceRefresh = this.forceRefresh.bind(this);
+    this.executeRestAction = this.props.executeRestAction.bind(this);
     this.resize = this.resize.bind(this);
     this.setDescriptionRef = this.setDescriptionRef.bind(this);
     this.setHeaderRef = this.setHeaderRef.bind(this);
@@ -236,6 +238,7 @@ class Chart extends React.Component {
             updatedDttm={chartUpdateEndTime}
             toggleExpandSlice={toggleExpandSlice}
             forceRefresh={this.forceRefresh}
+            executeRestAction={this.executeRestAction}
             editMode={editMode}
             annotationQuery={chart.annotationQuery}
             exploreChart={this.exploreChart}
