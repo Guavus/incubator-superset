@@ -46,7 +46,10 @@ def parse_hadoop_jwt():
         
         #update scheme in url
         uri = parse.urlparse(request.url)
-        new_uri = uri._replace(scheme=request.environ['HTTP_X_FORWARDED_PROTO'])
+        new_uri = uri
+        if 'HTTP_X_FORWARDED_PROTO' in request.environ:
+            new_uri = uri._replace(scheme=request.environ['HTTP_X_FORWARDED_PROTO'])
+        
         login_url = parse.urlunparse(new_uri)
         
         sso_login_url = config.KNOX_SSO_URL+"?"+config.KNOX_SSO_ORIGINALURL+"="+login_url
