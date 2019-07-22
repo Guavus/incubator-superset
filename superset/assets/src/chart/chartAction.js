@@ -299,11 +299,14 @@ export function runRestQuery(action) {
           }
 
         };
-        xhr.open('POST', action.url);
-        xhr.withCredentials = true;
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('Authorization', 'Basic YXJwaXQuYWdhcndhbEBndWF2dXMuY29tOnZPekFnRWJ3RERRRWhxYjJpZGxlNzNGRg==');
-        xhr.send(JSON.stringify(action.data));
+        request.open('POST', action.url);
+        request.withCredentials = true;
+        for (var key in action.headers) {
+          request.setRequestHeader(key, action.headers[key])
+        }
+        //xhr.setRequestHeader ('Content-Type', 'application/json');
+        //xhr.setRequestHeader('Authorization', 'Basic YXJwaXQuYWdhcndhbEBndWF2dXMuY29tOnZPekFnRWJ3RERRRWhxYjJpZGxlNzNGRg==');
+        request.send(JSON.stringify(action.data));
       }).then((response) => {
         console.log(response)
       }).catch((error) => {
