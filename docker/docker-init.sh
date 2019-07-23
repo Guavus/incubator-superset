@@ -10,10 +10,10 @@ set -ex
 
 # To start a development web server, use the -d switch
  
-  gunicorn --bind  0.0.0.0:$SUPERSET_CONTAINER_PORT \
-      --workers $((2 * $SUPERSET_NPROCESSORS + 1)) \
+  gunicorn --bind  0.0.0.0:$CONTAINER_PORT \
+      --workers $((2 * $GUNICORN_PROCESSORS + 1)) \
       -k gevent \
-      --timeout $SUPERSET_SERVER_WORKER_TIMEOUT \
+      --timeout $GUNICORN_WORKER_TIMEOUT \
       --limit-request-line 0 \
       --limit-request-field_size 0 \
       superset:app

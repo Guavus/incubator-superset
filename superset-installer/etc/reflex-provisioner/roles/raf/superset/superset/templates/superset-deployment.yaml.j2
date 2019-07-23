@@ -114,6 +114,14 @@ spec:
           value: "{{ RVF_CACHE_DEFAULT_TIMEOUT }}"
         - name: CACHE_TYPE
           value: "{{ RVF_CACHE_TYPE }}"
+        - name: CONTAINER_PORT
+          value: "{{ SUPERSET_CONTAINER_PORT }}"
+        - name: GUNICORN_PROCESSORS
+          value: "{{ SUPERSET_NPROCESSORS }}
+        - name: GUNICORN_WORKER_TIMEOUT
+          value: "{{ SUPERSET_SERVER_WORKER_TIMEOUT }}"
+        - name: HIVE_KEYTAB_NAME
+          value: "{{ superset_hive_keytab_name }}"
         image: {{ superset_docker_image_name }}:{{ superset_image_tag }}
         name: superset
         ports:
