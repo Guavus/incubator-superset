@@ -38,6 +38,8 @@ def _find_user(username, sm):
     return user
 
 def parse_hadoop_jwt():
+    logging.debug("----------------Before Request Headers %s", request.headers)
+    logging.debug("----------------Before request data: %s", request.get_data())
     if config.IS_KNOX_SSO_ENABLED is True:
         logging.info("Attaching JWT handler")
         

@@ -95,7 +95,7 @@ def add_slice_to_dashboard(request,args, datasource_type=None, datasource_id=Non
 
 def add_to_dashboard(request):
     # create database  connection
-    logging.info(request.form)
+    logging.debug("----------------add_to_dashboard request data: %s", request.form)
     database_name = request.form.get('database_name')
     sqlalchemy_uri = request.form.get('sqlalchemy_uri')
     extra = request.form.get('extra')
