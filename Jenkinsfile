@@ -91,14 +91,6 @@ pipeline {
       }
     }
 
-    stage("Push rpm images in artifactory"){
-      steps{
-        script{
-          // rpm_push( env.buildType, 'dist/installer', 'ggn-dev-rpms/raf' )
-        }
-      }
-    }
-
     stage("Deploy the particular plugin") {
       when {
         expression {
