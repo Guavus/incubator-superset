@@ -120,7 +120,7 @@ setup(
         'parsedatetime==2.0.0',
         'pathlib2==2.3.0',
         'polyline==1.3.2',
-        'psycopg2-binary==2.7.5'
+        'psycopg2-binary==2.7.5',
         'py==1.7.0',
         'pycparser==2.19',
         'pycrypto==2.6.1',
