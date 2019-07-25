@@ -150,5 +150,5 @@ WTF_CSRF_EXEMPT_STR = get_env_variable('WTF_CSRF_EXEMPT_STR').strip()
 if WTF_CSRF_EXEMPT_STR:
     WTF_CSRF_EXEMPT_LIST = WTF_CSRF_EXEMPT_STR.split(",")
 
-ENABLE_CHUNK_ENCODING =  get_env_variable('ENABLE_CHUNK_ENCODING',True)  
+ENABLE_CHUNK_ENCODING =  boolify(get_env_variable('ENABLE_CHUNK_ENCODING',"True"))  
    
