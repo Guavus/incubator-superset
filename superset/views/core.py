@@ -814,6 +814,10 @@ appbuilder.add_view_no_menu(R)
 class Superset(BaseSupersetView):
     """The base views for Superset!"""
 
+    @expose('/rest_actions', methods=['POST'])
+    def restActions(self):
+        print(request)
+
     @expose('/add_to_dashboard', methods=['POST'])
     def addtodashboard(self):
         try:
