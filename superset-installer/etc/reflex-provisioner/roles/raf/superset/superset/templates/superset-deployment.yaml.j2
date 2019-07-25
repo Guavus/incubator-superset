@@ -127,6 +127,7 @@ spec:
         ports:
         - containerPort: {{ SUPERSET_CONTAINER_PORT }}
         resources: {}     
+        volumeMounts:
 {% if superset_kerberos_enabled  %} 
          - name: secret-krb5-keytab-volume
            readOnly: true
