@@ -188,7 +188,7 @@ export function runRestQuery(action) {
         }
       }
 
-      executeQuery(action.url, 60,"arpit", action.data, actions, loggers, dispatch)
+      executeQuery('/superset/rest_actions', 60,"arpit", {action: action}, actions, loggers, dispatch, true)
     }
   }
 }
@@ -249,7 +249,7 @@ export function runQuery(formData, force = false, timeout = 60, key) {
   };
 }
 
-export function executeQuery(url, timeout = 60, key, payload, actions, loggers,dispatch) {
+export function executeQuery(url, timeout = 60, key, payload, actions, loggers,dispatch, isEndpoint = false) {
 
     const {requestStarted, requestSucceeded, requestTimeout, requestStopped, requestFailed} = actions || {};
     const {success, failure} = loggers || {};
@@ -265,6 +265,13 @@ export function executeQuery(url, timeout = 60, key, payload, actions, loggers,d
       signal,
       timeout: timeout * 1000,
     };
+    if(isEndpoint) {
+      querySettings = {
+        ...querySettings,
+        endpoint: url,
+        url: undefined
+      }
+    }
     //if (allowCrossDomain) {
       querySettings = {
         ...querySettings,

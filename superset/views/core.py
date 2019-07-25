@@ -816,7 +816,13 @@ class Superset(BaseSupersetView):
 
     @expose('/rest_actions', methods=['POST'])
     def restActions(self):
-        print(request)
+        action = json.loads(request.form.get('action'))
+        url = action['url']
+        values = action['data']
+        headers = action['headers']
+        resposne = requests.post(url, json=values, headers=headers)
+        return json_success(resposne.text, resposne.status_code)
+
 
     @expose('/add_to_dashboard', methods=['POST'])
     def addtodashboard(self):
