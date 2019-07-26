@@ -70,7 +70,7 @@ class Chart extends React.Component {
     this.exploreChart = this.exploreChart.bind(this);
     this.exportCSV = this.exportCSV.bind(this);
     this.forceRefresh = this.forceRefresh.bind(this);
-    this.executeRestAction = this.props.executeRestAction.bind(this);
+    this.executeRestAction = this.executeRestAction.bind(this);
     this.resize = this.resize.bind(this);
     this.setDescriptionRef = this.setDescriptionRef.bind(this);
     this.setHeaderRef = this.setHeaderRef.bind(this);
@@ -193,6 +193,10 @@ class Chart extends React.Component {
     return this.props.refreshChart(this.props.chart, true, this.props.timeout);
   }
 
+  executeRestAction(action) {
+    return this.props.executeRestAction(this.props.chart, action, this.props.timeout)
+  }
+
   render() {
     const {
       id,
@@ -241,6 +245,7 @@ class Chart extends React.Component {
             executeRestAction={this.executeRestAction}
             editMode={editMode}
             annotationQuery={chart.annotationQuery}
+            currentRestAction={chart.restAction}
             exploreChart={this.exploreChart}
             exportCSV={this.exportCSV}
             canExportCSV={canExportCSV}

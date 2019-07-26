@@ -84,6 +84,30 @@ export const ANNOTATION_QUERY_FAILED = 'ANNOTATION_QUERY_FAILED';
 export function annotationQueryFailed(annotation, queryResponse, key) {
   return { type: ANNOTATION_QUERY_FAILED, annotation, queryResponse, key };
 }
+export const REST_ACTION_SUCCESS = 'REST_ACTION_SUCCESS';
+export function restActionSuccess(queryResponse, key) {
+  return { type: REST_ACTION_SUCCESS, queryResponse, key };
+}
+
+export const REST_ACTION_STARTED = 'REST_ACTION_STARTED';
+export function restActionStarted(queryController,restAction, key) {
+  return { type: REST_ACTION_STARTED, restAction, queryController, key };
+}
+
+export const REST_ACTION_FAILED = 'REST_ACTION__FAILED';
+export function restActionFailed(queryResponse, key) {
+  return { type: REST_ACTION_FAILED, queryResponse, key };
+}
+
+export const REST_ACTION_TIMEOUT = 'REST_ACTION_TIMEOUT';
+export function restActionTimeout(queryResponse,timeout ,key) {
+  return { type: REST_ACTION_TIMEOUT, queryResponse, key };
+}
+
+export const REST_ACTION_STOPPED = 'REST_ACTION_STOPPED';
+export function restActionStopped(key) {
+  return { type: REST_ACTION_STOPPED, key };
+}
 
 export function runAnnotationQuery(annotation, timeout = 60, formData = null, key) {
   return function (dispatch, getState) {
@@ -166,7 +190,7 @@ export function addChart(chart, key) {
   return { type: ADD_CHART, chart, key };
 }
 export const RUN_REST_QUERY = 'RUN_REST_QUERY';
-export function runRestQuery(action) {
+export function runRestQuery(action,timeout = 60, key) {
   return (dispatch) => {
     if ("get" === (action.method).toLowerCase()) {
       window.open(action.url, action.target || "_blank");
@@ -175,11 +199,11 @@ export function runRestQuery(action) {
     else {
 
       const actions = {
-        requestStarted: chartUpdateStarted,
-        requestSucceeded: chartUpdateSucceeded,
-        requestTimeout: chartUpdateTimeout,
-        requestStopped: chartUpdateStopped,
-        requestFailed: chartUpdateFailed,
+        requestStarted: restActionStarted,
+        requestSucceeded: restActionSuccess,
+        requestTimeout: restActionTimeout,
+        requestStopped: restActionStopped,
+        requestFailed: restActionFailed,
       };
       const loggers = {
         success: (json, starttime, duration) => { 
@@ -188,7 +212,7 @@ export function runRestQuery(action) {
         }
       }
 
-      executeQuery('/superset/rest_actions', 60,"arpit", {action: action}, actions, loggers, dispatch, true)
+      executeQuery('/superset/rest_actions', timeout, key, {action: action}, actions, loggers, dispatch, true)
     }
   }
 }
@@ -331,8 +355,9 @@ export function refreshChart(chart, force, timeout) {
   };
 }
 
-export function executeRestAction(restAction) {
+export function executeRestAction(chart, restAction, timeout) {
   return (dispatch) => {
-    dispatch(runRestQuery(restAction));
+    console.log(chart)
+    dispatch(runRestQuery(restAction,timeout, chart.id));
   };
 }
