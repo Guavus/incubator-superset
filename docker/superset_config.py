@@ -46,7 +46,7 @@ def get_cache_config():
 APPLICATION_PREFIX = get_env_variable('APPLICATION_PREFIX')
 
 # WalkMe feature enabled/disbaled
-WALKME_ENABLED = get_env_variable('WALKME_ENABLED')
+WALKME_ENABLED = boolify(get_env_variable('WALKME_ENABLED'))
 
 # Help configuration
 HELP_ENABLED = boolify(get_env_variable('HELP_ENABLED'))
