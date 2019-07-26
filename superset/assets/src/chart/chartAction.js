@@ -358,12 +358,12 @@ export function refreshChart(chart, force, timeout) {
   };
 }
 
-export function executeRestAction(chart, restAction, timeout) {
+export function executeRestAction(payload, restAction, timeout) {
   return (dispatch) => {
-    console.log(chart)
+    const {chart} = payload
     restAction = {
       ...restAction,
-      data: createPostPayload(restAction.data)
+      data: createPostPayload(restAction.data,payload)
     }
     dispatch(runRestQuery(restAction,timeout, chart.id));
   };

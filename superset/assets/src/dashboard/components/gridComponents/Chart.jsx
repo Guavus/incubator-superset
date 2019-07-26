@@ -151,6 +151,10 @@ class Chart extends React.Component {
     return this.props.dashboardInfo.id;
   }
 
+  getCurrentDashboardUrl() {
+    return window.location.href;
+  }
+
   getChartHeight(includeChartHeaderHeight = true) {
     const headerHeight = this.getHeaderHeight();
     const descriptionHeight =
@@ -194,7 +198,7 @@ class Chart extends React.Component {
   }
 
   executeRestAction(action) {
-    return this.props.executeRestAction(this.props.chart, action, this.props.timeout)
+    return this.props.executeRestAction({chart: this.props.chart, chart_title: this.props.sliceName, dashboard_url: this.getCurrentDashboardUrl(),dashboard_title: this.props.dashboardTitle}, action, this.props.timeout)
   }
 
   render() {
