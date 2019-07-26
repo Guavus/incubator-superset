@@ -3,7 +3,12 @@
 export function createJIRAPostPayload(payloadformat, data) {
   console.log(payloadformat);
   console.log(data);
-  return  payloadformat
+  var postdata = JSON.stringify(payloadformat);
+  
+  postdata = postdata.replace(/%(\w+)%/g, function(all, param) {
+      return data[param] || all;
+  });
+  return  JSON.parse(postdata);
 }
 
 export function createPostPayload(payloadformat, data) {

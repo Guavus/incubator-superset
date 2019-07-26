@@ -361,6 +361,10 @@ export function refreshChart(chart, force, timeout) {
 export function executeRestAction(payload, restAction, timeout) {
   return (dispatch) => {
     const {chart} = payload
+    payload = {
+      ...payload,
+      time: new Date().toLocaleString(),
+    }
     restAction = {
       ...restAction,
       data: createPostPayload(restAction.data,payload)
