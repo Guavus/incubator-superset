@@ -18,7 +18,7 @@
 #}
 {% import 'appbuilder/general/lib.html' as lib %}
 {% set serverRoot =  request.script_root %}
-{% set walkMeEnabled =  request.environ['WALKME_ENABLED'] %}
+{% set walkMeEnabled = appbuilder.app.config.get('WALKME_ENABLED') %}
 <html>
   <head>
     <title>
