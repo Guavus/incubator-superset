@@ -29,6 +29,7 @@ import getClientErrorObject from '../utils/getClientErrorObject';
 import { allowCrossDomain } from '../utils/hostNamesConfig';
 import { APPLICATION_PREFIX } from '../public-path';
 import { func } from 'prop-types';
+import { createPostPayload }  from '../utils/restActions'
 
 export const CHART_UPDATE_STARTED = 'CHART_UPDATE_STARTED';
 export function chartUpdateStarted(queryController, latestQueryFormData, key) {
@@ -211,11 +212,13 @@ export function runRestQuery(action,timeout = 60, key) {
         failure: (errorDetails, starttime, duration) => {
         }
       }
-
       executeQuery('/superset/rest_actions', timeout, key, {action: action}, actions, loggers, dispatch, true)
     }
   }
 }
+
+
+
 export const RUN_QUERY = 'RUN_QUERY';
 export function runQuery(formData, force = false, timeout = 60, key) {
   return (dispatch) => {
@@ -358,6 +361,11 @@ export function refreshChart(chart, force, timeout) {
 export function executeRestAction(chart, restAction, timeout) {
   return (dispatch) => {
     console.log(chart)
+    restAction = {
+      ...restAction,
+      data: createPostPayload(restAction.data)
+    }
     dispatch(runRestQuery(restAction,timeout, chart.id));
   };
 }
+
