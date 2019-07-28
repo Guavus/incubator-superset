@@ -181,6 +181,7 @@ export default function chartReducer(charts = {}, action) {
         ...state.restAction,
         status: "success",
         }
+
       return {
         ...state,
         restAction
@@ -192,7 +193,8 @@ export default function chartReducer(charts = {}, action) {
         error: !! action.queryResponse ? t('Network error.')
         : (action.queryResponse.error || action.queryResponse.errors)
       }
-    return {
+
+      return {
         ...state,
        restAction
       };

@@ -156,8 +156,7 @@ export function runAnnotationQuery(annotation, timeout = 60, formData = null, ke
           dispatch(annotationQuerySuccess(annotation, err, sliceKey));
         } else if (err.statusText !== 'abort') {
           dispatch(annotationQueryFailed(annotation, err, sliceKey));
-        }
-      }),
+        }}),
       );
   };
 }
@@ -221,7 +220,6 @@ export function runRestQuery(action,timeout = 60, key) {
 export const RUN_QUERY = 'RUN_QUERY';
 export function runQuery(formData, force = false, timeout = 60, key) {
   return (dispatch) => {
-
     const { url, payload } = getExploreUrlAndPayload({
       formData,
       endpointType: 'json',
@@ -263,7 +261,6 @@ export function runQuery(formData, force = false, timeout = 60, key) {
       }
     }
     const queryPromise = executeQuery(url,timeout,key,{form_data: payload }, actions, loggers, dispatch);
-
     const annotationLayers = formData.annotation_layers || [];
 
     return Promise.all([
@@ -276,7 +273,6 @@ export function runQuery(formData, force = false, timeout = 60, key) {
 }
 
 export function executeQuery(url, timeout = 60, key, payload, actions, loggers,dispatch, isEndpoint = false) {
-
     const {requestStarted, requestSucceeded, requestTimeout, requestStopped, requestFailed} = actions || {};
     const {success, failure} = loggers || {};
     const logStart = Logger.getTimestamp();
@@ -359,22 +355,22 @@ export function refreshChart(chart, force, timeout) {
 
 export function executeRestAction(payload, restAction, timeout) {
   return (dispatch) => {
-    const {chart} = payload
+    const {chart} = payload;
     payload = {
       ...payload,
       time: new Date().toLocaleString(),
       chart_query: chart.queryResponse && chart.queryResponse.query,
-      chart_selection:     ((obj) => {
+      chart_selection: ((obj) => {
            var selection = "No Selection";
            if(Object.keys(obj).length > 0) selection = Object.keys(obj).reduce((p,c) =>  p+"\n"+c+": "+obj[c],"")
            return selection
         })(payload.filters)
-    }
+    };
 
     restAction = {
       ...restAction,
       data: createPostPayload(restAction.data,payload)
-    }
+    };
     dispatch(runRestQuery(restAction,timeout, chart.id));
   };
 }
