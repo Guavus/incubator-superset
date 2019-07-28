@@ -198,7 +198,7 @@ class Chart extends React.Component {
   }
 
   executeRestAction(action) {
-    return this.props.executeRestAction({chart: this.props.chart, chart_title: this.props.sliceName, dashboard_url: this.getCurrentDashboardUrl(),dashboard_title: this.props.dashboardTitle}, action, this.props.timeout)
+    return this.props.executeRestAction({chart: this.props.chart, chart_title: this.props.sliceName, dashboard_url: this.getCurrentDashboardUrl(),filters:this.props.filters,dashboard_title: this.props.dashboardTitle}, action, this.props.timeout)
   }
 
   render() {

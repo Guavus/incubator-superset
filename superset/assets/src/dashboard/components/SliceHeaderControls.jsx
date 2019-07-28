@@ -132,10 +132,6 @@ class SliceHeaderControls extends React.PureComponent {
     return this.props.canExportCSV ? "export-csv-enabled" : "export-csv-disabled";
   }
 
-  executeRestAction(action) {
-    window.open(action.url, action.target || "_blank");
-  }
-
   renderRestActions() {
     const actionItems = []
     for (const restAction of  this.restActions) {

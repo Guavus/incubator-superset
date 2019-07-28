@@ -28,7 +28,6 @@ import { Logger, LOG_ACTIONS_LOAD_CHART } from '../logger';
 import getClientErrorObject from '../utils/getClientErrorObject';
 import { allowCrossDomain } from '../utils/hostNamesConfig';
 import { APPLICATION_PREFIX } from '../public-path';
-import { func } from 'prop-types';
 import { createPostPayload }  from '../utils/restActions'
 
 export const CHART_UPDATE_STARTED = 'CHART_UPDATE_STARTED';
@@ -299,12 +298,12 @@ export function executeQuery(url, timeout = 60, key, payload, actions, loggers,d
         url: undefined
       }
     }
-    //if (allowCrossDomain) {
+    if (allowCrossDomain) {
       querySettings = {
         ...querySettings,
         mode: 'cors',
         credentials: 'include',
-    //  };
+      };
     }
     const queryPromise = SupersetClient.post(querySettings)
     .then(({ json }) => {
@@ -364,7 +363,14 @@ export function executeRestAction(payload, restAction, timeout) {
     payload = {
       ...payload,
       time: new Date().toLocaleString(),
+      chart_query: chart.queryResponse && chart.queryResponse.query,
+      chart_selection:     ((obj) => {
+           var selection = "No Selection";
+           if(Object.keys(obj).length > 0) selection = Object.keys(obj).reduce((p,c) =>  p+"\n"+c+": "+obj[c],"")
+           return selection
+        })(payload.filters)
     }
+
     restAction = {
       ...restAction,
       data: createPostPayload(restAction.data,payload)
