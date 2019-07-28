@@ -122,6 +122,8 @@ spec:
           value: "{{ SUPERSET_SERVER_WORKER_TIMEOUT }}"
         - name: HIVE_KEYTAB_NAME
           value: "{{ superset_hive_keytab_name }}"
+        - name: WALKME_ENABLED
+          value: "{{ RVF_WALKME_ENABLED }}"
         image: {{ superset_docker_image_name }}:{{ superset_image_tag }}
         name: superset
         ports:
