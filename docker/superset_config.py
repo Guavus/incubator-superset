@@ -50,6 +50,9 @@ CORS_OPTIONS = eval(get_env_variable('CORS_OPTIONS'))
 # Application Root configuration
 APPLICATION_PREFIX = get_env_variable('APPLICATION_PREFIX')
 
+# WalkMe feature enabled/disbaled
+WALKME_ENABLED = boolify(get_env_variable('WALKME_ENABLED'))
+
 # Help configuration
 HELP_ENABLED = boolify(get_env_variable('HELP_ENABLED'))
 
