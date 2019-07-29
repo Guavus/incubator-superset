@@ -135,6 +135,24 @@ class SliceHeader extends React.PureComponent {
               <i className="fa fa-exclamation-circle danger" />
             </TooltipWrapper>
           )}
+          {!!currentRestAction && currentRestAction.status == 'started' && (
+            <TooltipWrapper
+              label="annotations-loading"
+              placement="top"
+              tooltip={`${currentRestAction.action.label} is in progress.`}
+            >
+              <i className="fa fa-refresh warning" />
+            </TooltipWrapper>
+          )}
+          {!!currentRestAction && currentRestAction.status == 'error' && (
+            <TooltipWrapper
+              label="annoation-errors"
+              placement="top"
+              tooltip={`${currentRestAction.action.label} has failed.`}
+            >
+              <i className="fa fa-exclamation-circle danger" />
+            </TooltipWrapper>
+          )}
           {!editMode && (
             <SliceHeaderControls
               slice={slice}

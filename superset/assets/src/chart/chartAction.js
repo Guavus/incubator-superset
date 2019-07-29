@@ -28,7 +28,8 @@ import { Logger, LOG_ACTIONS_LOAD_CHART } from '../logger';
 import getClientErrorObject from '../utils/getClientErrorObject';
 import { allowCrossDomain } from '../utils/hostNamesConfig';
 import { APPLICATION_PREFIX } from '../public-path';
-import { createPostPayload }  from '../utils/restActions'
+import { createPostPayload, getSuccessToastMessage }  from '../utils/restActions';
+import { addSuccessToast } from '../messageToasts/actions'
 
 export const CHART_UPDATE_STARTED = 'CHART_UPDATE_STARTED';
 export function chartUpdateStarted(queryController, latestQueryFormData, key) {
@@ -210,7 +211,15 @@ export function runRestQuery(action,timeout = 60, key) {
         failure: (errorDetails, starttime, duration) => {
         }
       }
-      executeQuery('/superset/execute_rest_action', timeout, key, {action: action}, actions, loggers, dispatch, true)
+      var queryPromise = executeQuery('/superset/execute_rest_action', timeout, key, {action: action}, actions, loggers, dispatch, true)
+      queryPromise.then( (value) => {
+        if(value.type == REST_ACTION_SUCCESS) {
+          dispatch(
+            addSuccessToast(getSuccessToastMessage(action, value.queryResponse)),
+          )}
+        }
+      );
+      return queryPromise; 
     }
   }
 }
@@ -374,4 +383,3 @@ export function executeRestAction(payload, restAction, timeout) {
     dispatch(runRestQuery(restAction,timeout, chart.id));
   };
 }
-
