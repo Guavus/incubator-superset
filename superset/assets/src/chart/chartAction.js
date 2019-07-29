@@ -210,7 +210,7 @@ export function runRestQuery(action,timeout = 60, key) {
         failure: (errorDetails, starttime, duration) => {
         }
       }
-      executeQuery('/superset/exeute_rest_action', timeout, key, {action: action}, actions, loggers, dispatch, true)
+      executeQuery('/superset/execute_rest_action', timeout, key, {action: action}, actions, loggers, dispatch, true)
     }
   }
 }

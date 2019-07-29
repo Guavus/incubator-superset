@@ -814,8 +814,8 @@ appbuilder.add_view_no_menu(R)
 class Superset(BaseSupersetView):
     """The base views for Superset!"""
 
-    @expose('/exeute_rest_action', methods=['POST'])
-    def exeute_rest_action(self):
+    @expose('/execute_rest_action', methods=['POST'])
+    def execute_rest_action(self):
         action = json.loads(request.form.get('action'))
         url = action['url']
         values = action['data']

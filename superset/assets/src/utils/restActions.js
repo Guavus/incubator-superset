@@ -1,8 +1,11 @@
 import { isString } from 'lodash'
 
 export function createPostPayload(payloadformat, data) {
-  let payload = JSON.parse(JSON.stringify(payloadformat)); // deepclone hack
-  replacePlaceholder(payload, data)
+  let payload 
+  if(payloadformat) {
+    payload = JSON.parse(JSON.stringify(payloadformat)); // deepclone hack
+    replacePlaceholder(payload, data)
+  }
   return payload;
 }
 
