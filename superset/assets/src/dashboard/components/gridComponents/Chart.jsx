@@ -34,6 +34,11 @@ const propTypes = {
   // from redux
   chart: PropTypes.shape(chartPropShape).isRequired,
   formData: PropTypes.object.isRequired,
+  dashboardInfo: PropTypes.shape({
+    id: PropTypes.number,
+    username: PropTypes.string,
+  }).isRequired,
+  dashboardTitle: PropTypes.string.isRequired,
   datasource: PropTypes.object.isRequired,
   slice: slicePropShape.isRequired,
   sliceName: PropTypes.string.isRequired,
@@ -115,36 +120,42 @@ class Chart extends React.Component {
   }
 
   itemClick(data) {
-    if (this.props.slice.form_data.hasOwnProperty('linked_slice') && this.props.slice.form_data.linked_slice) {
-      this.cloneSliceAndAddToDashboard(this.props.slice.form_data.linked_slice, data)
+    if (
+      this.props.slice.form_data.hasOwnProperty('linked_slice') &&
+      this.props.slice.form_data.linked_slice
+    ) {
+      this.cloneSliceAndAddToDashboard(
+        this.props.slice.form_data.linked_slice,
+        data,
+      );
     }
   }
 
   cloneSliceAndAddToDashboard(linked_slice_id, filters) {
     // todo:: define a way to name cloned slice
-    const slice_name = "clone_of_slice_id_" + linked_slice_id
-    var requestParams = this.getRequestParamsForCloneSlice(linked_slice_id, slice_name);
-    this.props.getSliceById(linked_slice_id)
-      .then((data) => {
-        // todo:: append filters in formdata
-        this.props.saveSlice(data.form_data, requestParams)
-          .then((data) => {
-            window.location = supersetURL(data.dashboard);
-          });
-      })
+    const slice_name = `clone_of_slice_id_${linked_slice_id}`;
+    const requestParams = this.getRequestParamsForCloneSlice(
+      linked_slice_id,
+      slice_name,
+    );
+    this.props.getSliceById(linked_slice_id).then(data => {
+      // todo:: append filters in formdata
+      this.props.saveSlice(data.form_data, requestParams).then(data => {
+        window.location = supersetURL(data.dashboard);
+      });
+    });
   }
-
 
   getRequestParamsForCloneSlice(slice_id, slice_name) {
     const dashId = this.getCurrentDashboardId();
     return {
-      action: "saveas",
-      add_to_dash: "existing",
+      action: 'saveas',
+      add_to_dash: 'existing',
       goto_dash: true,
       save_to_dashboard_id: dashId,
-      slice_id: slice_id,
-      slice_name: slice_name,
-    }
+      slice_id,
+      slice_name,
+    };
   }
 
   getCurrentDashboardId() {
@@ -165,7 +176,9 @@ class Chart extends React.Component {
       this.props.isExpanded && this.descriptionRef
         ? this.descriptionRef.offsetHeight
         : 0;
-    return includeChartHeaderHeight ? this.state.height - headerHeight - descriptionHeight : this.state.height - descriptionHeight;
+    return includeChartHeaderHeight
+      ? this.state.height - headerHeight - descriptionHeight
+      : this.state.height - descriptionHeight;
   }
 
   getHeaderHeight() {
@@ -202,18 +215,22 @@ class Chart extends React.Component {
   }
 
   executeRestAction(action) {
-    return this.props.executeRestAction(this.buildRestActionPayload(), action, this.props.timeout)
+    return this.props.executeRestAction(
+      this.buildRestActionPayload(),
+      action,
+      this.props.timeout,
+    );
   }
 
-  buildRestActionPayload(){
+  buildRestActionPayload() {
     return {
       chart: this.props.chart,
-      chart_title: this.props.sliceName, 
+      chart_title: this.props.sliceName,
       dashboard_url: this.getCurrentDashboardUrl(),
-      filters:this.props.filters,
+      filters: this.props.filters,
       dashboard_title: this.props.dashboardTitle,
-      username: this.getLoggedInUser()
-    }
+      username: this.getLoggedInUser(),
+    };
   }
 
   render() {

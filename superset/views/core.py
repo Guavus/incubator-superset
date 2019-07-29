@@ -2238,10 +2238,14 @@ class Superset(BaseSupersetView):
             'superset_can_explore': superset_can_explore,
             'slice_can_edit': slice_can_edit,
         })
-
+        username = None
+        if g.user.is_anonymous:
+            username = "Anonymous"
+        else:
+            username = g.user.username
         bootstrap_data = {
             'user_id': g.user.get_id(),
-            'username': g.user.username,
+            'username': username,
             'dashboard_data': dashboard_data,
             'datasources': {ds.uid: ds.data for ds in datasources},
             'common': self.common_bootsrap_payload(),
