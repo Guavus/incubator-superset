@@ -151,6 +151,10 @@ class Chart extends React.Component {
     return this.props.dashboardInfo.id;
   }
 
+  getLoggedInUser() {
+    return this.props.dashboardInfo.username;
+  }
+
   getCurrentDashboardUrl() {
     return window.location.href;
   }
@@ -198,7 +202,18 @@ class Chart extends React.Component {
   }
 
   executeRestAction(action) {
-    return this.props.executeRestAction({chart: this.props.chart, chart_title: this.props.sliceName, dashboard_url: this.getCurrentDashboardUrl(),filters:this.props.filters,dashboard_title: this.props.dashboardTitle}, action, this.props.timeout)
+    return this.props.executeRestAction(this.buildRestActionPayload(), action, this.props.timeout)
+  }
+
+  buildRestActionPayload(){
+    return {
+      chart: this.props.chart,
+      chart_title: this.props.sliceName, 
+      dashboard_url: this.getCurrentDashboardUrl(),
+      filters:this.props.filters,
+      dashboard_title: this.props.dashboardTitle,
+      username: this.getLoggedInUser()
+    }
   }
 
   render() {
