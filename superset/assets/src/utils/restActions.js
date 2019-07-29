@@ -1,3 +1,5 @@
+import { isString } from 'lodash'
+
 export function createPostPayload(payloadformat, data) {
   let payload = JSON.parse(JSON.stringify(payloadformat)); // deepclone hack
   replacePlaceholder(payload, data)
@@ -17,8 +19,4 @@ const replacePlaceholder = (obj, data) => {
       replacePlaceholder(obj[key], data)
     }
   })
-}
-
-function isString(value) {
-  return typeof value === 'string' || value instanceof String;
 }

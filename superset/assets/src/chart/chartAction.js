@@ -94,7 +94,7 @@ export function restActionStarted(queryController,restAction, key) {
   return { type: REST_ACTION_STARTED, restAction, queryController, key };
 }
 
-export const REST_ACTION_FAILED = 'REST_ACTION__FAILED';
+export const REST_ACTION_FAILED = 'REST_ACTION_FAILED';
 export function restActionFailed(queryResponse, key) {
   return { type: REST_ACTION_FAILED, queryResponse, key };
 }
@@ -210,7 +210,7 @@ export function runRestQuery(action,timeout = 60, key) {
         failure: (errorDetails, starttime, duration) => {
         }
       }
-      executeQuery('/superset/rest_actions', timeout, key, {action: action}, actions, loggers, dispatch, true)
+      executeQuery('/superset/exeute_rest_action', timeout, key, {action: action}, actions, loggers, dispatch, true)
     }
   }
 }

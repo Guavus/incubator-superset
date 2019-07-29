@@ -135,7 +135,7 @@ class SliceHeaderControls extends React.PureComponent {
   renderRestActions() {
     const actionItems = []
     for (const restAction of  this.restActions) {
-      actionItems.push(<MenuItem  eventKey={restAction} onSelect={this.executeRestAction}>
+      actionItems.push(<MenuItem key={restAction.label} eventKey={restAction} onSelect={this.executeRestAction}>
           {restAction.label}
       </MenuItem>);
     }
