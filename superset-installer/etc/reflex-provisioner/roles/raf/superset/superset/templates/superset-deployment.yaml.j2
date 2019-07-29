@@ -130,6 +130,8 @@ spec:
           value: "{{ superset_hive_keytab_name }}"
         - name: WALKME_ENABLED
           value: "{{ RVF_WALKME_ENABLED }}"
+        - name: APPLICATION_PREFIX
+          value: "{{ RVF_APPLICATION_PREFIX }}"   
         - name: IS_KNOX_SSO_ENABLED
           value: "{{ RVF_IS_KNOX_SSO_ENABLED }}"          
         - name: KNOX_SSO_PUBLIC_KEY
@@ -148,7 +150,8 @@ spec:
         name: superset
         ports:
         - containerPort: {{ SUPERSET_CONTAINER_PORT }}
-        resources: {}     
+          hostPort: {{ superset_host_port }}
+        resources: {}
         volumeMounts:
 {% if superset_kerberos_enabled  %} 
          - name: secret-krb5-keytab-volume

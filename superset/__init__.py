@@ -203,10 +203,7 @@ class PrefixMiddleware(object):
        # if environ['PATH_INFO'].startswith(self.prefix):
         environ['PATH_INFO'] = environ['PATH_INFO'][len(self.prefix):]
         request = Request(environ)
-        logging.debug("PrefixMiddleware request headers: %s", request.headers)
         logging.debug("PrefixMiddleware request form: %s", request.form)
-        logging.debug("PrefixMiddleware request args: %s", request.args)
-        logging.debug("PrefixMiddleware request data: %s", request.data)
         environ['SCRIPT_NAME'] = self.prefix
         return self.app(environ, start_response)
 
