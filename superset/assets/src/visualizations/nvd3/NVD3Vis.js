@@ -265,7 +265,7 @@ function nvd3Vis(element, props) {
   let chart;
   let width = maxWidth;
   let colorKey = 'key';
-  let selections;
+  let selection;
 
   function isVizTypes(types) {
     return types.indexOf(vizType) >= 0;
@@ -358,29 +358,29 @@ function nvd3Vis(element, props) {
             const yField = findYAxisField(yColumn, publishedColumns);
             let xFieldVal;
             let yFieldVal
-            let xValueChanged;
-            let yValueChanged;
+            let xValueChanged = false;
+            let yValueChanged = false;
             if (xField != undefined && e.point) {
               xFieldVal = getXAxisFieldVal(xField, e.point.x, columns);
-              xValueChanged = selections ? selections['point'].x != e.point.x  : true;
+              xValueChanged = selection ? selection['point'].x != e.point.x  : true;
             }
 
             if (yField != undefined && e.point) {
               yFieldVal = e.point.y;
-              yValueChanged = selections ? selections['point'].y != yFieldVal  : true;
+              yValueChanged = selection ? selection['point'].y != yFieldVal  : true;
             }
 
-            if ( (xValueChanged && yValueChanged ) ||  (yValueChanged && !xValueChanged)) {
+            if (yValueChanged) {
               onAddFilter(xField, xFieldVal, false, false);
               onAddFilter(yField, yFieldVal, false, true);
             }
-            else if (xValueChanged && !yValueChanged) {
+            else if (xValueChanged) {
               onAddFilter(yField, yFieldVal, false, false);
               onAddFilter(xField, xFieldVal, false, true);
             }
 
-            // set selections
-            selections = {'point': e.point}
+            // set selection
+            selection = {'point': e.point}
           }
         });
         chart.xScale(d3.time.scale.utc());
