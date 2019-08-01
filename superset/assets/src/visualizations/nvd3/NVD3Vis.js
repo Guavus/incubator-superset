@@ -340,9 +340,8 @@ function nvd3Vis(element, props) {
         }
         chart.lines.dispatch.on('elementClick', function (e) {
           if (tableFilter) {
-            const removeSelection = (selection && selection.seriesIndex == e.seriesIndex && selection.pointIndex == e.pointIndex);
             const hightLightSelection = (seriesIndex, pointIndex, showSelected) => {
-              console.log("HightLightSelection "+showSelected+" for .nv-series-" + seriesIndex + ".nv-point-" + pointIndex);
+              console.log("HightLightSelection " + showSelected + " for .nv-series-" + seriesIndex + ".nv-point-" + pointIndex);
               let node = d3.select(chart.container).selectAll('.nv-scatter .nv-groups')
                 .selectAll(".nv-series-" + seriesIndex)
                 .selectAll(".nv-point-" + pointIndex)
@@ -380,14 +379,22 @@ function nvd3Vis(element, props) {
             let yFieldVal
             let xValueChanged = false;
             let yValueChanged = false;
-            if (xField != undefined && e.point) {
-              xFieldVal = removeSelection ? null : getXAxisFieldVal(xField, e.point.x, columns)
-              xValueChanged = removeSelection || selection ? selection['point'].x != e.point.x : true;
-            }
+            const removeSelection = (selection && selection.seriesIndex == e.seriesIndex && selection.pointIndex == e.pointIndex);
 
-            if (yField != undefined && e.point) {
-              yFieldVal = removeSelection ? null : e.point.y;
-              yValueChanged = removeSelection || selection ? selection['point'].y != yFieldVal : true;
+            if (removeSelection) {
+              xValueChanged = yValueChanged = true;
+              xFieldVal = yFieldVal = null;
+            }
+            else {
+              if (xField != undefined && e.point) {
+                xFieldVal = getXAxisFieldVal(xField, e.point.x, columns)
+                xValueChanged = selection ? selection['point'].x != e.point.x : true;
+              }
+
+              if (yField != undefined && e.point) {
+                yFieldVal = e.point.y;
+                yValueChanged = selection ? selection['point'].y != yFieldVal : true;
+              }
             }
 
             if (yValueChanged) {
