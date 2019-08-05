@@ -853,8 +853,8 @@ class Superset(BaseSupersetView):
         return dashboards
     
 
-    @expose('/build_dashboard', methods=['POST'])
-    def build_dashboard(self):
+    @expose('/replicate_dashboard', methods=['POST'])
+    def replicate_dashboard(self):
         database_name = request.form.get('database_name')
         sqlalchemy_uri = request.form.get('sqlalchemy_uri')
         extra = request.form.get('extra')
