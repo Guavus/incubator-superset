@@ -1340,14 +1340,6 @@ class Superset(BaseSupersetView):
             return redirect(url_for('DashboardAddView.list'))
         return self.render_template('superset/import_dashboards.html')
 
-    @expose('/import_dashboard_json', methods=['POST'])
-    def import_dashboard_json(self):
-        """Overrides the dashboards using json instances from the file."""
-        if request.method == 'POST':
-            dashboard_import_export.import_dashboards(db.session, request.data, is_stream=False)
-            return redirect(url_for('DashboardAddView.list'))
-        return self.render_template('superset/import_dashboards.html')
-
     @log_this
     @has_access
     @expose('/explorev2/<datasource_type>/<datasource_id>/')
