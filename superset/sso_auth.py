@@ -62,8 +62,10 @@ def parse_hadoop_jwt():
         #update scheme in url
         uri = parse.urlparse(request.url)
         new_uri = uri
-        if 'HTTP_X_FORWARDED_PROTO' in request.environ:
-            new_uri = uri._replace(scheme=request.environ['HTTP_X_FORWARDED_PROTO'])
+        if config.IS_KNOX_PROXY_ENABLED is True:
+            new_uri = uri._replace(scheme='https')
+        else: 
+            new_uri = uri._replace(scheme='http')   
         
         login_url = parse.urlunparse(new_uri)
         

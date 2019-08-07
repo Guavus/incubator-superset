@@ -150,5 +150,6 @@ WTF_CSRF_EXEMPT_STR = get_env_variable('WTF_CSRF_EXEMPT_STR').strip()
 if WTF_CSRF_EXEMPT_STR:
     WTF_CSRF_EXEMPT_LIST = WTF_CSRF_EXEMPT_STR.split(",")
 
-ENABLE_CHUNK_ENCODING =  boolify(get_env_variable('ENABLE_CHUNK_ENCODING',"True"))  
+ENABLE_CHUNK_ENCODING =  boolify(get_env_variable('ENABLE_CHUNK_ENCODING',"True"))
+IS_KNOX_PROXY_ENABLED =  boolify(get_env_variable('IS_KNOX_PROXY_ENABLED',get_env_variable('IS_KNOX_SSO_ENABLED'))) 
    
