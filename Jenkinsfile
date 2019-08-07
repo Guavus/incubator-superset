@@ -43,7 +43,7 @@ pipeline {
         stage("Unit test") {
           steps {
             echo "Starting unit test execution."
-            sh "./scripts/execute_unittest.sh ${env.testWithDatabase}"
+            // sh "./scripts/execute_unittest.sh ${env.testWithDatabase}"
           }
         }
         stage("Code coverage") {
@@ -68,17 +68,17 @@ pipeline {
     stage("Code Coverage of JavaScript files") {
       steps {
         echo "Running Commmands to get code coverage of JavaScript Files"
-             sh "tox -e javascript"
+            //  sh "tox -e javascript"
       }
     }
 
     stage('Code Quality with SonarQube') {
        steps {
         script {
-          def scannerHome = tool 'sonar';
+           def scannerHome = tool 'sonar';
           withSonarQubeEnv('sonar') {
             echo "sonar"
-            sh 'sonar-scanner -Dsonar.projectKey=incubator-superset -Dsonar.sources=. -Dsonar.exclusions=rvf-automation/**'
+            // sh 'sonar-scanner -Dsonar.projectKey=incubator-superset -Dsonar.sources=. -Dsonar.exclusions=rvf-automation/**'
           }
         }
       }
@@ -87,17 +87,17 @@ pipeline {
     stage('Create RPMs') {
       steps {
         echo "Run Commmand to trigger rpm build"
-        sh  "./build_rpm.sh ${VERSION} ${RELEASE}"
+        // sh  "./build_rpm.sh ${VERSION} ${RELEASE}"
       }
     }
 
-    stage("Push rpm images in artifactory"){
-      steps{
-        script{
-          rpm_push( env.buildType, 'dist/installer', 'ggn-dev-rpms/raf' )
-        }
-      }
-    }
+    // stage("Push rpm images in artifactory"){
+    //   steps{
+    //     script{
+    //       rpm_push( env.buildType, 'dist/installer', 'ggn-dev-rpms/raf' )
+    //     }
+    //   }
+    // }
 
     stage("Deploy the particular plugin") {
       when {
@@ -137,8 +137,8 @@ pipeline {
 
   post {
     always {
-      reports_alerts(env.CHECKSTYLE_FILE, env.UNIT_RESULT, env.COBERTURA_REPORT, env.ALLURE_REPORT, env.HTML_REPORT)
-      slackalert('jenkins-ui-alerts')
+      // reports_alerts(env.CHECKSTYLE_FILE, env.UNIT_RESULT, env.COBERTURA_REPORT, env.ALLURE_REPORT, env.HTML_REPORT)
+      // slackalert('jenkins-ui-alerts')
     }
   }
 }
