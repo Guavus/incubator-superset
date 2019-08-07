@@ -863,12 +863,12 @@ class Superset(BaseSupersetView):
             database_id = create_database(database_name,sqlalchemy_uri,extra,impersonate_user)
 
         dashboard_title = request.form.get('dashboard_title')
-        tablesparam = json.loads(r''+request.form.get('tables'))
+        tables_param = json.loads(r''+request.form.get('tables'))
         template_parameters = {'dashboard_title': dashboard_title}
 
         if database_id is not None:
-            for table_placeholder in tablesparam:
-                schema_and_table_name = tablesparam[table_placeholder].split('.')
+            for table_placeholder in tables_param:
+                schema_and_table_name = tables_param[table_placeholder].split('.')
                 params = {
                     'database_id':database_id ,
                     'table_name': schema_and_table_name[1],
