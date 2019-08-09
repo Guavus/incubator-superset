@@ -23,6 +23,7 @@ import re
 import time
 import traceback
 import requests
+import base64
 from urllib import parse
 
 from flask import (
@@ -819,13 +820,31 @@ class Superset(BaseSupersetView):
 
     @expose('/execute_rest_action', methods=['POST'])
     def execute_rest_action(self):
-        action = json.loads(request.form.get('action'))
+        action = self.build_rest_request(request.form.get('action'))
         url = action['url']
         values = action['data']
         headers = action['headers']
         resposne = requests.post(url, json=values, headers=headers)
         return json_success(resposne.text, resposne.status_code)
+    
+    def build_rest_request(self,rawaction):
+        action = json.loads(rawaction)
+        if action['url'] == 'TICKET_GENERATION_SYSTEM_ENDPOINT' :
+            action = self.build_ticket_generation_request(action)
+        return action
 
+    def build_ticket_generation_request(self,action):
+        action['url'] = config['TICKET_GENERATION_SYSTEM_ENDPOINT']
+        api_token = '%s:%s' % (config['TICKET_GENERATION_SYSTEM_USER'], config['TICKET_GENERATION_SYSTEM_API_KEY'])
+
+        base64string = base64.standard_b64encode(api_token.encode('utf-8'))
+        authorization_header_value =  'Basic %s' % base64string.decode('utf-8')
+
+        action['headers'] = {    
+            "Content-Type": "application/json",
+            "Authorization": authorization_header_value
+        }
+        return action
 
     @expose('/add_to_dashboard', methods=['POST'])
     def addtodashboard(self):
