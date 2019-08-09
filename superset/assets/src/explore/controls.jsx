@@ -2188,10 +2188,10 @@ export const controls = {
 
   navigate_to_dashboards: {
     "type": "SelectControl",
-    "label": t("Navigate to dashboard"),
+    "label": t("Dashboard"),
     "multi": false,
     "validators": [],
-    "description": t("Select dashboard to navigate on click of Navigate to dashboard link  added in slice header menu options"),
+    "description": t("Select dashboard to navigate."),
     "renderTrigger": true,
     "tabOverride": "data",
     mapStateToProps: (state) => {
@@ -2204,7 +2204,7 @@ export const controls = {
 
   navigate_to_dash_link_name: {
     type: 'TextControl',
-    label: t('Navigate to dashboard link name '),
+    label: t('Link Name '),
     description: t('This is displayed as a link in slice header menu options.'),
     default: 'Navigate to dashboard',
     renderTrigger: true,
