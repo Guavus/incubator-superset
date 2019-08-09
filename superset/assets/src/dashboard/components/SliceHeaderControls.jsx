@@ -29,6 +29,8 @@ import {
   LOG_ACTIONS_REFRESH_CHART,
 } from '../../logger';
 
+import { APPLICATION_PREFIX } from "../../public-path";
+
 const propTypes = {
   slice: PropTypes.object.isRequired,
   isCached: PropTypes.bool,
@@ -80,12 +82,25 @@ class SliceHeaderControls extends React.PureComponent {
       this.props.slice.slice_id,
     );
     this.restActions = this.props.slice.form_data.rest_actions || [];
+    this.addNavigateToDashboardAction(this.restActions)
 
     this.renderRestActions = this.renderRestActions.bind(this);
     this.executeRestAction = this.props.executeRestAction.bind(this);
     this.state = {
       showControls: false,
     };
+  }
+
+  addNavigateToDashboardAction(restActions) {
+    if (this.props.slice.form_data.navigate_to_dashboards && this.props.slice.form_data.navigate_to_dash_link_name) {
+      let navigateToDashURL = APPLICATION_PREFIX + "/superset/dashboard/" + this.props.slice.form_data.navigate_to_dashboards + "/";
+      let navigateToDashAction = {
+        "label": this.props.slice.form_data.navigate_to_dash_link_name,
+        "url": navigateToDashURL,
+        "method": "GET"
+      };
+      restActions.push(navigateToDashAction);
+    }
   }
 
   exportCSV() {

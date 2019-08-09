@@ -91,6 +91,15 @@ export const subscribers = {
   ],
 };
 
+export const actions = {
+  label: t('Actions'),
+  expanded: true,
+  controlSetRows: [
+    ['navigate_to_dash_link_name'],
+    ['navigate_to_dashboards'],
+  ],
+};
+
 export const advancedOptions = {
   label: t('Advanced Options'),
   expanded: true,

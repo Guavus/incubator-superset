@@ -19,6 +19,7 @@
 /* eslint camelcase: 0 */
 import { getControlsState, getFormDataFromControls } from '../store';
 import * as actions from '../actions/exploreActions';
+import { FETCH_DASHBOARDS_SUCCEEDED } from '../actions/saveModalActions'
 
 export default function exploreReducer(state = {}, action) {
   const actionHandlers = {
@@ -151,6 +152,12 @@ export default function exploreReducer(state = {}, action) {
         can_add: action.can_add,
         can_download: action.can_download,
         can_overwrite: action.can_overwrite,
+      };
+    },
+    [FETCH_DASHBOARDS_SUCCEEDED]() {
+      return {
+        ...state,
+        dashboards: action.choices
       };
     },
   };

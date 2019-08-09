@@ -69,6 +69,10 @@ export default class Control extends React.PureComponent {
   componentDidMount() {
     if (this.props.name == "linked_slice" || this.props.name == 'subscriber_layers')
       this.props.actions.fetchSlices();
+
+    if (this.props.name == "navigate_to_dashboards") {
+      this.props.actions.fetchDashboards(this.props.userId);
+    }
     this.validateAndSetValue(this.props.value, []);
   }
   onChange(value, errors) {

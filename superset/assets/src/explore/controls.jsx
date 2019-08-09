@@ -2185,6 +2185,32 @@ export const controls = {
       return newState;
     }
   },
+
+  navigate_to_dashboards: {
+    "type": "SelectControl",
+    "label": t("Navigate to dashboard"),
+    "multi": false,
+    "validators": [],
+    "description": t("Select dashboard to navigate on click of Navigate to dashboard link  added in slice header menu options"),
+    "renderTrigger": true,
+    "tabOverride": "data",
+    mapStateToProps: (state) => {
+      const newState = {};
+      newState.options = state.dashboards ? state.dashboards : [];
+      newState.userId = state.user_id
+      return newState;
+    }
+  },
+
+  navigate_to_dash_link_name: {
+    type: 'TextControl',
+    label: t('Navigate to dashboard link name '),
+    description: t('This is displayed as a link in slice header menu options.'),
+    default: 'Navigate to dashboard',
+    renderTrigger: true,
+    tabOverride: 'data',
+  },
+
   cache_timeout: {
     type: 'HiddenControl',
     label: t('Cache Timeout (seconds)'),
