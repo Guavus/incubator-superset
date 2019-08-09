@@ -30,6 +30,7 @@ import ControlRow from './ControlRow';
 import Control from './Control';
 import controls from '../controls';
 import * as actions from '../actions/exploreActions';
+import {fetchDashboards} from '../actions/saveModalActions'
 
 const propTypes = {
   actions: PropTypes.object.isRequired,
@@ -177,8 +178,11 @@ function mapStateToProps({ explore }) {
 }
 
 function mapDispatchToProps(dispatch) {
+  const allActions = Object.assign({}, {
+    fetchDashboards
+  }, actions );
   return {
-    actions: bindActionCreators(actions, dispatch),
+    actions: bindActionCreators(allActions, dispatch),
   };
 }
 
