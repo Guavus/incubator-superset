@@ -46,6 +46,7 @@ export const linkedSlices = {
     ['publish_columns'],
     ['linked_slice'],
     ['rest_actions'],
+    ['raise_ticket_action'],
   ],
 };
 

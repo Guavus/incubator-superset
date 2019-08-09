@@ -69,6 +69,7 @@ import * as v from './validators';
 import { defaultViewport } from '../modules/geo';
 import ColumnOption from '../components/ColumnOption';
 import OptionDescription from '../components/OptionDescription';
+import * as Jira from './jira-payload-format.json'
 
 const categoricalSchemeRegistry = getCategoricalSchemeRegistry();
 const sequentialSchemeRegistry = getSequentialSchemeRegistry();
@@ -240,6 +241,23 @@ function jsFunctionControl(label, description, extraDescr = null, height = 100, 
         t('This functionality is disabled in your environment for security reasons.') : null,
       readOnly: !state.common.conf.ENABLE_JAVASCRIPT_CONTROLS,
     }),
+  };
+}
+
+function jsonDataControl(label, description,defaultText = '', extraDescr = null, height = 100) {
+  return {
+    type: 'TextAreaControl',
+    language: 'json',
+    label,
+    description,
+    height,
+    value: defaultText,
+    aboveEditorSection: (
+      <div>
+        <p>{description}</p>
+        {extraDescr}
+      </div>
+    ),
   };
 }
 
@@ -2219,10 +2237,15 @@ export const controls = {
   },
   rest_actions: {
     "type": "HiddenControl",
-    "label": "Rest Actions",
+    "label": t("Rest Actions"),
     "hidden": true,
     "description": "rest actions"
   },
+  raise_ticket_action: jsonDataControl(
+    t('Raise Ticket'),
+    t('Raise Ticket payload format with placeholder'),
+    JSON.stringify(Jira.default)
+  ),
   url_params: {
     type: 'HiddenControl',
     label: t('URL Parameters'),

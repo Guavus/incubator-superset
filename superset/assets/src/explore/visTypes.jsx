@@ -32,6 +32,7 @@ export const sections = {
     controlSetRows: [
       ['publish_columns'],
       ['rest_actions']
+      ['raise_ticket_action']
     ],
   },
   colorScheme: {
