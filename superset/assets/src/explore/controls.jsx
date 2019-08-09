@@ -2241,11 +2241,24 @@ export const controls = {
     "hidden": true,
     "description": "rest actions"
   },
-  raise_ticket_action: jsonDataControl(
-    t('Raise Ticket'),
+  raise_ticket_action: {
+    type: 'CheckboxControl',
+    label: t('Enable Raise Ticket'),
+    description: t('Add an option to raise tickets from chart.'),
+    default: true,
+  },
+  raise_ticket_action_payload: jsonDataControl(
+    t('Payload Format'),
     t('Raise Ticket payload format with placeholder'),
     JSON.stringify(Jira.default)
   ),
+  raise_ticket_action_message: {
+    type: 'TextControl',
+    label: t('Success Message Format'),
+    default: t('Ticket %key% created successfully'),
+    description: t('The message to be shown on successful ticket generation'),
+  },
+
   url_params: {
     type: 'HiddenControl',
     label: t('URL Parameters'),
