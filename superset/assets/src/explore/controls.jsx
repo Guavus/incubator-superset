@@ -251,7 +251,7 @@ function jsonDataControl(label, description,defaultText = '', extraDescr = null,
     label,
     description,
     height,
-    value: defaultText,
+    default: defaultText,
     aboveEditorSection: (
       <div>
         <p>{description}</p>
@@ -2245,12 +2245,12 @@ export const controls = {
     type: 'CheckboxControl',
     label: t('Enable Raise Ticket'),
     description: t('Add an option to raise tickets from chart.'),
-    default: true,
+    default: false,
   },
   raise_ticket_action_payload: jsonDataControl(
     t('Payload Format'),
     t('Raise Ticket payload format with placeholder'),
-    JSON.stringify(Jira.default)
+    JSON.stringify(Jira.default, null, '\t')
   ),
   raise_ticket_action_message: {
     type: 'TextControl',
