@@ -2249,8 +2249,6 @@ export const controls = {
     description: t('Add an option to raise tickets from chart.'),
     default: false,
     mapStateToProps: state => ({
-      warning: state.common.conf.TICKET_GENERATION_SYSTEM_ENDPOINT == ''?
-        t('Raise Ticket functionality is disabled in your environment by adminstartor.') : null,
       disabled: state.common.conf.TICKET_GENERATION_SYSTEM_ENDPOINT == '',
     })
   },
