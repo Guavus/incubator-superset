@@ -2243,15 +2243,17 @@ export const controls = {
     "hidden": true,
     "description": "rest actions"
   },
-  raise_ticket_action: {
+  raise_ticket_action:  {
     type: 'CheckboxControl',
     label: t('Enable Raise Ticket'),
     description: t('Add an option to raise tickets from chart.'),
     default: false,
     mapStateToProps: state => ({
       disabled: state.common.conf.TICKET_GENERATION_SYSTEM_ENDPOINT == '',
+      label: state.common.conf.TICKET_GENERATION_SYSTEM_ENDPOINT == '' ? t('Enable Raise Ticket (Not Configured)') : t('Enable Raise Ticket')
     })
   },
+
   raise_ticket_action_payload: jsonDataControl(
     t('Payload Format'),
     t('Raise Ticket payload format with placeholder'),

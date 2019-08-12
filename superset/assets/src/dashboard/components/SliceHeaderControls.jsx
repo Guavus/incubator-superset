@@ -107,17 +107,19 @@ class SliceHeaderControls extends React.PureComponent {
   }
 
   getRaiseTicketAction() {
-    const raise_ticket_payload = this.props.slice.form_data.raise_ticket_action_payload
-    if (this.props.slice.form_data.raise_ticket_action) {
-      let navigateToDashURL = APPLICATION_PREFIX + "/superset/dashboard/" + this.props.slice.form_data.navigate_to_dashboards + "/";
-      let navigateToDashAction = {
-        "label": "Raise Ticket",
-        "url": "TICKET_GENERATION_SYSTEM_ENDPOINT",
-        "method": "POST",
-        "data": JSON.parse(raise_ticket_payload),
-        "success_message": this.props.slice.form_data.raise_ticket_action_message,
-      };
-    return navigateToDashAction
+    let raise_ticket_action
+    if(this.props.conf['TICKET_GENERATION_SYSTEM_ENDPOINT'] != '') {
+      const raise_ticket_payload = this.props.slice.form_data.raise_ticket_action_payload
+      if (this.props.slice.form_data.raise_ticket_action) {
+        raise_ticket_action = {
+          "label": "Raise Ticket",
+          "url": "TICKET_GENERATION_SYSTEM_ENDPOINT",
+          "method": "POST",
+          "data": JSON.parse(raise_ticket_payload),
+          "success_message": this.props.slice.form_data.raise_ticket_action_message,
+        };
+    }
+    return raise_ticket_action
     }
   }
 
