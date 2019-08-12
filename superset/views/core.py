@@ -835,15 +835,16 @@ class Superset(BaseSupersetView):
 
     def build_ticket_generation_request(self,action):
         action['url'] = config['TICKET_GENERATION_SYSTEM_ENDPOINT']
-        api_token = '%s:%s' % (config['TICKET_GENERATION_SYSTEM_USER'], config['TICKET_GENERATION_SYSTEM_API_KEY'])
-
-        base64string = base64.standard_b64encode(api_token.encode('utf-8'))
-        authorization_header_value =  'Basic %s' % base64string.decode('utf-8')
-
+        user = config['TICKET_GENERATION_SYSTEM_USER']
+        api_key = config['TICKET_GENERATION_SYSTEM_API_KEY']
         action['headers'] = {    
-            "Content-Type": "application/json",
-            "Authorization": authorization_header_value
-        }
+                "Content-Type": "application/json",
+            }
+        if api_key is not '' and user is not '':
+            api_token = '%s:%s' % (user,api_key)
+            base64string = base64.standard_b64encode(api_token.encode('utf-8'))
+            authorization_header_value =  'Basic %s' % base64string.decode('utf-8')
+            action['headers']['Authorization'] = authorization_header_value
         return action
 
     @expose('/add_to_dashboard', methods=['POST'])
