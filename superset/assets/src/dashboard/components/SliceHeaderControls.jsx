@@ -177,7 +177,7 @@ class SliceHeaderControls extends React.PureComponent {
 
 
   render() {
-    const { slice, isCached, cachedDttm, updatedDttm } = this.props;
+    const { slice, isCached, cachedDttm, updatedDttm, conf } = this.props;
     const cachedWhen = moment.utc(cachedDttm).fromNow();
     const updatedWhen = updatedDttm ? moment.utc(updatedDttm).fromNow() : '';
     const refreshTooltip = isCached

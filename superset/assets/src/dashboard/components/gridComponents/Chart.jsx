@@ -290,6 +290,7 @@ class Chart extends React.Component {
             sliceSubHeader={sliceSubHeader}
             supersetCanExplore={supersetCanExplore}
             sliceCanEdit={sliceCanEdit}
+            conf = {this.props.dashboardInfo.common.conf}
           />
         )}
 

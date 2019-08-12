@@ -46,6 +46,7 @@ const propTypes = {
   sliceSubHeader: PropTypes.string,
   supersetCanExplore: PropTypes.bool,
   sliceCanEdit: PropTypes.bool,
+  conf: PropTypes.object
 };
 
 const defaultProps = {
@@ -69,6 +70,7 @@ const defaultProps = {
   supersetCanExplore: false,
   canExportCSV: true,
   sliceCanEdit: false,
+  conf: {},
 };
 
 const annoationsLoading = t('Annotation layers are still loading.');
@@ -98,6 +100,7 @@ class SliceHeader extends React.PureComponent {
       updateSliceName,
       annotationQuery,
       annotationError,
+      conf
     } = this.props;
 
     return (
@@ -148,7 +151,7 @@ class SliceHeader extends React.PureComponent {
             <TooltipWrapper
               label="annoation-errors"
               placement="top"
-              tooltip={`${currentRestAction.action.label} has failed.`}
+              tooltip={ !currentRestAction.error ? `${currentRestAction.action.label} has failed.` : currentRestAction.error}
             >
               <i className="fa fa-exclamation-circle danger" />
             </TooltipWrapper>
@@ -168,6 +171,7 @@ class SliceHeader extends React.PureComponent {
               canExportCSV={canExportCSV}
               supersetCanExplore={supersetCanExplore}
               sliceCanEdit={sliceCanEdit}
+              conf={conf}
             />
           )}
         </div>

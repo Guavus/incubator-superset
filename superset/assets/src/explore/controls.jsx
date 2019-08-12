@@ -244,7 +244,7 @@ function jsFunctionControl(label, description, extraDescr = null, height = 100, 
   };
 }
 
-function jsonDataControl(label, description,defaultText = '', extraDescr = null, height = 100) {
+function jsonDataControl(label, description,defaultText = '',mapStateToProps=null, extraDescr = null, height = 100) {
   return {
     type: 'TextAreaControl',
     language: 'json',
@@ -258,7 +258,9 @@ function jsonDataControl(label, description,defaultText = '', extraDescr = null,
         {extraDescr}
       </div>
     ),
+    mapStateToProps: mapStateToProps,
   };
+
 }
 
 export const controls = {
@@ -2246,17 +2248,28 @@ export const controls = {
     label: t('Enable Raise Ticket'),
     description: t('Add an option to raise tickets from chart.'),
     default: false,
+    mapStateToProps: state => ({
+      warning: state.common.conf.TICKET_GENERATION_SYSTEM_ENDPOINT == ''?
+        t('Raise Ticket functionality is disabled in your environment by adminstartor.') : null,
+      disabled: state.common.conf.TICKET_GENERATION_SYSTEM_ENDPOINT == '',
+    })
   },
   raise_ticket_action_payload: jsonDataControl(
     t('Payload Format'),
     t('Raise Ticket payload format with placeholder'),
-    JSON.stringify(Jira.default, null, '\t')
+    JSON.stringify(Jira.default, null, '\t'),
+    state => ({
+      hidden: state.common.conf.TICKET_GENERATION_SYSTEM_ENDPOINT == '',
+    })
   ),
   raise_ticket_action_message: {
     type: 'TextControl',
     label: t('Success Message Format'),
     default: t('Ticket %key% created successfully'),
     description: t('The message to be shown on successful ticket generation'),
+    mapStateToProps: state => ({
+      hidden: state.common.conf.TICKET_GENERATION_SYSTEM_ENDPOINT == '',
+    })
   },
 
   url_params: {

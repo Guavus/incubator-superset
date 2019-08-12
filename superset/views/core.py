@@ -824,6 +824,8 @@ class Superset(BaseSupersetView):
         url = action['url']
         values = action['data']
         headers = action['headers']
+        if url is '':
+            return json_error_response(action['label']+" is not configured") 
         resposne = requests.post(url, json=values, headers=headers)
         return json_success(resposne.text, resposne.status_code)
     

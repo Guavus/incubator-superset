@@ -188,10 +188,11 @@ export default function chartReducer(charts = {}, action) {
       };
     },
     [actions.REST_ACTION_FAILED](state) {
+      const errorMessage = action.queryResponse ?  action.queryResponse.error : ''
+
       let restAction = { ...state.restAction,
         status: "error",
-        error: !! action.queryResponse ? t('Network error.')
-        : (action.queryResponse.error || action.queryResponse.errors)
+        error:  errorMessage
       }
 
       return {
