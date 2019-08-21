@@ -17,7 +17,7 @@
  * under the License.
  */
 import { isTruthy } from '../../utils/common';
-import { formatLabel } from './utils';
+import { formatLabel, simpleNumber } from './utils';
 
 export default function transformProps(chartProps) {
   const {
@@ -82,6 +82,7 @@ export default function transformProps(chartProps) {
   const data = Array.isArray(rawData)
     ? rawData.map(row => ({
       ...row,
+      values: simpleNumber(row.values),
       key: formatLabel(row.key, datasource.verboseMap),
     }))
     : rawData;

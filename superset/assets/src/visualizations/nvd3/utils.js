@@ -21,6 +21,7 @@ import d3tip from 'd3-tip';
 import dompurify from 'dompurify';
 import { getNumberFormatter } from '@superset-ui/number-format';
 import { smartDateFormatter } from '@superset-ui/time-format';
+import JSONbig from 'json-bigint';
 
 // Regexp for the label added to time shifted series
 // (1 hour offset, 2 days offset, etc.)
@@ -234,6 +235,12 @@ export function formatLabel(input, verboseMap = {}) {
       .join(', ')
     : verboseLookup(input);
 }
+
+export function simpleNumber(json) {
+  var str = JSONbig.stringify(json);
+  return JSON.parse(str);
+}
+
 
 const MIN_BAR_WIDTH = 15;
 
