@@ -23,21 +23,35 @@ def create_table(args):
     database_id = int(args.get('database_id'))
     table_name =  args.get('table_name')
     schema =  args.get('schema')
+    # Because of table_name unique constraint at db table level 
+    # we cannot create table with same name across dbs/schemas
+    # if there is table with provided name then using it as table_model
+    table_models = (
+                db.session.query(SqlaTable)
+                .filter_by(table_name=table_name
+                )
+                .all()
+            )
+    if len(table_models) == 0:
+        database = db.session.query(models.Database).filter_by(id=database_id).one()
+        columns = json.loads(args.get('columns'))
+        table_columns = get_table_columns(columns)
+        table_model = SqlaTable(
+            table_name=table_name,
+            schema=schema,
+            database_id=database_id,
+            database = database,
+            columns= table_columns,
+        )
+        db.session.add(table_model)
+        db.session.commit()
+        logging.info('table is created with id = '+str(table_model.id)+' and linked with database id = '+str(database_id))
+        return table_model
+    else:
+        # pick first one
+        logging.info('reused table with id = '+str(table_models[0].id))
+        return table_models[0]
 
-    database = db.session.query(models.Database).filter_by(id=database_id).one()
-    columns = json.loads(args.get('columns'))
-    table_columns = get_table_columns(columns)
-    table_model = SqlaTable(
-        table_name=table_name,
-        schema=schema,
-        database_id=database_id,
-        database = database,
-        columns= table_columns,
-    )
-    db.session.add(table_model)
-    db.session.commit()
-    logging.info('table is created with id = '+str(table_model.id)+' and linked with database id = '+str(database_id))
-    return table_model
 
     
 def add_slice_to_dashboard(request,args, datasource_type=None, datasource_id=None):
@@ -90,17 +104,27 @@ def add_slice_to_dashboard(request,args, datasource_type=None, datasource_id=Non
 
 
 def create_database(database_name,sqlalchemy_uri,extra,impersonate_user):
-    db_model = models.Database(
-        database_name=database_name,
-        sqlalchemy_uri=sqlalchemy_uri,
-        extra=extra,
-        impersonate_user=impersonate_user
-    )
-    db.session.add(db_model)
-    db.session.commit()
-    database_id = db_model.id 
-    logging.info('database connection is created with id = '+str(database_id))
-    return database_id
+    db_models = (
+                db.session.query(models.Database)
+                .filter_by(database_name=database_name)
+                .all()
+            )
+    if len(db_models) == 0:        
+        db_model = models.Database(
+            database_name=database_name,
+            sqlalchemy_uri=sqlalchemy_uri,
+            extra=extra,
+            impersonate_user=impersonate_user
+        )
+        db.session.add(db_model)
+        db.session.commit()
+        database_id = db_model.id 
+        logging.info('database connection is created with id = '+str(database_id))
+        return database_id
+    else:
+        # pick first one
+        logging.info('reused database connection with id = '+str(db_models[0].id))
+        return db_models[0].id    
 
 def add_to_dashboard(request):
     # create database  connection
