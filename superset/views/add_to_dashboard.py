@@ -145,9 +145,9 @@ def add_to_dashboard(request):
         'save_to_dashboard_id':dashboard_id,
         'goto_dash':'false',
         'form_data':json.dumps(_slice),
-        'datasource_id' : table_model['id'],
-        'datasource_type' : table_model['type'],
-        'datasource_name' : table_model['name']
+        'datasource_id' : table_model.id,
+        'datasource_type' : table_model.type,
+        'datasource_name' : table_model.name
         }
 
         add_slice_to_dashboard(request,slice_param_data)
