@@ -29,9 +29,10 @@ def import_dashboard_json(session, data, import_time=None):
     current_tt = int(time.time())
     import_time = current_tt if import_time is None else import_time
     dashboard = data['dashboards'][0]
-    Dashboard.import_obj(
+    dash_id = Dashboard.import_obj(
             dashboard, import_time=import_time)
     session.commit()
+    return dash_id
 
 def import_dashboards(session, data_stream, import_time=None):
     """Imports dashboards from a stream to databases"""

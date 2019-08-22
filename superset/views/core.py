@@ -77,7 +77,7 @@ from .base import (
     SupersetFilter, SupersetModelView, YamlExportMixin,
 )
 from .utils import bootstrap_user_data
-from .add_to_dashboard import add_to_dashboard, create_database, create_table
+from .add_to_dashboard import add_to_dashboard, replicate_dashboard
 
 
 config = app.config
@@ -830,69 +830,20 @@ class Superset(BaseSupersetView):
     @expose('/add_to_dashboard', methods=['POST'])
     def addtodashboard(self):
         try:
-            add_to_dashboard(request)
-            return json_success('OK')
+            response = add_to_dashboard(request)
+            return json_success(response)
         except Exception as e:
             logging.exception(e)
             return json_error_response(e) 
 
-    def update_dashboard(self, dashboards, parameters):
-        dashboard = dashboards['dashboards'][0]
-        title = parameters['dashboard_title']
-        if title:
-            dashboard.dashboard_title = title
-        # assuming sinle dashboard per JSON
-        for slice_item in dashboard.slices:
-            datasource = parameters[slice_item.datasource_name]
-            if datasource is not None:
-                slice_item.alter_params(
-                            datasource_name = datasource.name,
-                            schema = datasource.name,
-                            database_name = datasource.database_name,
-                        )
-        return dashboards
-    
-
     @expose('/replicate_dashboard', methods=['POST'])
     def replicate_dashboard(self):
-        database_name = request.form.get('database_name')
-        sqlalchemy_uri = request.form.get('sqlalchemy_uri')
-        extra = request.form.get('extra')
-        impersonate_user = eval(request.form.get('impersonate_user'))
-        if database_name is not None:
-            database_id = create_database(database_name,sqlalchemy_uri,extra,impersonate_user)
-
-        dashboard_title = request.form.get('dashboard_title')
-        tables_param = json.loads(r''+request.form.get('tables'))
-        template_parameters = {'dashboard_title': dashboard_title}
-
-        if database_id is not None:
-            for table_placeholder in tables_param:
-                schema_and_table_name = tables_param[table_placeholder].split('.')
-                params = {
-                    'database_id':database_id ,
-                    'table_name': schema_and_table_name[1],
-                    'schema': schema_and_table_name[0],
-                    'columns': json.dumps([])
-                }
-                # create table for slice
-                table = create_table(params)
-                table.fetch_metadata()
-                security_manager.merge_perm('datasource_access', table.get_perm())
-                if table.schema:
-                    security_manager.merge_perm('schema_access', table.schema_perm)
-                template_parameters[table_placeholder] = table
-
-                logging.info('table is created with id = '+str(table.id)+' and linked with database id = '+str(database_id)) 
-        
-        dashboard_data_param = request.form.get('template')
-        dashboard_data = dashboard_import_export.dashboard_json(dashboard_data_param)
-
-        self.update_dashboard(dashboard_data,template_parameters)
-
-        dashboard_import_export.import_dashboard_json(db.session, dashboard_data)
-        return redirect(url_for('DashboardAddView.list'))
-    
+        try:
+            response = replicate_dashboard(request)
+            return json_success(response)
+        except Exception as e:
+            logging.exception(e)
+            return json_error_response(e) 
 
     @has_access_api
     @expose('/datasources/')

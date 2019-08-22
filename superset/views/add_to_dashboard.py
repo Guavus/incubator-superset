@@ -3,11 +3,12 @@ import simplejson as json
 
 from flask import g 
 
-from superset import db 
+from superset import app, db, security_manager
 from superset.connectors.sqla.models import SqlaTable
 import superset.models.core as models
 from superset.utils import core as utils
 from superset.views.default_slice_metadata import update_slice_metadata
+from superset.utils import dashboard_import_export
 
 def get_table_columns(columns):
     table_columns = []
@@ -19,7 +20,7 @@ def get_table_columns(columns):
         table_columns.append(table_column)
     return table_columns
 
-def create_table(args):
+def create_table(args,fetch_metadata = False):
     database_id = int(args.get('database_id'))
     table_name =  args.get('table_name')
     schema =  args.get('schema')
@@ -45,13 +46,22 @@ def create_table(args):
         )
         db.session.add(table_model)
         db.session.commit()
+        fetch_table_metadata(table_model, fetch_metadata)
         logging.info('table is created with id = '+str(table_model.id)+' and linked with database id = '+str(database_id))
         return table_model
     else:
         # pick first one
         logging.info('reused table with id = '+str(table_models[0].id))
+        fetch_table_metadata(table_models[0], fetch_metadata)
         return table_models[0]
 
+
+def fetch_table_metadata(table_model,fetch_metadata = False):
+    if fetch_metadata:
+        table_model.fetch_metadata()
+        security_manager.merge_perm('datasource_access', table_model.get_perm())
+        if table_model.schema:
+            security_manager.merge_perm('schema_access', table_model.schema_perm)
 
     
 def add_slice_to_dashboard(request,args, datasource_type=None, datasource_id=None):
@@ -103,7 +113,16 @@ def add_slice_to_dashboard(request,args, datasource_type=None, datasource_id=Non
     }
 
 
-def create_database(database_name,sqlalchemy_uri,extra,impersonate_user):
+def create_database(form):
+    # create database  connection
+    database_name = form.get('database_name')
+    if database_name is None:
+        return None
+
+    sqlalchemy_uri = form.get('sqlalchemy_uri')
+    extra = form.get('extra')
+    impersonate_user = eval(form.get('impersonate_user'))
+
     db_models = (
                 db.session.query(models.Database)
                 .filter_by(database_name=database_name)
@@ -128,11 +147,7 @@ def create_database(database_name,sqlalchemy_uri,extra,impersonate_user):
 
 def add_to_dashboard(request):
     # create database  connection
-    database_name = request.form.get('database_name')
-    sqlalchemy_uri = request.form.get('sqlalchemy_uri')
-    extra = request.form.get('extra')
-    impersonate_user = eval(request.form.get('impersonate_user'))
-    database_id = create_database(database_name,sqlalchemy_uri,extra,impersonate_user)    
+    database_id = create_database(request.form)    
 
     # create dashboard
     dash_model = models.Dashboard(
@@ -175,3 +190,69 @@ def add_to_dashboard(request):
         }
 
         add_slice_to_dashboard(request,slice_param_data)
+
+    return get_dashboard_response(request.url_root,dashboard_id)    
+
+
+def update_slices_in_dashboard(dashboards, parameters):
+    dashboard = dashboards['dashboards'][0]
+    title = parameters['dashboard_title']
+    if title:
+        dashboard.dashboard_title = title
+    # assuming sinle dashboard per JSON
+    for slice_item in dashboard.slices:
+        datasource = None
+        if slice_item.datasource_name in parameters:
+            datasource = parameters[slice_item.datasource_name]
+        if datasource is not None:
+            slice_item.alter_params(
+                        datasource_name = datasource.name,
+                        schema = datasource.name,
+                        database_name = datasource.database_name,
+                    )
+    return dashboards
+
+def get_dashboard_response(url_root,dash_id):
+    return json.dumps({'dashboard_url' : url_root.rstrip('/')+ app.config.get('APPLICATION_PREFIX') + "/superset/dashboard/" + str(dash_id) + "/"})
+
+def replicate_dashboard(request):
+    database_id = create_database(request.form)
+
+    dashboard_title = request.form.get('dashboard_title')
+    template_parameters = {'dashboard_title': dashboard_title}
+    tables_param = {}
+    dashboard_data_param = request.form.get('template')
+    dashboard_data = dashboard_import_export.dashboard_json(dashboard_data_param)
+
+    if database_id is not None:
+        # get tables from request
+        tables = request.form.get('tables')
+        if tables is not None:
+            tables_param = json.loads(r''+request.form.get('tables'))
+
+        # update tables_param with datasource_name of  slices, not defined in  tables
+        for slice_item in dashboard_data['dashboards'][0].slices:
+            if slice_item.datasource_name not in tables_param:
+                tables_param[slice_item.datasource_name] = slice_item.datasource_name
+        
+        for table_placeholder in tables_param:
+            schema_and_table_name = tables_param[table_placeholder].split('.')
+            table_name = schema_and_table_name[0]
+            schema = None
+            if len(schema_and_table_name) >= 2:
+                table_name = schema_and_table_name[1]
+                schema = schema_and_table_name[0]
+                
+            params = {
+                'database_id': database_id ,
+                'table_name': table_name,
+                'schema': schema,
+                'columns': json.dumps([])
+            }
+            # create table for slice
+            table = create_table(params,True)
+            template_parameters[table_placeholder] = table
+    
+    update_slices_in_dashboard(dashboard_data,template_parameters)
+    dash_id = dashboard_import_export.import_dashboard_json(db.session, dashboard_data)
+    return get_dashboard_response(request.url_root,dash_id)
