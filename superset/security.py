@@ -528,7 +528,7 @@ class SupersetSecurityManager(SecurityManager):
         return not self.is_user_defined_permission(pvm)
 
     def is_admin_ldap_pvm(self, pvm):
-        return not self.is_reset_password_pvm(pvm) and self.is_admin_pvm(pvm)
+        return not (self.is_reset_my_password_pvm(pvm) or self.is_reset_passwords_pvm(pvm) or self.is_user_defined_permission(pvm))
 
     def is_alpha_pvm(self, pvm):
         return not (self.is_user_defined_permission(pvm) or self.is_admin_only(pvm))
@@ -550,7 +550,7 @@ class SupersetSecurityManager(SecurityManager):
              pvm.permission.name == 'can_list'))
 
     def is_dashboard_viewer_pvm(self, pvm):
-        return ( self.is_dashboard_viewer_ldap_pvm(pvm) or self.is_reset_password_pvm(pvm))
+        return ( self.is_dashboard_viewer_ldap_pvm(pvm) or self.is_reset_my_password_pvm(pvm))
 
     def is_dashboard_viewer_ldap_pvm(self, pvm):
         return ( self.is_base_view_pvm(pvm) or self.is_user_perm_pvm(pvm) or
@@ -574,11 +574,20 @@ class SupersetSecurityManager(SecurityManager):
             # but i am shortcircuiting thsi for now as those permission will be not added to role
             )
 
-    def is_reset_password_pvm(self, pvm):
+    def is_reset_my_password_pvm(self, pvm):
         return (
             pvm.permission.name in {
-                 'resetmypassword' , 'can_this_form_get' , 'can_this_form_post'
-            } and pvm.view_menu.name in {  'ResetMyPasswordView' }
+                 'resetmypassword' , 'can_this_form_get' , 'can_this_form_post', 'userinfoedit'
+            } and pvm.view_menu.name in {  'ResetMyPasswordView', 'UserDBModelView', 'UserInfoEditView' }
+            # above code will allow some options which are not in PVM
+            # but i am shortcircuiting thsi for now as those permission will be not added to role
+            )
+
+    def is_reset_passwords_pvm(self, pvm):
+        return (
+            pvm.permission.name in {
+                 'resetpasswords' , 'can_this_form_get' , 'can_this_form_post'
+            } and pvm.view_menu.name in {  'ResetPasswordView', 'UserDBModelView' }
             # above code will allow some options which are not in PVM
             # but i am shortcircuiting thsi for now as those permission will be not added to role
             )
