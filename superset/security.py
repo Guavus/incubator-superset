@@ -477,11 +477,13 @@ class SupersetSecurityManager(SecurityManager):
 
         # Creating default roles
         self.set_role('Admin', self.is_admin_pvm)
+        self.set_role('Admin_LDAP', self.is_admin_ldap_pvm)
         self.set_role('Alpha', self.is_alpha_pvm)
         self.set_role('Gamma', self.is_gamma_pvm)
         self.set_role('granter', self.is_granter_pvm)
         self.set_role('sql_lab', self.is_sql_lab_pvm)
         self.set_role('Dashboard_Viewer', self.is_dashboard_viewer_pvm)
+        self.set_role('Dashboard_Viewer_LDAP', self.is_dashboard_viewer_ldap_pvm)
 
         if conf.get('PUBLIC_ROLE_LIKE_GAMMA', False):
             self.set_role('Public', self.is_gamma_pvm)
@@ -525,6 +527,9 @@ class SupersetSecurityManager(SecurityManager):
     def is_admin_pvm(self, pvm):
         return not self.is_user_defined_permission(pvm)
 
+    def is_admin_ldap_pvm(self, pvm):
+        return not self.is_reset_password_pvm(pvm) and self.is_admin_pvm(pvm))
+
     def is_alpha_pvm(self, pvm):
         return not (self.is_user_defined_permission(pvm) or self.is_admin_only(pvm))
 
@@ -545,7 +550,10 @@ class SupersetSecurityManager(SecurityManager):
              pvm.permission.name == 'can_list'))
 
     def is_dashboard_viewer_pvm(self, pvm):
-        return ( self.is_base_view_pvm(pvm) or self.is_base_security_pvm(pvm) or
+        return ( self.is_dashboard_viewer_ldap_pvm(pvm) or self.is_reset_password_pvm(pvm))
+
+    def is_dashboard_viewer_ldap_pvm(self, pvm):
+        return ( self.is_base_view_pvm(pvm) or self.is_user_perm_pvm(pvm) or
             pvm.permission.name in {
                 'can_dashboard', 'can_explore_json', 'can_slice_json'
             } or (pvm.permission.name in {'can_list'} and pvm.view_menu.name in {'CssTemplateAsyncModelView', 'DashboardModelViewAsync' })
@@ -557,11 +565,20 @@ class SupersetSecurityManager(SecurityManager):
                 'can_fave_slices', 'can_fave_dashboards', 'can_recent_activity', 'can_favstar'
             })
 
-    def is_base_security_pvm(self, pvm):
+     def is_user_perm_pvm(self, pvm):
         return (
             pvm.permission.name in {
-                'can_userinfo' , 'resetmypassword' , 'can_this_form_get' , 'can_this_form_post'
-            } and pvm.view_menu.name in { 'UserDBModelView', 'ResetMyPasswordView' }
+                'can_userinfo' , 'can_this_form_get' , 'can_this_form_post'
+            } and pvm.view_menu.name in { 'UserDBModelView' }
+            # above code will allow some options which are not in PVM
+            # but i am shortcircuiting thsi for now as those permission will be not added to role
+            )
+
+    def is_reset_password_pvm(self, pvm):
+        return (
+            pvm.permission.name in {
+                 'resetmypassword' , 'can_this_form_get' , 'can_this_form_post'
+            } and pvm.view_menu.name in {  'ResetMyPasswordView' }
             # above code will allow some options which are not in PVM
             # but i am shortcircuiting thsi for now as those permission will be not added to role
             )
