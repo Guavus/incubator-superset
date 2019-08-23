@@ -191,7 +191,7 @@ def add_to_dashboard(request):
 
         add_slice_to_dashboard(request,slice_param_data)
 
-    return get_dashboard_response(request.url_root,dashboard_id)    
+    return get_dashboard_response(request.url_root,dashboard_id,dash_model.slug)    
 
 
 def update_slices_in_dashboard(dashboards, parameters):
@@ -212,8 +212,11 @@ def update_slices_in_dashboard(dashboards, parameters):
                     )
     return dashboards
 
-def get_dashboard_response(url_root,dash_id):
-    return json.dumps({'dashboard_url' : url_root.rstrip('/')+ app.config.get('APPLICATION_PREFIX') + "/superset/dashboard/" + str(dash_id) + "/"})
+def get_dashboard_response(url_root,dash_id,slug = None):
+    id = str(dash_id)
+    if slug is not None:
+        id = slug 
+    return json.dumps({'dashboard_url' : url_root.rstrip('/')+ app.config.get('APPLICATION_PREFIX') + "/superset/dashboard/" + id + "/"})
 
 def replicate_dashboard(request):
     database_id = create_database(request.form)
