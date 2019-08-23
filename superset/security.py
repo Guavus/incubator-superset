@@ -528,7 +528,7 @@ class SupersetSecurityManager(SecurityManager):
         return not self.is_user_defined_permission(pvm)
 
     def is_admin_ldap_pvm(self, pvm):
-        return not self.is_reset_password_pvm(pvm) and self.is_admin_pvm(pvm))
+        return not self.is_reset_password_pvm(pvm) and self.is_admin_pvm(pvm)
 
     def is_alpha_pvm(self, pvm):
         return not (self.is_user_defined_permission(pvm) or self.is_admin_only(pvm))
@@ -565,7 +565,7 @@ class SupersetSecurityManager(SecurityManager):
                 'can_fave_slices', 'can_fave_dashboards', 'can_recent_activity', 'can_favstar'
             })
 
-     def is_user_perm_pvm(self, pvm):
+    def is_user_perm_pvm(self, pvm):
         return (
             pvm.permission.name in {
                 'can_userinfo' , 'can_this_form_get' , 'can_this_form_post'
