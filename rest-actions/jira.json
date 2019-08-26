@@ -17,6 +17,6 @@
   "success_message": "Ticket %key% created successfully",
   "headers": {
     "Content-Type": "application/json",
-    "Authorization": "Basic YXJwaXQuYWdhcndhbEBndWF2dXMuY29tOnZPekFnRWJ3RERRRWhxYjJpZGxlNzNGRg=="
+    "Authorization": "Basic cmFmLW9wZXJhdG9yQGd1YXZ1cy5jb206Tm54YUh6NE5RUElESTdlM3pVRjdCMzU3"
   }
 }

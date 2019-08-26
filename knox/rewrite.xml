@@ -16,46 +16,46 @@
    limitations under the License.
 -->
 <rules>
-    <rule dir="IN" name="SUPERSETUI/rvf/inbound/root" pattern="*://*:*/**/rvf/">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/superset/welcome"/>
+    <rule dir="IN" name="RVFUI/rvf/inbound/root" pattern="*://*:*/**/rvf/">
+        <rewrite template="{$serviceUrl[RVFUI]}/superset/welcome"/>
     </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf/inbound/path" flow="OR">
+    <rule dir="IN" name="RVFUI/rvf/inbound/path" flow="OR">
         <match pattern="*://*:*/**/rvf/{**}/{*}/">
-            <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}/{*}/"/>
+            <rewrite template="{$serviceUrl[RVFUI]}/{**}/{*}/"/>
         </match>
         <match pattern="*://*:*/**/rvf/{*}/">
-            <rewrite template="{$serviceUrl[SUPERSETUI]}/{*}/"/>
+            <rewrite template="{$serviceUrl[RVFUI]}/{*}/"/>
         </match>
     </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf/inbound/path-noslash" flow="OR">
+    <rule dir="IN" name="RVFUI/rvf/inbound/path-noslash" flow="OR">
       <match pattern="*://*:*/**/rvf/tablecolumninlineview/add/?_flt_0_table={*}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/tablecolumninlineview/add/?_flt_0_table={*}"/>
+        <rewrite template="{$serviceUrl[RVFUI]}/tablecolumninlineview/add/?_flt_0_table={*}"/>
       </match>
       <match pattern="*://*:*/**/rvf/sqlmetricinlineview/add/?_flt_0_table={*}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/sqlmetricinlineview/add/?_flt_0_table={*}"/>
+        <rewrite template="{$serviceUrl[RVFUI]}/sqlmetricinlineview/add/?_flt_0_table={*}"/>
       </match>
       <match pattern="*://*:*/**/rvf/{**}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}"/>
+        <rewrite template="{$serviceUrl[RVFUI]}/{**}"/>
       </match>
     </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf/inbound/query" pattern="*://*:*/**/rvf/{**}/?{**}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}/?{**}"/>
+    <rule dir="IN" name="RVFUI/rvf/inbound/query" pattern="*://*:*/**/rvf/{**}/?{**}">
+        <rewrite template="{$serviceUrl[RVFUI]}/{**}/?{**}"/>
     </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf/inbound/query2" pattern="*://*:*/**/rvf/{**}?{**}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}?{**}"/>
+    <rule dir="IN" name="RVFUI/rvf/inbound/query2" pattern="*://*:*/**/rvf/{**}?{**}">
+        <rewrite template="{$serviceUrl[RVFUI]}/{**}?{**}"/>
     </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf/inbound/query-noslash" pattern="*://*:*/**/rvf/{**}/?{**}">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/{**}?{**}"/>
+    <rule dir="IN" name="RVFUI/rvf/inbound/query-noslash" pattern="*://*:*/**/rvf/{**}/?{**}">
+        <rewrite template="{$serviceUrl[RVFUI]}/{**}?{**}"/>
     </rule>
-    <rule dir="IN" name="SUPERSETUI/rvf/inbound/back" pattern="*://*:*/**/rvf/back">
-        <rewrite template="{$serviceUrl[SUPERSETUI]}/back"/>
+    <rule dir="IN" name="RVFUI/rvf/inbound/back" pattern="*://*:*/**/rvf/back">
+        <rewrite template="{$serviceUrl[RVFUI]}/back"/>
     </rule>
-    <filter name="SUPERSETUI/rvf/outbound/headers">
+    <filter name="RVFUI/rvf/outbound/headers">
      <content type="application/x-http-headers">
-      <apply path="Location" rule="SUPERSETUI/rvf/outbound/headers/location"/>
+      <apply path="Location" rule="RVFUI/rvf/outbound/headers/location"/>
      </content>
     </filter>
-    <rule dir="OUT" name="SUPERSETUI/rvf/outbound/headers/location" flow="OR">
+    <rule dir="OUT" name="RVFUI/rvf/outbound/headers/location" flow="OR">
         <match pattern="*://*:*/{g=*}/{p=*}/{path=**}/websso?{**}">
             <rewrite template="/{g}/{p}/{path}/websso?{**}"/>
         </match>
