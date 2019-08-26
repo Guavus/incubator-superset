@@ -29,7 +29,7 @@ from .base_tests import SupersetTestCase
 class AddToDashboardTests(SupersetTestCase):
 
     def __init__(self, *args, **kwargs):
-        super(DashboardTests, self).__init__(*args, **kwargs)
+        super(AddToDashboardTests, self).__init__(*args, **kwargs)
 
     @classmethod
     def setUpClass(cls):
@@ -55,7 +55,7 @@ class AddToDashboardTests(SupersetTestCase):
                         "schemas_allowed_for_csv_upload": []
                     },
                     "dashboard_title":"test_add_to_dashboard",
-                    "slug":None,
+                    "slug":"test_add_to_dashboard",
                     "slices":[
                                 {
                                     "table_name":"control_plane_table",
@@ -67,7 +67,7 @@ class AddToDashboardTests(SupersetTestCase):
                     ]
         }
         resp = self.client.post(url, data=dict(data=json.dumps(data)))
-        self.assertIn('[ untitled dashboard ]', resp)
+        self.assertIn({"dashboard_url":"/superset/test_add_to_dashboard"}, resp)
 
 if __name__ == '__main__':
     unittest.main()
