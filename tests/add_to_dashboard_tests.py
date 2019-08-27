@@ -45,28 +45,31 @@ class AddToDashboardTests(SupersetTestCase):
         self.login(username='admin',password='Ym8Hg1+u3VmyM8mRul3xnWuvh2xalT/soSM3z5fTosQ=')
         url = '/superset/add_to_dashboard'
         data = {
-                    "database_name":"test_add_to_dashboard",
-                    "sqlalchemy_uri":"hive://yarn@192.168.135.144:10000/",
-                    "impersonate_user":False,
-                    "extra": {
-                        "metadata_params": {},
-                        "engine_params": {},
-                        "metadata_cache_timeout": {},
-                        "schemas_allowed_for_csv_upload": []
-                    },
-                    "dashboard_title":"test_add_to_dashboard",
-                    "slug":"test_add_to_dashboard",
-                    "slices":[
-                                {
-                                    "table_name":"control_plane_table",
-                                    "schema":"demo",
-                                    "slice_name":"bardemo",
-                                    "viz_type":"dist_bar",
-                                    "metrics":[{"column":{"column_name":"c_call_duration"}}],
-                                    "groupby":["c_to_msisdn"]}
-                    ]
+                    
         }
-        resp = self.client.post(url, data=dict(data=json.dumps(data)))
+        resp = self.client.post(url, data=data=dict(
+            database_name="test_add_to_dashboard",
+            sqlalchemy_uri="hive://yarn@192.168.135.144:10000/",
+            impersonate_user=False,
+            extra= json.dumps({
+                "metadata_params": {},
+                "engine_params": {},
+                "metadata_cache_timeout": {},
+                "schemas_allowed_for_csv_upload": []
+            }),
+            dashboard_title="test_add_to_dashboard",
+            slug="test_add_to_dashboard",
+            slices=json.dumps([
+                        {
+                            "table_name":"control_plane_table",
+                            "schema":"demo",
+                            "slice_name":"bardemo",
+                            "viz_type":"dist_bar",
+                            "metrics":[{"column":{"column_name":"c_call_duration"}}],
+                            "groupby":["c_to_msisdn"]}
+            ])
+
+        ))
         self.assertIn({"dashboard_url":"/superset/test_add_to_dashboard"}, resp)
 
 if __name__ == '__main__':
