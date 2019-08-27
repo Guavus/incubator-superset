@@ -42,7 +42,7 @@ class AddToDashboardTests(SupersetTestCase):
         pass
 
     def test_add_to_dashboard(self):
-        self.login(username='admin')
+        self.login(username='admin',password='Ym8Hg1+u3VmyM8mRul3xnWuvh2xalT/soSM3z5fTosQ=')
         url = '/superset/add_to_dashboard'
         data = {
                     "database_name":"test_add_to_dashboard",
