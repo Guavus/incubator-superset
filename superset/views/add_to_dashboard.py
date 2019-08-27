@@ -101,11 +101,7 @@ def add_slice_to_dashboard(request,args, datasource_type=None, datasource_id=Non
 
     dash.slices.append(slc)
     db.session.commit()
-    logging.info(
-    'Slice [{}] was added to dashboard [{}]'.format(
-        slc.slice_name,
-        dash.dashboard_title),
-    'info')
+    logging.info('Slice ['+ slc.slice_name +'] was added to dashboard id [ '+str(args.get('save_to_dashboard_id'))+' ]')
 
     return {
         'form_data': slc.form_data,
