@@ -44,10 +44,7 @@ class AddToDashboardTests(SupersetTestCase):
     def test_add_to_dashboard(self):
         self.login(username='admin',password='Ym8Hg1+u3VmyM8mRul3xnWuvh2xalT/soSM3z5fTosQ=')
         url = '/superset/add_to_dashboard'
-        data = {
-                    
-        }
-        resp = self.client.post(url, data=data=dict(
+        resp = self.client.post(url, data=dict(
             database_name="test_add_to_dashboard",
             sqlalchemy_uri="hive://yarn@192.168.135.144:10000/",
             impersonate_user=False,
