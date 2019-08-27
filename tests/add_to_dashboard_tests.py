@@ -44,7 +44,7 @@ class AddToDashboardTests(SupersetTestCase):
     def test_add_to_dashboard(self):
         self.login(username='admin',password='Ym8Hg1+u3VmyM8mRul3xnWuvh2xalT/soSM3z5fTosQ=')
         url = '/superset/add_to_dashboard'
-        resp = self.client.post(url, data=dict(
+        self.client.post(url, data=dict(
             database_name="test_add_to_dashboard",
             sqlalchemy_uri="hive://yarn@192.168.135.144:10000/",
             impersonate_user=False,
@@ -67,7 +67,12 @@ class AddToDashboardTests(SupersetTestCase):
             ])
 
         ))
-        self.assertIn({"dashboard_url":"/superset/test_add_to_dashboard"}, resp)
+
+        dash_added = db.session.query(models.Dashboard).filter_by(
+            slug='test_add_to_dashboard').first()
+        slice_added = db.session.query(models.Slice).filter_by(
+            slice_name='bardemo').first()
+        assert slice_added in dash_added.slices
 
 if __name__ == '__main__':
     unittest.main()
