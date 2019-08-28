@@ -154,7 +154,6 @@ function LeafletMap(element, props) {
     }
 
     function getMapProperties(data) {
-        const idfield = formData.geojson;
         // create obj with all data
         var obj = Object.assign({}, data);
         obj['colorColumns'] = {}
@@ -267,16 +266,16 @@ function LeafletMap(element, props) {
 
           // publish all values as per publishColumns and its availability in selection
           formData.publishColumns.forEach((col, i, arr) => {
-            let refresh = false;
-            if (i === arr.length - 1) {
-              refresh = true;
-            }
-            if(selection && selection.hasOwnProperty(col)){
-                onAddFilter(col, [selection[col]], false, refresh);
-            }else{
-                // remove selections
-                onAddFilter(col, [], false, refresh);
-            }
+              let refresh = false;
+              if (i === arr.length - 1) {
+                  refresh = true;
+              }
+              if (selection && selection.hasOwnProperty(col)) {
+                  onAddFilter(col, [selection[col]], false, refresh);
+              } else {
+                  // remove selections
+                  onAddFilter(col, [], false, refresh);
+              }
           });
       }
     }
