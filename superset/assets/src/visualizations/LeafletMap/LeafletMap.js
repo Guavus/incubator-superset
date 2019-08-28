@@ -155,10 +155,12 @@ function LeafletMap(element, props) {
 
     function getMapProperties(data) {
         const idfield = formData.geojson;
-        var obj = { 'id': data[idfield] };
+        // create obj with all data
+        var obj = Object.assign({}, data);
+        obj['colorColumns'] = {}
         for (const key in data) {
             if (data.hasOwnProperty(key) && colorCols.hasOwnProperty(key)) {
-                obj[key] = getColumn(key, data[key])
+                obj['colorColumns'][key] = getColumn(key, data[key])
             }
         }
 
@@ -237,7 +239,7 @@ function LeafletMap(element, props) {
     }
 
     function getSelection(event, property, cssClass){
-      var selections = [];
+      var selection;
       // remove previous selected layers except selected
       Object.values(event.target._map._targets).forEach(element => {
         if (element.hasOwnProperty(property) && element[property].classList.contains(cssClass)
@@ -249,20 +251,33 @@ function LeafletMap(element, props) {
         event.target[property].classList.remove(cssClass);
       } else {
         event.target[property].classList.add(cssClass);
-        selections = [event.target.feature.properties.id];
+        selection = event.target.feature.properties;
       }
-      return selections;
+      return selection;
     }
 
     function mapItemClick(event) {
       if (enableClick) {
-          var selections = [];
+          var selection;
           if(event.target.hasOwnProperty('_path')){
-            selections = getSelection(event, '_path', 'active-layer')
+            selection = getSelection(event, '_path', 'active-layer')
           } else if(event.target.hasOwnProperty('_icon')){
-            selections = getSelection(event, '_icon', 'active-layer-canvas');
+            selection = getSelection(event, '_icon', 'active-layer-canvas');
           }
-          onAddFilter(formData.geojson, selections, false);
+
+          // publish all values as per publishColumns and its availability in selection
+          formData.publishColumns.forEach((col, i, arr) => {
+            let refresh = false;
+            if (i === arr.length - 1) {
+              refresh = true;
+            }
+            if(selection && selection.hasOwnProperty(col)){
+                onAddFilter(col, [selection[col]], false, refresh);
+            }else{
+                // remove selections
+                onAddFilter(col, [], false, refresh);
+            }
+          });
       }
     }
 
@@ -271,7 +286,7 @@ function LeafletMap(element, props) {
     }
 
     function getLayerStyles(feature) {
-        var clr = feature.properties[getSelectedColorColumn()].color;
+        var clr = feature.properties['colorColumns'][getSelectedColorColumn()].color;
         var styles = Object.assign({}, getDefaultPolygonStyles());
         styles.fillColor = clr;
         return styles;
@@ -325,7 +340,7 @@ function LeafletMap(element, props) {
               var node;
               if(feature.properties.hasOwnProperty('direction')){
                 var myIcon = new GRAPHICON.ENB({
-                  color: feature.properties[getSelectedColorColumn()].color,
+                  color: feature.properties['colorColumns'][getSelectedColorColumn()].color,
                   directionValue: feature.properties.direction,
                   markerValue: feature.properties.markerValue,
                   className: 'my-div-icon',
