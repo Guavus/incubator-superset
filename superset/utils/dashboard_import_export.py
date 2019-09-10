@@ -22,6 +22,15 @@ import time
 from superset.models.core import Dashboard
 from superset.utils.core import decode_dashboards
 
+def update_slice_options(slices):
+    # remove sliceOptions before dump to db ,it will fetch on runtime
+    for slice in slices:
+        params = json.loads(slice.params)
+        for subscriber_layer in params['subscriber_layers']:
+            if 'sliceOptions' in subscriber_layer:
+                subscriber_layer['sliceOptions'] = []
+        slice.params = json.dumps(params)  
+
 def dashboard_json(data):
     return json.loads(data, object_hook=decode_dashboards)
 
@@ -29,6 +38,7 @@ def import_dashboard_json(session, data, import_time=None):
     current_tt = int(time.time())
     import_time = current_tt if import_time is None else import_time
     dashboard = data['dashboards'][0]
+    update_slice_options(dashboard.slices)
     dash_id = Dashboard.import_obj(
             dashboard, import_time=import_time)
     session.commit()
@@ -44,6 +54,7 @@ def import_dashboards(session, data_stream, import_time=None):
         type(table).import_obj(table, import_time=import_time)
     session.commit()
     for dashboard in data['dashboards']:
+        update_slice_options(dashboard.slices)
         Dashboard.import_obj(
             dashboard, import_time=import_time)
     session.commit()
