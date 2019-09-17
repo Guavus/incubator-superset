@@ -256,7 +256,7 @@ export default class SubscriberLayer extends React.PureComponent {
 
       Object.keys(this.state).forEach((k) => {
         // add checks of not dump sliceOptions in formdata ,it will fetch runtime always
-        if (this.state[k] !== null && k != 'sliceOptions') {
+        if ( k != 'sliceOptions' && this.state[k] !== null ) {
           subscription[k] = this.state[k];
         }
       });
