@@ -58,6 +58,7 @@ describe('Chart', () => {
     isExpanded: false,
     supersetCanExplore: false,
     sliceCanEdit: false,
+    dashboardInfo: {common: {conf: {TICKET_GENERATION_SYSTEM_ENDPOINT: "https://guavus-jira.atlassian.net/"}}}
   };
 
   function setup(overrideProps) {
