@@ -237,8 +237,11 @@ export function formatLabel(input, verboseMap = {}) {
 }
 
 export function simpleNumber(json) {
-  var str = JSONbig.stringify(json);
-  return JSON.parse(str);
+  if (json) {
+    var str = JSONbig.stringify(json);
+    return JSON.parse(str);
+  }
+  return json
 }
 
 
