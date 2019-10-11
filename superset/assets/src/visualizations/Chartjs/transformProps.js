@@ -24,6 +24,8 @@ export default function transformProps(chartProps) {
       data: payload.data.records,
       xField:formData.allColumnsX,
       yField:formData.allColumnsY,
+      showAnnotationLine:formData.showMarkers,
+      annotationLineValue:formData.treemapRatio,
     };
   }
   

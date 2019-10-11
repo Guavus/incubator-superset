@@ -37,10 +37,27 @@ export default {
         ['adhoc_filters'],
       ],
     },
+    {
+      label: t('Options'),
+      expanded: true,
+      controlSetRows: [
+        ['show_markers'],
+        ['treemap_ratio']
+      ],
+    },
   ],
   controlOverrides: {
-    metrics: {
-       validators: [],
+    show_markers: {
+      label: t('Show Annotation Line'),
+      default: true,
+      renderTrigger: false,
+      description: t('Show annotation line on x-axis at given Annotation Line Value'),
     },
+    treemap_ratio: {
+      label: t('Annotation Line Value'),
+      default: 1,
+      renderTrigger: false,
+      description: t('Set annotation line value'),
+   },
   },
 };

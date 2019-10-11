@@ -30,6 +30,8 @@ const propTypes = {
     data: PropTypes.arrayOf(PropTypes.object),
     xField:PropTypes.string,
     yField:PropTypes.string,
+    showAnnotationLine:PropTypes.bool,
+    annotationLineValue:PropTypes.number,
   };
   const defaultProps = {
     width: '100%',
@@ -37,6 +39,8 @@ const propTypes = {
     data: undefined,
     xField: undefined,
     yField:undefined,
+    showAnnotationLine:true,
+    annotationLineValue:1,
   };
   
   class ChartJSVis extends React.PureComponent {
@@ -52,7 +56,7 @@ const propTypes = {
     }
 
     createConfig(){
-        const {width,height,data,xField,yField} = this.props
+        const {width,height,data,xField,yField,showAnnotationLine,annotationLineValue} = this.props
         let labels =[];
         let chartData = [];
         data.forEach(element => {
@@ -111,31 +115,37 @@ const propTypes = {
                     }
                 },
                 annotation: {
-                    annotations: [
-                        {
-                            drawTime: "afterDatasetsDraw",
-                            id: "hline",
-                            type: "line",
-                            mode: "vertical",
-                            scaleID: "x-axis-0",
-                            value: 1,
-                            borderColor: "black",
-                            borderWidth: 3,
-                        }
-
-                    ]
+                    annotations: this.getAnnotations(showAnnotationLine,annotationLineValue)
                 }
 
             },
 
         }
     }
+
+    getAnnotations(show, value) {
+        if (!show) {
+            return []
+        }
+        return [{
+            drawTime: "beforeDatasetsDraw",
+            id: "hline",
+            type: "line",
+            mode: "vertical",
+            scaleID: "x-axis-0",
+            value: value,
+            borderColor: "black",
+            borderWidth: 2,
+            borderDash: [2, 2],
+        }
+        ]
+    }
     
     render() {
         let style = {display: 'block',height:this.props.height,width:this.props.width}
         return (
             <div style ={style}>
-                <canvas id="chartjs-line-cvs" class="chartjs-render-monitor"
+                <canvas id="chartjs-line-cvs" className="chartjs-render-monitor"
                    style={style}></canvas>
             </div>
         )
