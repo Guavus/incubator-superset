@@ -18,6 +18,11 @@
  */
 export default function transformProps(chartProps) {
     const { width, height, formData, payload } = chartProps;
+    const getrgb =(color)=> {
+        const { r, g, b } = color;
+        const alpha = 1;
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
     return {
       width,
       height,
@@ -26,6 +31,10 @@ export default function transformProps(chartProps) {
       yField:formData.allColumnsY,
       showAnnotationLine:formData.showMarkers,
       annotationLineValue:formData.treemapRatio,
+      axisColor :getrgb(formData.strokeColorPicker),
+      labelColor :getrgb(formData.colorPicker),
+      fillColor :getrgb(formData.targetColorPicker),
+      annotationLineColor :getrgb(formData.fillColorPicker),
     };
   }
   

@@ -19,7 +19,7 @@
 /* eslint-disable no-param-reassign */
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { rgb } from 'd3';
 import 'chart.js';
 import 'chartjs-plugin-annotation';
 import './Chartjs.css'
@@ -32,6 +32,10 @@ const propTypes = {
     yField:PropTypes.string,
     showAnnotationLine:PropTypes.bool,
     annotationLineValue:PropTypes.number,
+    axisColor :PropTypes.string,
+    labelColor :PropTypes.string,
+    fillColor :PropTypes.string,
+    annotationLineColor :PropTypes.string,
   };
   const defaultProps = {
     width: '100%',
@@ -41,6 +45,10 @@ const propTypes = {
     yField:undefined,
     showAnnotationLine:true,
     annotationLineValue:1,
+    axisColor :'black',
+    labelColor :'black',
+    fillColor :'red',
+    annotationLineColor :'black',
   };
   
   class ChartJSVis extends React.PureComponent {
@@ -56,7 +64,9 @@ const propTypes = {
     }
 
     createConfig(){
-        const {width,height,data,xField,yField,showAnnotationLine,annotationLineValue} = this.props
+        const {width,height,data,xField,yField,showAnnotationLine,annotationLineValue,axisColor,labelColor,fillColor,annotationLineColor} = this.props
+        let pointStyle = 'circle';
+        let annotationLineMode= "vertical";
         let labels =[];
         let chartData = [];
         data.forEach(element => {
@@ -76,8 +86,8 @@ const propTypes = {
                 datasets: [{
                     label: "",
                     fill: true,
-                    backgroundColor: 'red',
-                    borderColor: 'red',
+                    backgroundColor: fillColor,
+                    borderColor: fillColor,
                     pointRadius: 7,
                     pointHoverRadius: 10,
                     data: chartData
@@ -89,15 +99,31 @@ const propTypes = {
                         type: 'linear',
                         position: 'bottom',
                         gridLines: {
-                            display: false
-                        }
+                            display: true,
+                            drawBorder: true,
+                            drawOnChartArea: false,
+                            color: axisColor
+                            
+                        },
+                        ticks: {
+                            display: true,
+                            fontColor: labelColor,
+                          },
                     }],
                     yAxes: [{
                         type: 'category',
                         position: 'left',
                         gridLines: {
-                            display: false
-                        }
+                            display: true,
+                            drawBorder: true,
+                            drawOnChartArea: false,
+                            color: axisColor
+                            
+                        },
+                        ticks: {
+                            display: true,
+                            fontColor: labelColor,
+                          },
                     }]
                 },
                 responsive: true,
@@ -111,11 +137,11 @@ const propTypes = {
                 },
                 elements: {
                     point: {
-                        pointStyle: 'circle',
+                        pointStyle: pointStyle,
                     }
                 },
                 annotation: {
-                    annotations: this.getAnnotations(showAnnotationLine,annotationLineValue)
+                    annotations: this.getAnnotations(showAnnotationLine,annotationLineValue,annotationLineColor,annotationLineMode)
                 }
 
             },
@@ -123,7 +149,7 @@ const propTypes = {
         }
     }
 
-    getAnnotations(show, value) {
+    getAnnotations(show, value, color,mode) {
         if (!show) {
             return []
         }
@@ -131,10 +157,10 @@ const propTypes = {
             drawTime: "beforeDatasetsDraw",
             id: "hline",
             type: "line",
-            mode: "vertical",
+            mode: mode,
             scaleID: "x-axis-0",
             value: value,
-            borderColor: "black",
+            borderColor: color,
             borderWidth: 2,
             borderDash: [2, 2],
         }

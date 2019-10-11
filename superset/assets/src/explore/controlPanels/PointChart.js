@@ -38,11 +38,15 @@ export default {
       ],
     },
     {
-      label: t('Options'),
+      label: t('Chart Options'),
       expanded: true,
       controlSetRows: [
         ['show_markers'],
-        ['treemap_ratio']
+        ['treemap_ratio'],
+        ['fill_color_picker'],
+        ['stroke_color_picker'],
+        ['color_picker'],
+        ['target_color_picker'],
       ],
     },
   ],
@@ -50,14 +54,33 @@ export default {
     show_markers: {
       label: t('Show Annotation Line'),
       default: true,
-      renderTrigger: false,
       description: t('Show annotation line on x-axis at given Annotation Line Value'),
     },
     treemap_ratio: {
       label: t('Annotation Line Value'),
       default: 1,
-      renderTrigger: false,
+      isInt: true,
       description: t('Set annotation line value'),
-   },
+    },
+    fill_color_picker: {
+      label: t('Annotation Line Color'),
+      default: { r: 0, g: 0, b: 0, a: 1 },
+      description: t('Set Annotation Line Color'),
+    },
+    stroke_color_picker: {
+      label: t('Axis Color'),
+      default: { r: 0, g: 0, b: 0, a: 1 },
+      description: t('Set Axis Color'),
+    },
+    color_picker: {
+      label: t('Axis Label Color'),
+      default: { r: 0, g: 0, b: 0, a: 1 },
+      description: t('Set Axis Label Color'),
+    },
+    target_color_picker: {
+      label: t('Point Fill Color'),
+      default: { r: 255, g: 0, b: 0, a: 1 },
+      description: t('Set Point Fill Color'),
+    },
   },
 };
