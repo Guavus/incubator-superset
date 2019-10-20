@@ -191,6 +191,10 @@ class BaseViz(object):
 
     def get_samples(self):
         query_obj = self.query_obj()
+        if not query_obj:
+            # Return empty dataframe in case of no query to avoid export CSV error
+            return pd.DataFrame().to_dict(orient='records')
+
         query_obj.update({
             'groupby': [],
             'metrics': [],
@@ -202,18 +206,20 @@ class BaseViz(object):
 
     def get_df(self, query_obj=None):
         """Returns a pandas dataframe based on the query object"""
+        query_obj = self.query_obj()
         if not query_obj:
-            query_obj = self.query_obj()
-        if not query_obj:
-            return None
+            # Return empty dataframe in case of no query to avoid export CSV error
+            return pd.DataFrame()
 
         self.error_msg = ''
 
         timestamp_format = None
         if self.datasource.type == 'table':
             dttm_col = self.datasource.get_col(query_obj['granularity'])
+            print("DTTM_COL", dttm_col)
             if dttm_col:
                 timestamp_format = dttm_col.python_date_format
+                print("FORMAT", timestamp_format)
 
         # The datasource here can be different backend but the interface is common
         self.results = self.datasource.query(query_obj)
