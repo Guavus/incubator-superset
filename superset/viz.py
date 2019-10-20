@@ -33,6 +33,7 @@ import pickle as pkl
 import re
 import traceback
 import uuid
+import simplejson as json
 
 from dateutil import relativedelta as rdelta
 from flask import request
@@ -518,6 +519,19 @@ class BaseViz(object):
 
     def get_csv(self):
         df = self.get_df()
+        if df is None:
+            df = pd.DataFrame()
+            include_index = not isinstance(df.index, pd.RangeIndex)
+            return df.to_csv(index=include_index, **config.get('CSV_EXPORT'))
+        parsed_json = json.dumps(self.datasource.data, sort_keys=True)
+        json_dict = json.loads(parsed_json)
+        verbose_column_names = []
+        for col in df.columns:
+            if col in json_dict["verbose_map"]:
+                verbose_column_names.append(json_dict["verbose_map"][col])
+            else:
+                verbose_column_names.append(col)
+        df.columns = verbose_column_names
         include_index = not isinstance(df.index, pd.RangeIndex)
         return df.to_csv(index=include_index, **config.get('CSV_EXPORT'))
 
