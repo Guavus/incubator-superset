@@ -35,6 +35,7 @@ export default function transformProps(chartProps) {
       labelColor :getrgb(formData.colorPicker),
       fillColor :getrgb(formData.targetColorPicker),
       annotationLineColor :getrgb(formData.fillColorPicker),
+      sliceId: formData.sliceId,
     };
   }
   

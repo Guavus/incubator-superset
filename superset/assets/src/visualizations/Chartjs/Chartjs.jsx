@@ -36,6 +36,7 @@ const propTypes = {
     labelColor :PropTypes.string,
     fillColor :PropTypes.string,
     annotationLineColor :PropTypes.string,
+    sliceId: PropTypes.number.isRequired,
   };
   const defaultProps = {
     width: '100%',
@@ -49,6 +50,7 @@ const propTypes = {
     labelColor :'black',
     fillColor :'red',
     annotationLineColor :'black',
+    sliceId: undefined
   };
   
   class ChartJSVis extends React.PureComponent {
@@ -56,8 +58,12 @@ const propTypes = {
       super(props);
     }
 
+    getId(){
+        return 'chartjs-point-chart-'+this.props.sliceId;
+    }
+
     renderChart(){
-        var ctx = document.getElementById('chartjs-line-cvs').getContext('2d');
+        var ctx = document.getElementById(this.getId()).getContext('2d');
         var config = this.createConfig();
         // console.log(config);
         new Chart(ctx, config);
@@ -169,9 +175,10 @@ const propTypes = {
     
     render() {
         let style = {display: 'block',height:this.props.height,width:this.props.width}
+        let id = this.getId()
         return (
             <div style ={style}>
-                <canvas id="chartjs-line-cvs" className="chartjs-render-monitor"
+                <canvas id={id} className="chartjs-render-monitor"
                    style={style}></canvas>
             </div>
         )
