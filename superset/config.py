@@ -49,6 +49,7 @@ else:
 # ---------------------------------------------------------
 PACKAGE_DIR = os.path.join(BASE_DIR, 'static', 'assets')
 PACKAGE_FILE = os.path.join(PACKAGE_DIR, 'package.json')
+VERSION_FILE_PATH = os.path.abspath(os.path.join(BASE_DIR, '..', '.VERSION'))
 with open(PACKAGE_FILE) as package_file:
     VERSION_STRING = json.load(package_file)['version']
 
@@ -582,9 +583,14 @@ WEBDRIVER_CONFIGURATION = {}
 # The base URL to query for accessing the user interface
 WEBDRIVER_BASEURL = 'http://0.0.0.0:8080/'
 
-#add timezone and copyright property for footer display
+# add timezone and copyright property for footer display
 TIMEZONE = 'UTC'
+
+version_file = open(VERSION_FILE_PATH, 'r')
+APP_VERSION = version_file.read()
+
 COPYRIGHT = '© '+ datetime.today().strftime('%Y') +' Guavus'
+
 # Send user to a link where they can report bugs
 BUG_REPORT_URL = None
 
@@ -599,7 +605,7 @@ DEFAULT_RELATIVE_END_TIME = 'today'
 IS_EPOCH_S_TRULY_UTC = False
 
 
-# set on IS_KNOX_SSO_ENABLED here ,because of unit test cases and rest KNOX varibales are defined in superset_config.py 
+# set on IS_KNOX_SSO_ENABLED here ,because of unit test cases and rest KNOX varibales are defined in superset_config.py
 IS_KNOX_SSO_ENABLED = False
 
 
