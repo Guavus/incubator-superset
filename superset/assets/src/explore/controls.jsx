@@ -212,6 +212,7 @@ const jsFunctionInfo = (
   </div>
 );
 
+
 function columnChoices(datasource) {
   if (datasource && datasource.columns) {
     return datasource.columns
@@ -1024,7 +1025,7 @@ export const controls = {
     type: 'DateFilterControl',
     freeForm: true,
     label: t('Time range'),
-    default: t('Last week'),
+    default: t('No filter'),
   },
 
   max_bubble_size: {
