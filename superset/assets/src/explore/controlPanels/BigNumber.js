@@ -26,6 +26,7 @@ export default {
       controlSetRows: [
         ['metric'],
         ['adhoc_filters'],
+        ['row_limit'],
       ],
     },
     {

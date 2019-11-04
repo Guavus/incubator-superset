@@ -1405,6 +1405,7 @@ export const visTypes = {
         controlSetRows: [
           ['metric'],
           ['adhoc_filters'],
+          ['row_limit'],
         ],
       },
       {
@@ -1433,6 +1434,7 @@ export const visTypes = {
         controlSetRows: [
           ['metric'],
           ['adhoc_filters'],
+          ['row_limit'],
         ],
       },
       {

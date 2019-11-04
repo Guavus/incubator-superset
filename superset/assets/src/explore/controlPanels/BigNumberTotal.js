@@ -27,6 +27,7 @@ export default {
         ['metric'],
         ['percentageMetric'],
         ['adhoc_filters'],
+        ['row_limit'],
       ],
     },
     {
