@@ -526,12 +526,11 @@ class BaseViz(object):
             df = pd.DataFrame()
             include_index = not isinstance(df.index, pd.RangeIndex)
             return df.to_csv(index=include_index, **config.get('CSV_EXPORT'))
-        parsed_json = json.dumps(self.datasource.data, sort_keys=True)
-        json_dict = json.loads(parsed_json)
+        verbose_col_map = self.datasource.data['verbose_map']
         verbose_column_names = []
         for col in df.columns:
-            if col in json_dict["verbose_map"]:
-                verbose_column_names.append(json_dict["verbose_map"][col])
+            if col in verbose_col_map:
+                verbose_column_names.append(verbose_col_map[col])
             else:
                 verbose_column_names.append(col)
         df.columns = verbose_column_names
