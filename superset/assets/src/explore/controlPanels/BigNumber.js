@@ -17,6 +17,9 @@
  * under the License.
  */
 import { t } from '@superset-ui/translation';
+import { ROW_LIMIT_OPTIONS } from '../controls';
+import * as v from '../validators';
+import { formatSelectOptions } from '../../../src/modules/utils';
 
 export default {
   controlPanelSections: [
@@ -43,6 +46,11 @@ export default {
   controlOverrides: {
     y_axis_format: {
       label: t('Number format'),
+    },
+    row_limit: {
+      default: "None",
+      validators: [v.nonEmpty],
+      choices: formatSelectOptions(['None', ...ROW_LIMIT_OPTIONS])
     },
   },
 };

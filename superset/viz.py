@@ -298,7 +298,10 @@ class BaseViz(object):
         )
         limit = int(form_data.get('limit') or 0)
         timeseries_limit_metric = form_data.get('timeseries_limit_metric')
-        row_limit = int(form_data.get('row_limit') or config.get('ROW_LIMIT'))
+        if form_data.get('row_limit') == 'None' or config.get('ROW_LIMIT') == 'None':
+            row_limit = form_data.get('row_limit') or config.get('ROW_LIMIT')
+        else:
+            row_limit = int(form_data.get('row_limit') or config.get('ROW_LIMIT'))
 
         # default order direction
         order_desc = form_data.get('order_desc', True)
@@ -1098,7 +1101,7 @@ class BigNumberViz(BaseViz):
         d['metrics'] = [self.form_data.get('metric')]
         self.form_data['metric'] = metric
         row_limit = self.form_data.get('row_limit')
-        if row_limit == -1:
+        if row_limit == 'None':
             d['row_limit'] = None
         return d
 
@@ -1126,7 +1129,7 @@ class BigNumberTotalViz(BaseViz):
 
         self.form_data['metric'] = metric
         row_limit = self.form_data.get('row_limit')
-        if row_limit == -1:
+        if row_limit == 'None':
             d['row_limit'] = None
         return d
 
