@@ -48,7 +48,7 @@ export default {
       label: t('Number format'),
     },
     row_limit: {
-      default: "None",
+      default: 'None',
       validators: [v.nonEmpty],
       choices: formatSelectOptions(['None', ...ROW_LIMIT_OPTIONS])
     },
