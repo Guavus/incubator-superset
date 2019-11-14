@@ -14,7 +14,7 @@ const propTypes = {
     onAddFilter: PropTypes.func,
   };
 
-function NOOP() {} 
+function NOOP() {}
 
 /**
  * Leaflet Map Visualization
@@ -22,7 +22,7 @@ function NOOP() {}
  * @param {*} props
  */
 function LeafletMap(element, props) {
- 
+
     const {height, payload, formData ,onAddFilter = NOOP } = props;
 
     const POLYGON = 'Polygon';
@@ -32,8 +32,6 @@ function LeafletMap(element, props) {
     const MARKER_RADIUS = 10;
     const MARKER_WEIGHT = 1;
     const MARKER_OPACITY = 1;
-    const LEAFLET_VIS_ID = 'leafllet-chart-id';
-    const MAP_CONTAINER = '<div id = ' + LEAFLET_VIS_ID + ' style="width: 100%; height: 100%;z-index:0;"></div>';
     var colorCols;
     var geoJson;
     var mapInstance;
@@ -44,6 +42,14 @@ function LeafletMap(element, props) {
     var enableClick = formData.chartInteractivity;
     var showTooltip = formData.richTooltip;
     var useEsriJS = formData.labelsOutside;
+
+    function getMapId() {
+      return 'leaflet-map' + props.formData.sliceId;
+    }
+
+    function getMapContainer() {
+      return '<div id = ' + getMapId() + ' style="width: 100%; height: 100%;z-index:0;"></div>';
+    }
 
     function getDefaultPolygonStyles() {
         return {
@@ -66,7 +72,7 @@ function LeafletMap(element, props) {
 
     function setLayout() {
         // set innerHtML to hold map vis
-        element.innerHTML = MAP_CONTAINER;
+        element.innerHTML = getMapContainer();
         element.style.height =  height;
         element.style.overflow =  'auto';
     }
@@ -219,7 +225,7 @@ function LeafletMap(element, props) {
         const min_zoom = formData.minRadius;
         const max_zoom = formData.maxRadius;
 
-        mapInstance = L.map(LEAFLET_VIS_ID, {
+        mapInstance = L.map(getMapId(), {
             minZoom: min_zoom,
             maxZoom: max_zoom
         }).setView([def_lat, def_long], def_zoom, {});
