@@ -21,7 +21,7 @@ RUN useradd --user-group --create-home --no-log-init --shell /bin/bash ${user} \
 
 
 RUN apt-get update && \
-    apt-get install -y build-essential libssl-dev curl=7.54.0 -V gcc \
+    apt-get install -y build-essential libssl-dev curl=7.54.0 gcc \
         libffi-dev libsasl2-dev libldap2-dev \
         libsasl2-modules libsasl2-2 libsasl2-modules-gssapi-mit libkrb5-dev krb5-user  && \
     apt-get clean && \
