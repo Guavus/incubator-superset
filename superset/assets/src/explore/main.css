@@ -34,6 +34,30 @@
   margin-bottom: 40px;
 }
 
+.btn.label-btn {
+  background-color: #808e95;
+  font-weight: normal;
+  color: #fff;
+  padding: 5px 4px 4px;
+  border:0;
+}
+
+.label-dropdown ul.dropdown-menu {
+  position: fixed;
+  top: auto;
+  left: auto;
+  margin: 20px 0 0;
+}
+
+.label-btn:hover, .label-btn-label:hover {
+  background-color: #667177;
+  color: #fff;
+}
+
+.label-btn-label {
+  cursor: pointer;
+}
+
 .fave-unfave-icon, .edit-desc-icon {
   padding: 0 0 0 .5em;
   font-size: 14px;

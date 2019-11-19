@@ -17,47 +17,47 @@
  * under the License.
  */
 import React from 'react';
-import { Tabs } from 'react-bootstrap';
-import { shallow } from 'enzyme';
+import { Modal } from 'react-bootstrap';
 import configureStore from 'redux-mock-store';
+import { shallow } from 'enzyme';
 import fetchMock from 'fetch-mock';
 import thunk from 'redux-thunk';
+import sinon from 'sinon';
 
-import DatasourceEditor from '../../../src/datasource/DatasourceEditor';
-import Field from '../../../src/CRUD/Field';
+import ChangeDatasourceModal from '../../../src/datasource/ChangeDatasourceModal';
 import mockDatasource from '../../fixtures/mockDatasource';
 
 const props = {
-  datasource: mockDatasource['7__table'],
-  addSuccessToast: () => {},
   addDangerToast: () => {},
+  onDatasourceSave: sinon.spy(),
   onChange: () => {},
+  onHide: () => {},
+  show: true,
 };
 
-const extraColumn = {
-  column_name: 'new_column',
-  type: 'VARCHAR(10)',
-  description: null,
-  filterable: true,
-  verbose_name: null,
-  is_dttm: false,
-  expression: '',
-  groupby: true,
+const datasource = mockDatasource['7__table'];
+const datasourceData = {
+  id: datasource.name,
+  type: datasource.type,
+  uid: datasource.id,
 };
 
-const DATASOURCE_ENDPOINT = 'glob:*/datasource/external_metadata/*';
+const DATASOURCES_ENDPOINT = 'glob:*/superset/datasources/';
+const DATASOURCE_ENDPOINT = `glob:*/datasource/get/${datasourceData.type}/${datasourceData.id}`;
+const DATASOURCES_PAYLOAD = { json: 'data' };
+const DATASOURCE_PAYLOAD = { new: 'data' };
 
-describe('DatasourceEditor', () => {
+describe('ChangeDatasourceModal', () => {
   const mockStore = configureStore([thunk]);
   const store = mockStore({});
-  fetchMock.get(DATASOURCE_ENDPOINT, []);
+  fetchMock.get(DATASOURCES_ENDPOINT, DATASOURCES_PAYLOAD);
 
   let wrapper;
   let el;
   let inst;
 
   beforeEach(() => {
-    el = <DatasourceEditor {...props} />;
+    el = <ChangeDatasourceModal {...props} />;
     wrapper = shallow(el, { context: { store } }).dive();
     inst = wrapper.instance();
   });
@@ -66,33 +66,27 @@ describe('DatasourceEditor', () => {
     expect(React.isValidElement(el)).toBe(true);
   });
 
-  it('renders Tabs', () => {
-    expect(wrapper.find(Tabs)).toHaveLength(1);
+  it('renders a Modal', () => {
+    expect(wrapper.find(Modal)).toHaveLength(1);
   });
 
-  it('makes an async request', (done) => {
-    wrapper.setState({ activeTabKey: 2 });
-    const syncButton = wrapper.find('.sync-from-source');
-    expect(syncButton).toHaveLength(1);
-    syncButton.simulate('click');
-
+  it('fetches datasources', (done) => {
+    inst.onEnterModal();
     setTimeout(() => {
-      expect(fetchMock.calls(DATASOURCE_ENDPOINT)).toHaveLength(1);
+      expect(fetchMock.calls(DATASOURCES_ENDPOINT)).toHaveLength(1);
       fetchMock.reset();
       done();
     }, 0);
   });
 
-  it('merges columns', () => {
-    const numCols = props.datasource.columns.length;
-    expect(inst.state.databaseColumns).toHaveLength(numCols);
-    inst.mergeColumns([extraColumn]);
-    expect(inst.state.databaseColumns).toHaveLength(numCols + 1);
-  });
-
-  it('renders isSqla fields', () => {
-    wrapper.setState({ activeTabKey: 4 });
-    expect(wrapper.state('isSqla')).toBe(true);
-    expect(wrapper.find(Field).find({ fieldKey: 'fetch_values_predicate' }).exists()).toBe(true);
+  it('changes the datasource', (done) => {
+    fetchMock.get(DATASOURCE_ENDPOINT, DATASOURCE_PAYLOAD);
+    inst.selectDatasource(datasourceData);
+    setTimeout(() => {
+      expect(fetchMock.calls(DATASOURCE_ENDPOINT)).toHaveLength(1);
+      expect(props.onDatasourceSave.getCall(0).args[0]).toEqual(DATASOURCE_PAYLOAD);
+      fetchMock.reset();
+      done();
+    }, 0);
   });
 });
