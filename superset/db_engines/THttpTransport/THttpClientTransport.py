@@ -61,7 +61,7 @@ class THttpClientTransport(TTransportBase):
   def set_basic_auth(self, username, password):
     self._client.set_basic_auth(username, password)
 
-  def set_verify(self, verify=True):
+  def set_verify(self, verify):
     self._client.set_verify(verify)
 
   def close(self):

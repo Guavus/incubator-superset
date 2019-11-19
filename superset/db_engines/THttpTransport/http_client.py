@@ -155,8 +155,20 @@ class HttpClient(object):
   def logger(self):
     return self._logger
 
-  def set_verify(self, verify=True):
-    self._session.verify = verify
+  def set_verify(self, verify):
+    self.logger.debug('set -----------------------verify---------------------------------------')
+    if verify == 'True':
+      self.logger.debug(verify)
+      self._session.verify = True
+    elif verify == 'False':
+      self.logger.debug(verify)
+      self._session.verify = False
+    else:
+      self.logger.debug(verify)
+      self._session.verify = verify
+    
+    self.logger.debug('*************************************************************************')
+
     return self
       
   def _get_headers(self, headers):
@@ -184,6 +196,7 @@ class HttpClient(object):
     if urlencode:
       path = urllib.parse.quote(smart_str(path))
     url = self._make_url(path, params)
+    self.logger.debug("-------connection url-----------------------------------------------------'%s'" % url)
     if http_method in ("GET", "DELETE"):
       if data is not None:
         self.logger.warn("GET and DELETE methods do not pass any data. Path '%s'" % path)

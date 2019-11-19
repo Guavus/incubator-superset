@@ -92,6 +92,9 @@ class Resource(object):
     Invoke an API method.
     @return: Raw body or JSON dictionary (if response content type is JSON).
     """
+    self._client.logger.debug('setting --------------header-------------------------------------------------------------------------------------')
+    self._client.logger.debug(headers)
+    self._client.logger.debug('***********-------------------------------------------------------------------------------------*****************')
     path = self._join_uri(relpath)
     start_time = time.time()
     resp = self._client.execute(method,

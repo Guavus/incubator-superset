@@ -66,7 +66,7 @@ def fetch_logs(self, max_rows=1024,
 def remove_http_params_from(url, connect_args):
     # remove custom  http transport vars not req in phive 
     backend_name = url.get_backend_name()
-    http_params = ['principal','transport_mode','mutual_authentication','http_path','service','delegate','force_preemptive','hostname_override','sanitize_mutual_error_response','send_cbt']  
+    http_params = ['verify','scheme','principal','transport_mode','mutual_authentication','http_path','service','delegate','force_preemptive','hostname_override','sanitize_mutual_error_response','send_cbt']  
     if(backend_name == 'hive'):
         for param in http_params:
             if( param in connect_args ):
@@ -120,12 +120,15 @@ def get_http_thrift_transport(url , kwargs):
         send_cbt = get_prop_value('send_cbt',kwargs,True)     
         auth = get_prop_value('auth',kwargs,"NONE")       
         
-        client = THttpClientTransport("http://{}:{}/{}".format(host, port, http_path))
+        scheme = get_prop_value('scheme',kwargs,"https")
+        verify = get_prop_value('verify',kwargs,"False")        
+        client = THttpClientTransport("{}://{}:{}/{}".format(scheme, host, port, http_path))
         if auth == 'KERBEROS':
             client.set_kerberos_auth(mutual_authentication,
             service, delegate, force_preemptive,
             principal, hostname_override,
             sanitize_mutual_error_response, send_cbt)
+            client.set_verify(verify)
         else:  
             client.set_basic_auth(username, password)  
 
