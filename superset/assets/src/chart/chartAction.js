@@ -28,7 +28,7 @@ import { Logger, LOG_ACTIONS_LOAD_CHART } from '../logger';
 import getClientErrorObject from '../utils/getClientErrorObject';
 import { allowCrossDomain } from '../utils/hostNamesConfig';
 import { APPLICATION_PREFIX } from '../public-path';
-import { createPostPayload, getSuccessToastMessage }  from '../utils/restActions';
+import { createPostPayload, getSuccessToastMessage } from '../utils/restActions';
 import { addSuccessToast } from '../messageToasts/actions'
 
 export const CHART_UPDATE_STARTED = 'CHART_UPDATE_STARTED';
@@ -91,7 +91,7 @@ export function restActionSuccess(queryResponse, key) {
 }
 
 export const REST_ACTION_STARTED = 'REST_ACTION_STARTED';
-export function restActionStarted(queryController,restAction, key) {
+export function restActionStarted(queryController, restAction, key) {
   return { type: REST_ACTION_STARTED, restAction, queryController, key };
 }
 
@@ -101,7 +101,7 @@ export function restActionFailed(queryResponse, key) {
 }
 
 export const REST_ACTION_TIMEOUT = 'REST_ACTION_TIMEOUT';
-export function restActionTimeout(queryResponse,timeout ,key) {
+export function restActionTimeout(queryResponse, timeout, key) {
   return { type: REST_ACTION_TIMEOUT, queryResponse, key };
 }
 
@@ -137,6 +137,11 @@ export function runAnnotationQuery(annotation, timeout = 60, formData = null, ke
       }),
       {},
     );
+
+    if (fd !== null) {
+      const hasExtraFilters = fd.extra_filters && fd.extra_filters.length > 0;
+      sliceFormData.extra_filters = hasExtraFilters ? fd.extra_filters : undefined;
+    }
     const isNative = annotation.sourceType === ANNOTATION_SOURCE_TYPES.NATIVE;
     const url = getAnnotationJsonUrl(annotation.value, sliceFormData, isNative);
     const controller = new AbortController();
@@ -157,7 +162,8 @@ export function runAnnotationQuery(annotation, timeout = 60, formData = null, ke
           dispatch(annotationQuerySuccess(annotation, err, sliceKey));
         } else if (err.statusText !== 'abort') {
           dispatch(annotationQueryFailed(annotation, err, sliceKey));
-        }}),
+        }
+      }),
       );
   };
 }
@@ -190,7 +196,7 @@ export function addChart(chart, key) {
   return { type: ADD_CHART, chart, key };
 }
 export const RUN_REST_QUERY = 'RUN_REST_QUERY';
-export function runRestQuery(action,timeout = 60, key) {
+export function runRestQuery(action, timeout = 60, key) {
   return (dispatch) => {
     if ("get" === (action.method).toLowerCase()) {
       window.open(action.url, action.target || "_blank");
@@ -206,20 +212,21 @@ export function runRestQuery(action,timeout = 60, key) {
         requestFailed: restActionFailed,
       };
       const loggers = {
-        success: (json, starttime, duration) => { 
-        } , 
+        success: (json, starttime, duration) => {
+        },
         failure: (errorDetails, starttime, duration) => {
         }
       }
-      var queryPromise = executeQuery('/superset/execute_rest_action', timeout, key, {action: action}, actions, loggers, dispatch, true)
-      queryPromise.then( (value) => {
-        if(value.type == REST_ACTION_SUCCESS) {
+      var queryPromise = executeQuery('/superset/execute_rest_action', timeout, key, { action: action }, actions, loggers, dispatch, true)
+      queryPromise.then((value) => {
+        if (value.type == REST_ACTION_SUCCESS) {
           dispatch(
             addSuccessToast(getSuccessToastMessage(action, value.queryResponse)),
-          )}
+          )
         }
+      }
       );
-      return queryPromise; 
+      return queryPromise;
     }
   }
 }
@@ -245,7 +252,7 @@ export function runQuery(formData, force = false, timeout = 60, key) {
     };
 
     const loggers = {
-      success: (json, starttime, duration) => { 
+      success: (json, starttime, duration) => {
         Logger.append(LOG_ACTIONS_LOAD_CHART, {
           slice_id: key,
           is_cached: json.is_cached,
@@ -257,7 +264,7 @@ export function runQuery(formData, force = false, timeout = 60, key) {
           has_extra_filters: formData.extra_filters && formData.extra_filters.length > 0,
           viz_type: formData.viz_type,
         })
-      } , 
+      },
       failure: (errorDetails, starttime, duration) => {
         Logger.append(LOG_ACTIONS_LOAD_CHART, {
           slice_id: key,
@@ -269,7 +276,7 @@ export function runQuery(formData, force = false, timeout = 60, key) {
         });
       }
     }
-    const queryPromise = executeQuery(url,timeout,key,{form_data: payload }, actions, loggers, dispatch);
+    const queryPromise = executeQuery(url, timeout, key, { form_data: payload }, actions, loggers, dispatch);
     const annotationLayers = formData.annotation_layers || [];
 
     return Promise.all([
@@ -281,43 +288,43 @@ export function runQuery(formData, force = false, timeout = 60, key) {
   };
 }
 
-export function executeQuery(url, timeout = 60, key, payload, actions, loggers,dispatch, isEndpoint = false) {
-    const {requestStarted, requestSucceeded, requestTimeout, requestStopped, requestFailed} = actions || {};
-    const {success, failure} = loggers || {};
-    const logStart = Logger.getTimestamp();
-    const controller = new AbortController();
-    const { signal } = controller;
+export function executeQuery(url, timeout = 60, key, payload, actions, loggers, dispatch, isEndpoint = false) {
+  const { requestStarted, requestSucceeded, requestTimeout, requestStopped, requestFailed } = actions || {};
+  const { success, failure } = loggers || {};
+  const logStart = Logger.getTimestamp();
+  const controller = new AbortController();
+  const { signal } = controller;
 
-    dispatch(requestStarted(controller, payload, key));
+  dispatch(requestStarted(controller, payload, key));
 
-    let querySettings = {
-      url,
-      postPayload: payload,
-      signal,
-      timeout: timeout * 1000,
+  let querySettings = {
+    url,
+    postPayload: payload,
+    signal,
+    timeout: timeout * 1000,
+  };
+  if (isEndpoint) {
+    querySettings = {
+      ...querySettings,
+      endpoint: url,
+      url: undefined
+    }
+  }
+  if (allowCrossDomain) {
+    querySettings = {
+      ...querySettings,
+      mode: 'cors',
+      credentials: 'include',
     };
-    if(isEndpoint) {
-      querySettings = {
-        ...querySettings,
-        endpoint: url,
-        url: undefined
-      }
-    }
-    if (allowCrossDomain) {
-      querySettings = {
-        ...querySettings,
-        mode: 'cors',
-        credentials: 'include',
-      };
-    }
-    const queryPromise = SupersetClient.post(querySettings)
+  }
+  const queryPromise = SupersetClient.post(querySettings)
     .then(({ json }) => {
       success(json, logStart, Logger.getTimestamp() - logStart);
       return dispatch(requestSucceeded(json, key));
     })
     .catch((response) => {
       const appendErrorLog = (errorDetails) => {
-        failure(errorDetails,logStart, Logger.getTimestamp() - logStart);
+        failure(errorDetails, logStart, Logger.getTimestamp() - logStart);
       };
       if (response.statusText === 'timeout') {
         appendErrorLog('timeout');
@@ -332,7 +339,7 @@ export function executeQuery(url, timeout = 60, key, payload, actions, loggers,d
       });
     });
 
-    return queryPromise;
+  return queryPromise;
 }
 
 export function redirectSQLLab(formData) {
@@ -364,22 +371,22 @@ export function refreshChart(chart, force, timeout) {
 
 export function executeRestAction(payload, restAction, timeout) {
   return (dispatch) => {
-    const {chart} = payload;
+    const { chart } = payload;
     payload = {
       ...payload,
       time: new Date().toLocaleString(),
       chart_query: chart.queryResponse && chart.queryResponse.query,
       chart_selection: ((obj) => {
-           var selection = "No Selection";
-           if(Object.keys(obj).length > 0) selection = Object.keys(obj).reduce((p,c) =>  p+"\n"+c+": "+obj[c],"")
-           return selection
-        })(payload.filters)
+        var selection = "No Selection";
+        if (Object.keys(obj).length > 0) selection = Object.keys(obj).reduce((p, c) => p + "\n" + c + ": " + obj[c], "")
+        return selection
+      })(payload.filters)
     };
 
     restAction = {
       ...restAction,
-      data: createPostPayload(restAction.data,payload)
+      data: createPostPayload(restAction.data, payload)
     };
-    dispatch(runRestQuery(restAction,timeout, chart.id));
+    dispatch(runRestQuery(restAction, timeout, chart.id));
   };
 }

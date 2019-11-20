@@ -50,12 +50,18 @@ CORS_OPTIONS = eval(get_env_variable('CORS_OPTIONS'))
 # Application Root configuration
 APPLICATION_PREFIX = get_env_variable('APPLICATION_PREFIX')
 
+# What is the Last N days relative in the time selector to:
+# 'today'/'now'
+DEFAULT_RELATIVE_END_TIME = get_env_variable('DEFAULT_RELATIVE_END_TIME')
+
 # WalkMe feature enabled/disbaled
 WALKME_ENABLED = boolify(get_env_variable('WALKME_ENABLED'))
 
 # Help configuration
 HELP_ENABLED = boolify(get_env_variable('HELP_ENABLED'))
 
+# Log format and level configuration
+LOG_FORMAT = get_env_variable('LOG_FORMAT')
 LOG_LEVEL = boolify(get_env_variable('LOG_LEVEL'))
 
 #stale session timeout
@@ -149,11 +155,14 @@ TICKET_GENERATION_SYSTEM_NAME = get_env_variable('TICKET_GENERATION_SYSTEM_NAME'
 TICKET_GENERATION_SYSTEM_ENDPOINT = get_env_variable('TICKET_GENERATION_SYSTEM_ENDPOINT','')
 TICKET_GENERATION_SYSTEM_API_KEY = get_env_variable('TICKET_GENERATION_SYSTEM_API_KEY','')
 TICKET_GENERATION_SYSTEM_USER = get_env_variable('TICKET_GENERATION_SYSTEM_USER','')
- 
+
+# Set to False to disable all CSRF protection.
+WTF_CSRF_ENABLED = boolify('WTF_CSRF_ENABLED')
+# Max age in seconds for CSRF tokens. Default is 3600. If set to None, the CSRF token is valid for the life of the session.
+WTF_CSRF_TIME_LIMIT = int(eval(get_env_variable('WTF_CSRF_TIME_LIMIT')))
 # expose deployement var for WTF_CSRF_EXEMPT_LIST
 WTF_CSRF_EXEMPT_STR = get_env_variable('WTF_CSRF_EXEMPT_STR').strip()
 if WTF_CSRF_EXEMPT_STR:
     WTF_CSRF_EXEMPT_LIST = WTF_CSRF_EXEMPT_STR.split(",")
 
-ENABLE_CHUNK_ENCODING =  boolify(get_env_variable('ENABLE_CHUNK_ENCODING',"True"))  
-   
+ENABLE_CHUNK_ENCODING =  boolify(get_env_variable('ENABLE_CHUNK_ENCODING',"True"))

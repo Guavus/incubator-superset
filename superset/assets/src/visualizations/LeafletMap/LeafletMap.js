@@ -14,7 +14,7 @@ const propTypes = {
     onAddFilter: PropTypes.func,
   };
 
-function NOOP() {} 
+function NOOP() {}
 
 /**
  * Leaflet Map Visualization
@@ -22,7 +22,7 @@ function NOOP() {}
  * @param {*} props
  */
 function LeafletMap(element, props) {
- 
+
     const {height, payload, formData ,onAddFilter = NOOP } = props;
 
     const POLYGON = 'Polygon';
@@ -32,8 +32,7 @@ function LeafletMap(element, props) {
     const MARKER_RADIUS = 10;
     const MARKER_WEIGHT = 1;
     const MARKER_OPACITY = 1;
-    const LEAFLET_VIS_ID = 'leafllet-chart-id';
-    const MAP_CONTAINER = '<div id = ' + LEAFLET_VIS_ID + ' style="width: 100%; height: 100%;z-index:0;"></div>';
+
     var colorCols;
     var geoJson;
     var mapInstance;
@@ -44,6 +43,19 @@ function LeafletMap(element, props) {
     var enableClick = formData.chartInteractivity;
     var showTooltip = formData.richTooltip;
     var useEsriJS = formData.labelsOutside;
+    const alphaNumericChars = '0123456789abcdefghijklmnopqrstuvwxyz';
+
+    function randomKey(len) {
+      var result = '';
+      for (var i = len; i > 0; i--) {
+        result +=
+        alphaNumericChars[Math.floor(Math.random() * alphaNumericChars.length)];
+      }
+      return result;
+  }
+
+  const LEAFLET_VIS_ID = randomKey(10);
+  const MAP_CONTAINER = '<div id = ' + LEAFLET_VIS_ID + ' style="width: 100%; height: 100%;z-index:0;"></div>';
 
     function getDefaultPolygonStyles() {
         return {
@@ -207,7 +219,6 @@ function LeafletMap(element, props) {
             'type': 'FeatureCollection',
             'features': getFeatures(),
         }
-        console.log(geoJson);
     }
 
     function renderBasicMap() {

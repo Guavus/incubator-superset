@@ -33,6 +33,7 @@ describe('DisplayQueryButton', () => {
     queryEndpoint: 'localhost',
     latestQueryFormData: {
       datasource: '1__table',
+      tz: 'UTC',
     },
   };
 

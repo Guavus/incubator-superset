@@ -148,7 +148,14 @@ export function getExploreUrlAndPayload({
     });
   }
   uri = uri.search(search).directory(uri.prefix+directory);
-  const payload = { ...formData };
+
+  // Fetch client's timezone for timestamp conversion of charts to local TZ
+  let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // If this fails for some old unsupported browser, all the TZ handling will be done in UTC
+  if (tz === 'undefined') {
+    tz = 'UTC';
+  }
+  const payload = { ...formData, tz: tz };
 
   return {
     url: uri.toString(),

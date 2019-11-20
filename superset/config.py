@@ -118,6 +118,7 @@ TICKET_GENERATION_SYSTEM_NAME = 'JIRA'
 TICKET_GENERATION_SYSTEM_ENDPOINT = 'https://guavus-jira.atlassian.net/rest/api/2/issue/'
 TICKET_GENERATION_SYSTEM_API_KEY = 'NnxaHz4NQPIDI7e3zUF7B357'
 TICKET_GENERATION_SYSTEM_USER ='raf-operator@guavus.com'
+
 # Use this flag to enable/disable walkme
 WALKME_ENABLED = True
 
@@ -399,10 +400,10 @@ CELERY_CONFIG = None
 # static http headers to be served by your Superset server.
 # This header prevents iFrames from other domains and
 # "clickjacking" as a result
-HTTP_HEADERS = {'X-Frame-Options': 'SAMEORIGIN'}
+# HTTP_HEADERS = {'X-Frame-Options': 'SAMEORIGIN'}
 # If you need to allow iframes from other domains (and are
 # aware of the risks), you can disable this header:
-# HTTP_HEADERS = {}
+HTTP_HEADERS = {}
 
 # The db id here results in selecting this one as a default in SQL Lab
 DEFAULT_DB_ID = None
@@ -584,7 +585,7 @@ WEBDRIVER_CONFIGURATION = {}
 WEBDRIVER_BASEURL = 'http://0.0.0.0:8080/'
 
 # add timezone and copyright property for footer display
-TIMEZONE = 'UTC'
+TIMEZONE = datetime.now(tz.tzlocal()).tzname()
 
 version_file = open(VERSION_FILE_PATH, 'r')
 APP_VERSION = version_file.read()
@@ -597,17 +598,10 @@ BUG_REPORT_URL = None
 # What is the Last N days relative in the time selector to:
 # 'today' means it is midnight (00:00:00) of today in the local timezone
 # 'now' means it is relative to the query issue time
-DEFAULT_RELATIVE_END_TIME = 'today'
-
-# Is epoch_s/epoch_ms datetime format supposed to be considered since UTC ?
-# If not, it is sassumed then the epoch_s/epoch_ms is seconds since 1/1/1970
-# localtime (in the tz where the superset webserver is running)
-IS_EPOCH_S_TRULY_UTC = False
-
+DEFAULT_RELATIVE_END_TIME = 'now'
 
 # set on IS_KNOX_SSO_ENABLED here ,because of unit test cases and rest KNOX varibales are defined in superset_config.py
 IS_KNOX_SSO_ENABLED = False
-
 
 # A function that intercepts the SQL to be executed and can alter it.
 #

@@ -134,8 +134,11 @@ export function encryptText(_m) {
   var _e = CryptoJS.AES.encrypt(_m, _k, {
       iv: _i
   });
-  _e = _i.concat(_e.ciphertext).toString(CryptoJS.enc.Base64);
-
-  return _e;
+  var _t = (_e.iv).concat(_e.ciphertext).toString(CryptoJS.enc.Base64);
+  /*
+  var _x = _i.concat(_e.ciphertext).toString(CryptoJS.enc.Base64);
+  console.log(_t) //admin (after encoding) -> mR7g s9Tp Iau4 l/Xr uBOo K5Az PK97 ACHn kPp5 oIBy LNI=
+  console.log(_x) //admin (after encoding) -> mR7g s9Tp Iau4 l/Xr uBOo K5Az PK97 ACHn kPp5 oIBy LNKQ Mzyv ewAh 55D6 eaCA cizS
+  */
+  return _t;
 }
-

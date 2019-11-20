@@ -137,16 +137,15 @@ class TableColumn(Model, BaseColumn):
         return self.table
 
     def get_time_filter(self, start_dttm, end_dttm):
-        is_epoch_in_utc = config.get('IS_EPOCH_S_TRULY_UTC', False)
         col = self.get_sqla_col(label='__time')
         l = []  # noqa: E741
         if start_dttm:
-            l.append(col >= text(self.dttm_sql_literal(start_dttm, is_epoch_in_utc)))
+            l.append(col >= text(self.dttm_sql_literal(start_dttm)))
         if end_dttm:
-            l.append(col <= text(self.dttm_sql_literal(end_dttm, is_epoch_in_utc)))
+            l.append(col <= text(self.dttm_sql_literal(end_dttm)))
         return and_(*l)
 
-    def get_timestamp_expression(self, time_grain):
+    def get_timestamp_expression(self, time_grain, timezone=None):
         """Getting the time component of the query"""
         label = self.table.get_label(utils.DTTM_ALIAS)
 
@@ -163,7 +162,10 @@ class TableColumn(Model, BaseColumn):
                     f'No grain spec for {time_grain} for database {db.database_name}')
         expr = db.db_engine_spec.get_time_expr(
             self.expression or self.column_name,
-            pdf, time_grain, grain)
+            pdf,
+            time_grain,
+            grain,
+            timezone)
         return literal_column(expr, type_=DateTime).label(label)
 
     @classmethod
@@ -174,7 +176,7 @@ class TableColumn(Model, BaseColumn):
                 TableColumn.column_name == lookup_column.column_name).first()
         return import_datasource.import_simple_obj(db.session, i_column, lookup_obj)
 
-    def dttm_sql_literal(self, dttm, is_epoch_in_utc):
+    def dttm_sql_literal(self, dttm):
         """Convert datetime object to a SQL expression string
 
         If database_expression is empty, the internal dttm
@@ -187,11 +189,7 @@ class TableColumn(Model, BaseColumn):
         if self.database_expression:
             return self.database_expression.format(dttm.strftime('%Y-%m-%d %H:%M:%S'))
         elif tf:
-            if is_epoch_in_utc:
-                seconds_since_epoch = dttm.timestamp()
-            else:
-                seconds_since_epoch = (dttm - datetime(1970, 1, 1)).total_seconds()
-            seconds_since_epoch = int(seconds_since_epoch)
+            seconds_since_epoch = int(dttm.timestamp())
             if tf == 'epoch_s':
                 return str(seconds_since_epoch)
             elif tf == 'epoch_ms':
@@ -551,6 +549,7 @@ class SqlaTable(Model, BaseDatasource):
 
     def get_sqla_query(  # sqla
             self,
+            timezone,
             groupby, metrics,
             granularity,
             from_dttm, to_dttm,
@@ -643,7 +642,7 @@ class SqlaTable(Model, BaseDatasource):
             time_filters = []
 
             if is_timeseries:
-                timestamp = dttm_col.get_timestamp_expression(time_grain)
+                timestamp = dttm_col.get_timestamp_expression(time_grain, timezone)
                 select_exprs += [timestamp]
                 groupby_exprs_with_timestamp[timestamp.name] = timestamp
 
@@ -790,6 +789,7 @@ class SqlaTable(Model, BaseDatasource):
             else:
                 # run subquery to get top groups
                 subquery_obj = {
+                    'timezone': 'UTC',
                     'prequeries': prequeries,
                     'is_prequery': True,
                     'is_timeseries': False,

@@ -115,16 +115,23 @@ class BaseEngineSpec(object):
     arraysize = None
 
     @classmethod
-    def get_time_expr(cls, expr, pdf, time_grain, grain):
+    def get_time_expr(cls, expr, pdf, time_grain, grain, timezone):
+        if timezone == None:
+            timezone = 'UTC'
         # if epoch, translate to DATE using db specific conf
         if pdf == 'epoch_s':
             expr = cls.epoch_to_dttm().format(col=expr)
+            if "from_unixtime" in expr:
+                expr = 'from_utc_timestamp(%s, \'%s\')' % (expr, timezone)
         elif pdf == 'epoch_ms':
+            # As '/' is not supported in hive, we use DIV
             expr = cls.epoch_ms_to_dttm().format(col=expr)
-
+            if "from_unixtime" in expr:
+                expr = 'from_utc_timestamp(%s, \'%s\')' % (expr, timezone)
         if grain:
-            expr = grain.function.format(col=expr)
-        return expr
+            return grain.function.format(col=expr)
+        else:
+            return expr
 
     @classmethod
     def get_time_grains(cls):
@@ -160,7 +167,7 @@ class BaseEngineSpec(object):
 
     @classmethod
     def epoch_ms_to_dttm(cls):
-        return cls.epoch_to_dttm().replace('{col}', '({col}/1000)')
+        return cls.epoch_to_dttm().replace('{col}', '({col} DIV 1000)')
 
     @classmethod
     def get_datatype(cls, type_code):
@@ -1480,7 +1487,7 @@ class PinotEngineSpec(BaseEngineSpec):
     time_grain_functions = {k: None for k in _time_grain_to_datetimeconvert.keys()}
 
     @classmethod
-    def get_time_expr(cls, expr, pdf, time_grain, grain):
+    def get_time_expr(cls, expr, pdf, time_grain, grain, timezone):
         is_epoch = pdf in ('epoch_s', 'epoch_ms')
         if not is_epoch:
             raise NotImplementedError('Pinot currently only supports epochs')

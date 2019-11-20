@@ -4,8 +4,10 @@
  */
 import React from 'react';
 import { D3_TIME_FORMAT_OPTIONS } from './controls';
+import { ROW_LIMIT_OPTIONS } from './controls';
 import * as v from './validators';
 import { t } from '../locales';
+import { formatSelectOptions } from 'src/modules/utils';
 
 export const sections = {
   druidTimeSeries: {
@@ -1405,6 +1407,7 @@ export const visTypes = {
         controlSetRows: [
           ['metric'],
           ['adhoc_filters'],
+          ['row_limit'],
         ],
       },
       {
@@ -1421,6 +1424,11 @@ export const visTypes = {
       y_axis_format: {
         label: t('Number format'),
       },
+      row_limit: {
+        default: 'None',
+        validators: [v.nonEmpty],
+        choices: formatSelectOptions(['None', ...ROW_LIMIT_OPTIONS])
+      },
     },
   },
 
@@ -1433,6 +1441,7 @@ export const visTypes = {
         controlSetRows: [
           ['metric'],
           ['adhoc_filters'],
+          ['row_limit'],
         ],
       },
       {
@@ -1447,6 +1456,11 @@ export const visTypes = {
     controlOverrides: {
       y_axis_format: {
         label: t('Number format'),
+      },
+      row_limit: {
+        default: 'None',
+        validators: [v.nonEmpty],
+        choices: formatSelectOptions(['None', ...ROW_LIMIT_OPTIONS])
       },
     },
   },

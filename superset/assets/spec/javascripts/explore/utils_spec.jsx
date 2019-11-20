@@ -26,6 +26,7 @@ describe('exploreUtils', () => {
   const location = window.location;
   const formData = {
     datasource: '1__table',
+    tz: 'UTC',
   };
   const sFormData = JSON.stringify(formData);
   const uri = new URI();

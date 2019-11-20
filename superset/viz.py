@@ -128,6 +128,9 @@ class BaseViz(object):
                     label = utils.get_metric_name(o)
                     self.metric_dict[label] = o
 
+        # Get client's timezone for conversion of UTC Timestamps to Local TZ Timestamps
+        self.time_zone = fd.get("tz")
+
         # Cast to list needed to return serializable object in py3
         self.all_metrics = list(self.metric_dict.values())
         self.metric_labels = list(self.metric_dict.keys())
@@ -280,6 +283,7 @@ class BaseViz(object):
         """Building a query object"""
 
         has_kerberos_ticket()
+        client_tz = self.time_zone
         st_seconds = datetime.now()
         form_data = self.form_data
         self.process_query_filters()
@@ -302,7 +306,10 @@ class BaseViz(object):
         )
         limit = int(form_data.get('limit') or 0)
         timeseries_limit_metric = form_data.get('timeseries_limit_metric')
-        row_limit = int(form_data.get('row_limit') or config.get('ROW_LIMIT'))
+        if form_data.get('row_limit') == 'None' or config.get('ROW_LIMIT') == 'None':
+            row_limit = form_data.get('row_limit') or config.get('ROW_LIMIT')
+        else:
+            row_limit = int(form_data.get('row_limit') or config.get('ROW_LIMIT'))
 
         # default order direction
         order_desc = form_data.get('order_desc', True)
@@ -333,6 +340,7 @@ class BaseViz(object):
         }
 
         d = {
+            'timezone': client_tz,
             'granularity': granularity,
             'from_dttm': from_dttm,
             'to_dttm': to_dttm,
@@ -348,7 +356,7 @@ class BaseViz(object):
             'prequeries': [],
             'is_prequery': False,
         }
-        logging.info('[PERFORMANCE CHECK] Query Obj formation time {0} '.format(datetime.now() - st_seconds))    
+        logging.info('[PERFORMANCE CHECK] Query Obj formation time {0} '.format(datetime.now() - st_seconds))
         return d
 
     @property
@@ -405,12 +413,12 @@ class BaseViz(object):
                 payload['error'] = 'No data'
             else:
                 payload['data'] = self.get_data(df)
-       
-        logging.info('[PERFORMANCE CHECK] df to  for  vis data convertion time {0} '.format(datetime.now() - st_seconds_1))  
+
+        logging.info('[PERFORMANCE CHECK] df to  for  vis data convertion time {0} '.format(datetime.now() - st_seconds_1))
 
         if 'df' in payload:
             del payload['df']
-        logging.info('[PERFORMANCE CHECK] Total Time in execute request  and transform  to vis data  {0} '.format(datetime.now()-st_seconds))    
+        logging.info('[PERFORMANCE CHECK] Total Time in execute request  and transform  to vis data  {0} '.format(datetime.now()-st_seconds))
         return payload
 
     def get_df_payload(self, query_obj=None, **kwargs):
@@ -1113,6 +1121,9 @@ class BigNumberViz(BaseViz):
             raise Exception(_('Pick a metric!'))
         d['metrics'] = [self.form_data.get('metric')]
         self.form_data['metric'] = metric
+        row_limit = self.form_data.get('row_limit')
+        if row_limit == 'None':
+            d['row_limit'] = None
         return d
 
 
@@ -1134,10 +1145,13 @@ class BigNumberTotalViz(BaseViz):
         if self.form_data['percentageMetric'] is not None:
             percentageMetric = self.form_data.get('percentageMetric')
             d['metrics'] = [metric, percentageMetric]
-        else: 
+        else:
             d['metrics'] = [metric]
 
         self.form_data['metric'] = metric
+        row_limit = self.form_data.get('row_limit')
+        if row_limit == 'None':
+            d['row_limit'] = None
         return d
 
 
@@ -1796,29 +1810,62 @@ class LeafletViz(BaseViz):
         d = super(LeafletViz, self).query_obj()
         fd = self.form_data
 
-        d['columns'] = [fd.get('geojson'), fd.get('polygon')]
+        mt = {
+          'aggregate':'COUNT_DISTINCT',
+          'column':{
+                    'column_name': 'downlink_bytes',
+                    'database_expression': None,
+                    'description': None,
+                    'expression': '',
+                    'filterable': True,
+                    'groupby': True,
+                    'id': 501,
+                    'is_dttm': False,
+                    'optionName': '_col_anomaly',
+                    'python_date_format': None,
+                    'type': 'INT',
+                    'verbose_name': None,
+                  },
+          'expressionType':'SIMPLE',
+          'fromFormData':True,
+          'hasCustomLabel':False,
+          'label':'downlink_bytes',
+          'optionName':'metric_ak4a742jw1s_zumhsrqh1gf',
+          'sqlExpression':None,
+        }
 
-        if (fd.get('all_columns_y') is not None ):
-            d['columns'].append(fd.get('all_columns_y'))
+        # d['metrics'].append(mt)
 
-        if (fd.get('latitude') is not None ):
-            d['columns'].append(fd.get('latitude'))
+        d['groupby'] = [fd.get('geojson'), fd.get('polygon')]
+        # d['columns'] = [fd.get('geojson'), fd.get('polygon')]
+
+        # if len(fd.get('groupby')) > 0:
+        #   d['columns'] += fd.get('groupby')
+
+        # if (fd.get('all_columns_y') is not None ):
+        #     d['columns'].append(fd.get('all_columns_y'))
+
+        # if (fd.get('latitude') is not None ):
+        #     d['columns'].append(fd.get('latitude'))
 
         if fd.get('adhoc_columns') is not None and len(fd.get('adhoc_columns')) > 0 :
             adhoc_columns = fd.get('adhoc_columns')
-            extra_cols = []
+
             for col in adhoc_columns:
+                extra_cols = {}
                 val1=col['subject']
-                extra_cols.append(val1)
-
-            d['columns'] += extra_cols
-
-        if fd.get('all_columns_x') is not None and len(fd.get('all_columns_x')) > 0 :  
-              all_columns_x = fd.get('all_columns_x')
-              d['columns'] += all_columns_x
+                extra_cols = copy.copy(mt)
+                extra_cols['label'] = val1
+                extra_cols['column']['column_name'] = val1
+                d['metrics'].append(extra_cols)
 
 
-        d['columns'] = list(set(d['columns']))
+        # if fd.get('all_columns_x') is not None and len(fd.get('all_columns_x')) > 0 :
+        #       all_columns_x = fd.get('all_columns_x')
+        #       d['columns'] += all_columns_x
+
+
+        # d['columns'] = list(set(d['columns']))
         d['is_timeseries'] = self.should_be_timeseries()
         return d
 

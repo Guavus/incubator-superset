@@ -54,7 +54,17 @@ const getFilter = (col, op, val) => {
   }
 }
 
-const valueToString = (value) => value ? value.toString() : value;
+const valueToString = (value) => {
+  return value == null ? '' : (typeof value === 'object' && !value.toString ? '[object]' : String(value));
+}
+
+/*
+   Ref: https://stackoverflow.com/a/53796206/5821408
+   const valueToString = (value) => value ? value.toString() : value;
+   valueToString(0) // Output = 0 (Problem with 0 due to JS's way to handle 0 (NAN, '', etc.))
+   valueToString(1) // Output = "1"
+   valueToString(2) // Output = "2"
+*/
 
 export function getEffectiveExtraFilters({
   dashboardMetadata,

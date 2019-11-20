@@ -9,7 +9,6 @@
     - 'always'
   tasks: []
 
-
 - name: "Set superset psql host IP"
   hosts:
     - management-nodes

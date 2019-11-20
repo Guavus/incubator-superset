@@ -53,7 +53,7 @@ function mapStateToProps(
     filters,
     sliceId: id,
     publishSubscriberMap,
-  })
+  });
 
   const dashboardTitle = ((undoableLayout.present[DASHBOARD_HEADER_ID] || {}).meta || {}).text;
 

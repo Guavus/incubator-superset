@@ -237,10 +237,10 @@ class TableModelView(DatasourceModelView, DeleteMixin, YamlExportMixin):  # noqa
             'A timeout of 0 indicates that the cache never expires. '
             'Note this defaults to the database timeout if undefined.'),
         'hive_partitions': utils.markdown(
-            '**Time based Hive partition schema sample **(supports till minute level)'
+            '**Date and Time based Hive partition schema sample **(supports till hour level for date and till minute level for time based)'
             '`{"time":{"year":"year_column","month":"month_column","day":"day_column",'
-            '"hour":"hr_column","minute":"min_column","bin_interval":900}}`'
-            ' Above schema can be defined till partition level (like hour, day, month etc.). '
+            '"hour":"hr_column","minute":"min_column","bin_interval":900}, "date":{"date":"date", "hour":"hour"}}`'
+            ' Above schema can be defined till partition level for time based (like hour, day, month etc.) and for date based (like date, hour) '
             '`bin_interval` is small common multiple of data aggregation intervals. '
             'Typical values **(in seconds)** are 300, 900, 1800, 3600 etc.',True ),
 

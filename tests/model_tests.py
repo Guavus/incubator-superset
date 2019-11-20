@@ -217,6 +217,7 @@ class SqlaTableModelTestCase(SupersetTestCase):
         arbitrary_metric = (dict(label='arbitrary', expressionType='SQL',
                                  sqlExpression='COUNT(1)'))
         query_obj = dict(
+            timezone='UTC',
             groupby=[arbitrary_gby, 'name'],
             metrics=[arbitrary_metric],
             filter=[],
@@ -262,6 +263,7 @@ class SqlaTableModelTestCase(SupersetTestCase):
     def test_sql_mutator(self):
         tbl = self.get_table_by_name('birth_names')
         query_obj = dict(
+            timezone='UTC',
             groupby=[],
             metrics=[],
             filter=[],

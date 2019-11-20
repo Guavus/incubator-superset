@@ -58,7 +58,7 @@ class PandasDatabase(object):
     def __init__(self, database_name, cache_timeout=None):
         self.database_name = database_name
         self.cache_timeout = cache_timeout
-        self.data = {};
+        self.data = {}
 
     def __str__(self):
         return self.database_name
@@ -226,7 +226,7 @@ class PandasDatasource(Model, BaseDatasource):
 
     @property
     def description_markeddown(self):
-        return utils.markdown(self.description)
+        return utils.core.markdown(self.description)
 
     @property
     def link(self):
@@ -273,7 +273,7 @@ class PandasDatasource(Model, BaseDatasource):
         # Note that the front end uses `granularity_sqla` and
         # `time_grain_sqla` as the parameters for selecting the
         # column and time grain separately.
-        d['granularity_sqla'] = utils.choicify(self.dttm_cols)
+        d['granularity_sqla'] = utils.core.choicify(self.dttm_cols)
         d['time_grain_sqla'] = [(g, g) for g in self.GRAINS.keys()]
         logging.info(d)
         return d

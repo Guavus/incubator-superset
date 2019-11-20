@@ -198,11 +198,10 @@ class SupersetSecurityManager(SecurityManager):
                 _e = base64.b64decode(message + EXTRA_PADDING)
             _i = _e[:BS]
             _a = AES.new(SK, AES.MODE_CBC, _i)
-            _d = _a.decrypt(_e[BS:]).decode('utf-8')
-            return _d[:-ord(_d[-1])]
+            _d = _a.decrypt(_e[BS:])
+            return _d[:-ord(_d[len(_d)-1:])].decode('utf-8')
 
         return  message
-
 
     def auth_user_db(self, username, password):
         """
