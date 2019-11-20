@@ -132,11 +132,7 @@ def get_http_thrift_transport(url , kwargs):
         # first update vars as per deployment file
         if ENABLE_SSL_HIVE_CONNECTION:
             scheme = "https"
-            verify = "True"
-
-        # update verify as per certfile path as per deployment file
-        if CA_CERT_FILE_PATH:
-            verify =  CA_CERT_FILE_PATH
+            verify = CA_CERT_FILE_PATH
 
         # override verify and scheme  as per ui config if defined there
         if get_prop_value('verify',kwargs, None):

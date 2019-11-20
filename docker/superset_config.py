@@ -159,5 +159,5 @@ ENABLE_CHUNK_ENCODING =  boolify(get_env_variable('ENABLE_CHUNK_ENCODING',"True"
 # set ENABLE_SSL_HIVE_CONNECTION True to create HIVE connection in SSL and  http transport mode
 ENABLE_SSL_HIVE_CONNECTION =  boolify(get_env_variable('ENABLE_SSL_HIVE_CONNECTION',"False"))  
 # provide ca certificate file with complete path as per available on local/container for SSL/TLS connection
-CA_CERT_FILE_PATH = get_env_variable('CA_CERT_FILE_PATH')
+CA_CERT_FILE_PATH = get_env_variable('CA_CERT_FILE_PATH','/etc/cert/ca.crt')
    
