@@ -10,11 +10,10 @@ export default {
       controlSetRows: [
         ['geojson'],
         ['polygon'],
+        ['metrics'],
         ['adhoc_columns'],
         ['rich_tooltip'],
         ['all_columns_x'],
-        ['all_columns_y'],
-        ['latitude'],
         ['adhoc_filters'],
         ['row_limit', 'include_time'],
       ],
@@ -65,6 +64,9 @@ export default {
       multi: true,
       default:[],
       description: t('Tooltip Data Columns'),
+      mapStateToProps: state => ({
+        choices: columnAllChoices(state.datasource, state),
+      }),
     },
     all_columns_y:{
       label: 'Direction',
@@ -149,7 +151,23 @@ export default {
     },
     row_limit:{
       default: 50,
-    }
-
+    },
+    metrics: {
+      validators: [],
+   }
   },
+
+
 };
+
+function columnAllChoices(datasource, state) {
+  if (datasource && datasource.columns) {
+    var ppp =  datasource.columns.concat(state.datasource.metrics)
+      .map(col => [col.column_name || col.metric_name, col.verbose_name || col.column_name])
+      .sort((opt1, opt2) => opt1[1].toLowerCase() > opt2[1].toLowerCase() ? 1 : -1);
+
+    return ppp;
+  }
+  return [];
+}
+
