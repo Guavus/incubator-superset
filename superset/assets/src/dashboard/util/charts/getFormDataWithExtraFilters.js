@@ -84,6 +84,9 @@ export default function getFormDataWithExtraFilters({
   sliceId,
   publishSubscriberMap = undefined,
 }) {
+  
+  // store preslice_filters
+  const preslice_filters = filters && filters.hasOwnProperty('preslice_filters') ? filters['preslice_filters'] : undefined;
 
   const subscriberSliceMap = getSubscriberSliceMap(publishSubscriberMap, sliceId);
 
@@ -99,6 +102,11 @@ export default function getFormDataWithExtraFilters({
     !!cachedFormdataByChart[sliceId]
   ) {
     return cachedFormdataByChart[sliceId];
+  }
+
+  // set preslice_filters
+  if(preslice_filters){
+    filters['preslice_filters']  = preslice_filters;
   }
 
   const formData = {

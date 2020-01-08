@@ -99,6 +99,14 @@ export default function (bootstrapData) {
     return defaultFilters;
   }
 
+  try {
+    // parse preslice_filters from uri and store it in filters against preslice_filters key
+    const preslice_filters =  JSON.parse(getParam('preslice_filters'));
+    filters['preslice_filters'] = preslice_filters;
+  } catch (error) {
+    console.log('no preslice_filters found in url')
+  }
+
   // try {
   //   // allow request parameter overwrite dashboard metadata
   //   filters = JSON.parse(

@@ -380,6 +380,12 @@ export function executeRestAction(payload, restAction, timeout) {
       ...restAction,
       data: createPostPayload(restAction.data,payload)
     };
+    
+    // update url with filters info as queryparmas for nvaigatetodashbaord rest action
+    if ("get" === (restAction.method).toLowerCase() && Object.keys(payload.filters).length > 0) {
+      var queryparams="?preslice_filters="+encodeURIComponent(JSON.stringify(payload.filters));
+      restAction.url += queryparams;
+    }
     dispatch(runRestQuery(restAction,timeout, chart.id));
   };
 }
