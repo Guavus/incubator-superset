@@ -2045,6 +2045,7 @@ class Superset(BaseSupersetView):
                 publish_columns = o.Slice.form_data['publish_columns']
             obj = {
                 'id': o.Slice.id,
+                'datasource': '%s' % o.Slice.datasource,
                 'title': o.Slice.slice_name,
                 'url': o.Slice.slice_url,
                 'column_names': publish_columns,

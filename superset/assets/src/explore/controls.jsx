@@ -2149,7 +2149,7 @@ export const controls = {
             return (slice.id != state.slice.slice_id && isPublishColumnExists);
           }
           return isPublishColumnExists;
-        }).map(slice => ({ label: slice.title, value: slice.id, columns: slice.column_names }));
+        }).map(slice => ({ label: slice.title + " (" + slice.datasource + ")" , value: slice.id, columns: slice.column_names }));
       }
       return newState;
     },
