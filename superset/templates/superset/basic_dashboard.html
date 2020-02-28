@@ -67,63 +67,76 @@
       <h1>IoT Analytics & AI Services</h1>
       <br>
       <div class="ui hidden divider"></div>
-      <div class="ui top attached massive tabular menu">
-        <a class="item active" data-tab="dashboard"><h4>Dashboard</h4></a>
-        <a class="item" data-tab="tab-name-incomplete"><h4>Service Details</h4></a>
-        <a class="item" data-tab="tab-name-incomplete"><h4>Device Logs</h4></a>
-        <a class="item" data-tab="tab-name-incomplete"><h4>Advanced Alerts</h4></a>
-        <a class="item" data-tab="tab-name-incomplete"><h4>Automation</h4></a>
-      </div>
-      <div class="ui bottom attached tab segment active" data-tab="dashboard">
+      {% include "superset/custom_dash_tabs.html" %}
+     {% block body %} 
+      <div {% if activetabtype == 'dsb' %} class="ui bottom attached tab segment active" {% else %} class="ui bottom attached tab segment" {% endif %}
+       data-tab="dashboard">
         <div class="ui grid">
-          <div class="two wide column">
-            <div class="ui vertical menu">
-              {% for dash in dashboards %}
-                <a href="{{ dash.url }}" class="item"><h3>{{ dash.title }}</h3></a>
-              {% endfor %}
-            </div>
-          </div>
-          <div class="fourteen wide column">
-            {% block body %}
-            <div id="app" data-bootstrap="{{ bootstrap_data }}">
-              <img src="{{ url_for('static' , filename='assets/images/loading.gif') }}"
-                style="width: 50px; margin: 10px;">
-            </div>
-            {% endblock %}
-
-            <!-- Modal for misc messages / alerts  -->
-            <div class="misc-modal modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 class="modal-title"></h4>
-                  </div>
-                  <div class="modal-body">
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  </div>
-                </div>
+          <div class="two wide column" {% if dashboards['dsb']|length < 2 %} style="display: none;" {% endif %}>
+                <div class="ui vertical menu">
+                {% for dash in dashboards['dsb'] %}
+                  {% if dash.url.split('/')[3].split('_')[0] == 'dsb' %}
+                    <a href="{{ dash.url }}" 
+                    {% if dashboard_id ==  dash.url.split('/')[3] %} class="item active" {% else %} class="item" {% endif %}
+                    name="dsb" ><h3>{{ dash.title }}</h3></a>
+                  {% endif %}
+                {% endfor %}
               </div>
-            </div>
-            {% block tail_js %}
-            {% if entry %}
-            {% with filename=entry %}
-            {% include "superset/partials/_script_tag.html" %}
-            {% endwith %}
+          </div>      
+          <div 
+          {% if dashboards['dsb']|length < 2 %} class="sixteen wide column" {% else %} class="fourteen wide column" {% endif %}
+          >
+            {% if activetabtype == 'dsb' %}
+            {% include "superset/custom_dash_content.html" %}
             {% endif %}
-            {% endblock %}
           </div>
         </div>
       </div>
-      <div class="ui bottom attached tab segment" data-tab="tab-name-incomplete">
-          <div class="ui active centered text inline loader">
-            <h3>Under development</h3>
+      <div {% if activetabtype == 'svc' %} class="ui bottom attached tab segment active" {% else %} class="ui bottom attached tab segment" {% endif %}
+       data-tab="service">
+        <div class="ui grid">
+          <div class="two wide column" {% if dashboards['svc']|length < 2 %} style="display: none;" {% endif %} >
+            <div class="ui vertical menu">
+              {% for dash in dashboards['svc'] %}
+              {% if dash.url.split('/')[3].split('_')[0] == 'svc' %}
+                <a href="{{ dash.url }}" 
+                {% if dashboard_id ==  dash.url.split('/')[3] %} class="item active" {% else %} class="item" {% endif %}
+                name="svc"><h3>{{ dash.title }}</h3></a>
+              {% endif %}
+              {% endfor %}
+            </div>
           </div>
+          <div {% if dashboards['svc']|length < 2 %} class="sixteen wide column" {% else %} class="fourteen wide column" {% endif %}
+          >
+            {% if activetabtype == 'svc' %}
+            {% include "superset/custom_dash_content.html" %}
+            {% endif %}
+          </div>
+        </div>
       </div>
+      <div {% if activetabtype == 'aut' %} class="ui bottom attached tab segment active" {% else %} class="ui bottom attached tab segment" {% endif %}
+       data-tab="automation">
+       <div class="ui grid">
+          <div class="two wide column" {% if dashboards['aut']|length < 2 %} style="display: none;" {% endif %}>
+            <div class="ui vertical menu">
+              {% for dash in dashboards['aut'] %}
+              {% if dash.url.split('/')[3].split('_')[0] == 'aut' %}
+                <a href="{{ dash.url }}"
+                {% if dashboard_id ==   dash.url.split('/')[3]  %} class="item active" {% else %} class="item" {% endif %}
+                 name="aut"><h3>{{ dash.title }}</h3></a>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div {% if dashboards['aut']|length < 2 %} class="sixteen wide column" {% else %} class="fourteen wide column" {% endif %}>
+            {% if activetabtype == 'aut' %}
+            {% include "superset/custom_dash_content.html" %}
+            {% endif %}
+          </div>
+        </div>
+    </div>
+    {% endblock %}
+    {% include "superset/custom_dash_modal.html" %}
     </div>
   </div>
 
@@ -138,6 +151,13 @@
     $('.menu .item').on('click', function () {
       $('.menu .item').removeClass('active');
       $(this).addClass('active');
+      // identify selected tab
+      var tabid = $(this)[0].id;
+      var anchorEle = document.getElementsByName(tabid)[0];
+      if(anchorEle){
+        // programatically click to load dashboard on tab change
+        anchorEle.click()
+      }
     });
   </script>
 

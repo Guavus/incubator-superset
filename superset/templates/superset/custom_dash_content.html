@@ -16,18 +16,7 @@
     specific language governing permissions and limitations
     under the License.
   #}
-<div class="ui massive menu">
-  <div class="header item">
-    <h1 class="ui header">ThingSpace</h2>
+  <div id="app" data-bootstrap="{{ bootstrap_data }}">
+    <img src="{{ url_for('static' , filename='assets/images/loading.gif') }}"
+        style="width: 50px; margin: 10px;">
   </div>
-  <div class="right menu">
-    <a class="item">
-      <h2 class="ui red header">Intelligence Prototype</h3>
-    </a>
-    <div class="item">
-      <a href="{{appbuilder.get_url_for_logout}}" class="ui negative button">
-        <h2 class="ui header">Logout</h3>
-      </a>
-    </div>
-  </div>
-</div>

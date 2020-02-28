@@ -2341,12 +2341,32 @@ class Superset(BaseSupersetView):
         session = db.session()
         qry = session.query(models.Dashboard)
         payload = self.dashboard_payload(qry)
+        
+        # supported tabtypes
+        #todo: get this from configs
+        # any dashboard belong to dashboard tab must have slug with prefix as dsb_
+        # any dashboard belong to service tab must have slug with prefix as svc_
+        # any dashboard belong to automation tab must have slug with prefix as aut_
+        tabtypes = ['dsb','svc','aut']
+        tab_typed_dashboards = {}
+        # default active tab is dashboard as per blueprint design and reuirement of iot usecase
+        activetabtype = tabtypes[0]
+
         if dashboard_id == None:
-            qry = qry.filter_by(id=payload[0]['id'])
+            id = payload[0]['id']
+            for dash in payload:
+                # based on url format /superset/dash/dsb_test/
+                # checking for only dsb type of dashboard ids 
+                if dash['url'].split('/')[3].split('_')[0] == tabtypes[0]:
+                    id = dash['id']
+                    break
+            qry = qry.filter_by(id=id)
         else:
             if dashboard_id.isdigit():
                 qry = qry.filter_by(id=int(dashboard_id))
             else:
+                # based on slug name convention format tabtype_xxxx 
+                activetabtype = dashboard_id.split('_')[0]
                 qry = qry.filter_by(slug=dashboard_id)
 
         dash = qry.one_or_none()
@@ -2410,14 +2430,27 @@ class Superset(BaseSupersetView):
 
         if request.args.get('json') == 'true':
             return json_success(json.dumps(bootstrap_data))
+        
+       
+        for _dash in payload:
+            _tabtype = _dash['url'].split('/')[3].split('_')[0]
+            if _tabtype in tabtypes:
+                if _tabtype in tab_typed_dashboards:
+                    tab_typed_dashboards[_tabtype].append(_dash)
+                else:
+                    tab_typed_dashboards[_tabtype] = []
+                    tab_typed_dashboards[_tabtype].append(_dash)
 
+         
         return self.render_template(
             'superset/basic_dashboard.html',
             entry='dashboard',
             standalone_mode=standalone_mode,
             title=dash.dashboard_title,
             bootstrap_data=json.dumps(bootstrap_data),
-            dashboards=payload
+            dashboards=tab_typed_dashboards,
+            activetabtype=activetabtype,
+            dashboard_id=dashboard_id
         )
 
     @api

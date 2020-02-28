@@ -16,18 +16,27 @@
     specific language governing permissions and limitations
     under the License.
   #}
-<div class="ui massive menu">
-  <div class="header item">
-    <h1 class="ui header">ThingSpace</h2>
-  </div>
-  <div class="right menu">
-    <a class="item">
-      <h2 class="ui red header">Intelligence Prototype</h3>
-    </a>
-    <div class="item">
-      <a href="{{appbuilder.get_url_for_logout}}" class="ui negative button">
-        <h2 class="ui header">Logout</h3>
-      </a>
+<div class="misc-modal modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+        </div>
     </div>
-  </div>
 </div>
+{% block tail_js %}
+{% if entry %}
+{% with filename=entry %}
+{% include "superset/partials/_script_tag.html" %}
+{% endwith %}
+{% endif %}
+{% endblock %} 
