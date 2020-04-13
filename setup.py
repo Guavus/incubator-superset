@@ -116,7 +116,6 @@ setup(
         'kombu==4.2.1',
         'mako==1.0.7',
         'markdown==3.0',
-        'markupsafe==1.0',
         'numpy==1.15.2',
         'pandas==0.23.1',
         'parsedatetime==2.0.0',
