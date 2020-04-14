@@ -102,6 +102,9 @@ class SliceHeaderControls extends React.PureComponent {
         "url": navigateToDashURL,
         "method": "GET"
       };
+      if (this.props.slice.form_data.hasOwnProperty('passing_filter_to_dasboard')) {
+        navigateToDashAction['passFilters'] = this.props.slice.form_data.passing_filter_to_dasboard;
+      }
       return navigateToDashAction;
     }
   }

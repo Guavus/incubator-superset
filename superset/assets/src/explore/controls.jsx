@@ -2232,6 +2232,14 @@ export const controls = {
     tabOverride: 'data',
   },
 
+  passing_filter_to_dasboard: {
+    type: 'CheckboxControl',
+    label: t('Pass filter to dashboard'),
+    default: true,
+    renderTrigger: true,
+    description: t('Pass filter to dashboard if checked'),
+  },
+
   cache_timeout: {
     type: 'HiddenControl',
     label: t('Cache Timeout (seconds)'),
