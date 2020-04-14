@@ -147,7 +147,7 @@ def default_hive_query_generator(sql, query_obj, database, datasource_name):
                 if st and en and gran_seconds:
                     where_clause = get_partitioned_whereclause(st, en, gran_seconds, time_partitions)
                     sql_updated = replace_whereclause_in_org_sql(granularity, sql, where_clause, granularity_in_partitions)
-                    logging.info('[PERFORMANCE CHECK] Hive Partition Query formation time {0} '.format(datetime.now() - st_seconds))
+                    logging.debug('[PERFORMANCE CHECK] Hive Partition Query formation time {0} '.format(datetime.now() - st_seconds))
                     return sql_updated
-    logging.info('[PERFORMANCE CHECK] Hive Partition Query formation time {0} '.format(datetime.now() - st_seconds))
+    logging.debug('[PERFORMANCE CHECK] Hive Partition Query formation time {0} '.format(datetime.now() - st_seconds))
     return sql
