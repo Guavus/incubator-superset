@@ -25,6 +25,8 @@ import * as L from '../../../node_modules/leaflet/dist/leaflet.js';
 import * as esri from '../../../node_modules/esri-leaflet/dist/esri-leaflet.js';
 import * as GRAPHICON from './graphIcon.js';
 import PropTypes from 'prop-types';
+import { Logger, LOG_ACTIONS_RENDER_CHART_CONTAINER } from '../../logger';
+
 
 const propTypes = {
     payload: PropTypes.object,
@@ -424,7 +426,15 @@ function LeafletMap(element, props) {
         drawMap();
     }
 
-    init();
+    try {
+      init();
+    } catch (err) {
+      Logger.append(LOG_ACTIONS_RENDER_CHART_CONTAINER, {
+        has_err: true,
+        error_details: err.toString()
+      }, true);
+      console.log(err);
+    }
 }
 
 LeafletMap.displayName = 'Leaflet Map';
