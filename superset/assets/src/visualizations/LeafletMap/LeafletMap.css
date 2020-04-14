@@ -73,3 +73,7 @@
   text-align: center;
   margin-left: 2px;
 }
+
+.click-not-allowed{
+  cursor: not-allowed !important;
+}

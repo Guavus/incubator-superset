@@ -245,7 +245,7 @@ function TableVis(element, props) {
         cellNodeClicked.classed('filtered', !cellNodeClicked.classed('filtered'));
       }
     })
-    .style('cursor', d => (!d.isMetric) ? 'pointer' : '')
+    .style('cursor', tableFilter ?  (d => (!d.isMetric) ? 'pointer' : '') : 'not-allowed')
     .html(d => d.html ? d.html : d.val);
 
   let publishColumnsKeyValueMap = {}

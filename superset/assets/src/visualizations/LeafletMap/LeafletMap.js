@@ -75,7 +75,8 @@ function LeafletMap(element, props) {
             color: getRgbColor(formData.strokeColorPicker),
             weight: MARKER_WEIGHT,
             opacity: MARKER_OPACITY,
-            fillOpacity: formData.cellSize
+            fillOpacity: formData.cellSize,
+            className: enableClick ? '' : 'click-not-allowed'
         }
     }
 
