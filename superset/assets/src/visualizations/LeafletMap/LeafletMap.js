@@ -25,6 +25,8 @@ import * as L from '../../../node_modules/leaflet/dist/leaflet.js';
 import * as esri from '../../../node_modules/esri-leaflet/dist/esri-leaflet.js';
 import * as GRAPHICON from './graphIcon.js';
 import PropTypes from 'prop-types';
+import { Logger, LOG_ACTIONS_RENDER_CHART_CONTAINER } from '../../logger';
+var GEOJSON_VALIDATION = require("geojson-validation");
 
 const propTypes = {
     payload: PropTypes.object,
@@ -112,10 +114,12 @@ function LeafletMap(element, props) {
     }
 
     function getTurfBasedGeoCordinates(points, type) {
+      try {
         var turfPoints = [];
         points.forEach(element => {
-            turfPoints.push(turf.point(element))
+          turfPoints.push(turf.point(element))
         });
+
         var turfFeatureCollection = turf.featureCollection(turfPoints);
         var hullFeature;
         if (type == CONVEX)
@@ -124,6 +128,12 @@ function LeafletMap(element, props) {
             hullFeature = turf.concave(turfFeatureCollection);
 
         return hullFeature ? hullFeature.geometry.coordinates : points;
+      } catch (err) {
+        Logger.append(LOG_ACTIONS_RENDER_CHART_CONTAINER, {
+          has_err: true,
+          error_details: err.toString()
+        }, true);
+      }
     }
 
     function getMapCordinates(data) {
@@ -219,13 +229,27 @@ function LeafletMap(element, props) {
     }
 
     function getFeatures() {
-        var _data = payload.data.data;
-        var feats = [];
-        _data.forEach(element => {
-            feats.push(getFeatureObject(element));
+      var _data = payload.data.data;
+      var feats = [], errorArr = [];
+      _data.forEach(element => {
+        const featureObj = getFeatureObject(element)
+        GEOJSON_VALIDATION.valid(featureObj, (isValid, error) => {
+          if (isValid) {
+            feats.push(featureObj);
+          } else {
+            const errStr = error.join(';').trim();
+            errorArr.includes(errStr) ? null : errorArr.push(errStr);
+          }
         });
+      });
 
-        return feats;
+      if (errorArr.length > 0) {
+        Logger.append(LOG_ACTIONS_RENDER_CHART_CONTAINER, {
+          has_err: true,
+          error_details: errorArr.join(';')
+        }, true);
+      }
+      return feats;
     }
 
     function createMapDP() {
