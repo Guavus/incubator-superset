@@ -64,7 +64,7 @@ export default function (bootstrapData) {
   const isPublishColumnExistsInFilters = (filterConfigFilters, col) => {
     return (Object.keys(filterConfigFilters).length > 0 && filterConfigFilters[col] != undefined && Object.keys(filterConfigFilters[col]).length > 0);
   }
-  
+
   const getSliceData = (sliceId, slices) => {
     let slice_data = _.find(slices, function (slice) {
       return (slice.slice_id == sliceId);
@@ -148,7 +148,18 @@ export default function (bootstrapData) {
   const sliceIds = new Set();
   const modalSliceIds = new Set();
 
+  var oldToNewSliceIdMap = dashboard.slices.reduce((map, slice) => {
+    map[slice.form_data.remote_id] = slice.slice_id;
+    return map;
+  }, {});
+
   dashboard.slices.forEach(slice => {
+    if (slice.form_data && slice.form_data.subscriber_layers) {
+      slice.form_data.subscriber_layers.forEach(layer => {
+        layer.sliceId = oldToNewSliceIdMap[layer.sliceId]
+      })
+    }
+
     const key = slice.slice_id;
     if (['separator', 'markup'].indexOf(slice.form_data.viz_type) === -1) {
       chartQueries[key] = {

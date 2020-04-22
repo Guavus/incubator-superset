@@ -2149,7 +2149,7 @@ export const controls = {
             return (slice.id != state.slice.slice_id && isPublishColumnExists);
           }
           return isPublishColumnExists;
-        }).map(slice => ({ label: slice.title + " (" + slice.datasource + ")" , value: slice.id, columns: slice.column_names }));
+        }).map(slice => ({ label: slice.title + " (" + slice.datasource + ")" , value: slice.id, remoteId: slice.data.remote_id, columns: slice.column_names }));
       }
       return newState;
     },
@@ -2201,7 +2201,7 @@ export const controls = {
     mapStateToProps: (state) => {
       const newState = {};
       if (state.slices) {
-        newState.options = state.slices.filter(slice => state.slice ? slice.id != state.slice.slice_id : true).map(slice => ({ label: slice.title, value: slice.id }))
+        newState.options = state.slices.filter(slice => state.slice ? slice.id != state.slice.slice_id : true).map(slice => ({ label: slice.title, value: slice.id, remoteId: slice.data.remote_id }))
       }
       return newState;
     }

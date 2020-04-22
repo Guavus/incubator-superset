@@ -25,7 +25,7 @@ import PopoverSection from '../../../components/PopoverSection';
 import TextControl from './TextControl';
 import CheckboxControl from './CheckboxControl';
 import { nonEmpty } from '../../validators';
-import { uniq } from 'lodash';
+import { uniq, find } from 'lodash';
 
 const propTypes = {
   name: PropTypes.string,
@@ -130,14 +130,8 @@ export default class SubscriberLayer extends React.PureComponent {
   }
 
   getPublishedColumns(sliceId) {
-    let sliceColumns = [];
-    this.props.sliceOptions.forEach(slice => {
-      if (slice.value === sliceId) {
-        sliceColumns = slice.columns;
-        return sliceColumns;
-      }
-    });
-    return sliceColumns;
+    const columnObj = find(this.props.sliceOptions, ['remoteId', sliceId]);
+    return columnObj ? columnObj.columns : [];
   }
 
   getRefactoredPublishedColumns(pubSliceCols) {
@@ -395,6 +389,7 @@ export default class SubscriberLayer extends React.PureComponent {
                 name="publised-layer-name"
                 options={publishedSlices}
                 value={sliceId}
+                valueKey='remoteId'
                 onChange={this.handleSliceType}
               />
 
