@@ -117,3 +117,54 @@ def load_css_templates():
     obj.css = css
     db.session.merge(obj)
     db.session.commit()
+
+
+    obj = (
+        db.session.query(CssTemplate).filter_by(template_name='Guavus_Brown').first())
+    if not obj:
+        obj = CssTemplate(template_name='Guavus_Brown')
+    css = textwrap.dedent("""\
+
+    .navbar-default-template, .navbar-inverse {
+      background-color: #383846;
+    }
+    .navbar-inverse {
+      border: 3px solid #383846;
+    }
+    """)
+    obj.css = css
+    db.session.merge(obj)
+    db.session.commit()
+
+    obj = (
+        db.session.query(CssTemplate).filter_by(template_name='Guavus_Blue').first())
+    if not obj:
+        obj = CssTemplate(template_name='Guavus_Blue')
+    css = textwrap.dedent("""\
+    .navbar-default-template, .navbar-inverse  {
+      background-color: #0d9d7f;
+    }
+    .navbar-inverse {
+      border: 3px solid #0d9d7f;
+    }
+    """)
+    obj.css = css
+    db.session.merge(obj)
+    db.session.commit()
+
+    obj = (
+        db.session.query(CssTemplate).filter_by(template_name='Guavus_Green').first())
+    if not obj:
+        obj = CssTemplate(template_name='Guavus_Green')
+    css = textwrap.dedent("""\
+    .navbar-default-template, .navbar-inverse  {
+      background-color: #1a396b;
+    }
+    .navbar-inverse {
+      border: 3px solid #1a396b;
+    }
+    """)
+    obj.css = css
+    db.session.merge(obj)
+    db.session.commit()
+

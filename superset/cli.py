@@ -55,6 +55,7 @@ def init():
     username = firstname = lastname = password = "admin"
     email = "admin@fab.org"
     user = security_manager.find_user(username)
+    data.load_css_templates()
     if user is None:
         user = security_manager.add_user(username, firstname, lastname, email, role_admin, password)
         if user:
